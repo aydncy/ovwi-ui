@@ -1,0 +1,78 @@
+%PDF-1.1
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 600 >>
+stream
+BT
+/F1 12 Tf
+72 740 Td
+(ClinicFlowAC + OVWI Overview) Tj
+0 -20 Td
+(ClinicFlowAC is an open healthcare workflow platform.) Tj
+0 -20 Td
+(OVWI provides API verification, usage tracking, and monetization.) Tj
+0 -20 Td
+(Live:) Tj
+0 -20 Td
+(https://www.cyzora.com) Tj
+0 -20 Td
+(https://ovwi.cyzora.com) Tj
+0 -20 Td
+(Architecture:) Tj
+0 -20 Td
+(User -> ClinicFlowAC -> OVWI -> API -> Billing) Tj
+0 -20 Td
+(Current Status:) Tj
+0 -20 Td
+(- Live frontend) Tj
+0 -20 Td
+(- Working UI) Tj
+0 -20 Td
+(- Authentication flow) Tj
+0 -20 Td
+(- OVWI API active) Tj
+0 -20 Td
+(- Billing integration) Tj
+0 -20 Td
+(Tech Stack:) Tj
+0 -20 Td
+(Frontend: React Vite) Tj
+0 -20 Td
+(Backend: Node Dart) Tj
+0 -20 Td
+(Infrastructure: OVWI) Tj
+0 -20 Td
+(Payments: LemonSqueezy) Tj
+0 -20 Td
+(Why it matters:) Tj
+0 -20 Td
+(Open alternative to proprietary systems.) Tj
+0 -20 Td
+(Reusable API monetization infrastructure.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000010 00000 n 
+0000000060 00000 n 
+0000000110 00000 n 
+0000000210 00000 n 
+0000000850 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+920
+%%EOF
