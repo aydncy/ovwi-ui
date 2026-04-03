@@ -1,12 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@supabase/supabase-js"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-)
+import { createSupabaseBrowser } from "@/app/lib/supabase-browser"
 
 export default function Dashboard() {
   const [state, setState] = useState("init")
@@ -14,22 +9,24 @@ export default function Dashboard() {
 
   useEffect(() => {
     const run = async () => {
-      setState("getting-user")
-      const { data, error } = await supabase.auth.getUser()
+      const supabase = createSupabaseBrowser()
+
+      setState("getSession")
+      const { data, error } = await supabase.auth.getSession()
 
       if (error) {
         setState("error:" + error.message)
         return
       }
 
-      if (!data?.user) {
-        setState("no-user → redirect")
+      if (!data?.session) {
+        setState("no-session → redirect")
         window.location.href = "/"
         return
       }
 
-      setEmail(data.user.email || "")
-      setState("ok")
+      setEmail(data.session.user.email)
+      setState("OK")
     }
 
     run()
@@ -37,9 +34,9 @@ export default function Dashboard() {
 
   return (
     <div style={{ padding: 40 }}>
-      <h1>DEBUG DASHBOARD v3</h1>
+      <h1>Dashboard</h1>
       <p>state: {state}</p>
-      <p>email: {email}</p>
+      <p>{email}</p>
     </div>
   )
 }
