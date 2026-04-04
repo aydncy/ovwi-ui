@@ -1,14 +1,16 @@
-import './globals.css';
-
-export const metadata = {
-  title: 'OVWI',
-  description: 'Webhook verification infrastructure',
-};
-
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html>
+      <body>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            window.onerror = function(msg, url, line, col, error) {
+              document.body.innerHTML = "<pre style='padding:40px;color:red'>" + msg + "\\n" + (error?.stack || "") + "</pre>";
+            };
+          `
+        }} />
+        {children}
+      </body>
     </html>
-  );
+  )
 }
