@@ -1,32 +1,25 @@
 'use client';
 
 import { useEffect } from 'react';
-import { createBrowserSupabase } from '@/lib/supabase-browser';
-import { saveSession } from '@/lib/session';
 
 export default function Callback() {
-  const supabase = createBrowserSupabase();
-
   useEffect(() => {
     const run = async () => {
-      const { data } = await supabase.auth.getUser();
-      const user = data.user;
+      const email = new URLSearchParams(window.location.search).get('email');
+      if (!email) return;
 
-      if (user?.email) {
-        saveSession({ email: user.email });
+      const res = await fetch('/api/create-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
 
-        // API key yoksa oluştur
-        const existing = localStorage.getItem('ovwi_api_key');
-        if (!existing) {
-          const res = await fetch('/api/create-key', { method: 'POST' });
-          const d = await res.json();
-          if (d.ok) localStorage.setItem('ovwi_api_key', d.apiKey);
-        }
+      const data = await res.json();
 
-        window.location.href = '/dashboard';
-      } else {
-        window.location.href = '/auth/login';
-      }
+      localStorage.setItem('ovwi_api_key', data.apiKey);
+      localStorage.setItem('ovwi_user', JSON.stringify({ email }));
+
+      window.location.href = '/dashboard';
     };
 
     run();

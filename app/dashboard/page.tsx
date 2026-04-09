@@ -7,15 +7,18 @@ export default function Dashboard() {
 
   useEffect(() => {
     const run = async () => {
+      const apiKey = localStorage.getItem('ovwi_api_key');
       const userRaw = localStorage.getItem('ovwi_user');
-      if (!userRaw) return;
+
+      if (!apiKey || !userRaw) {
+        window.location.href = '/login';
+        return;
+      }
 
       const user = JSON.parse(userRaw);
 
       const res = await fetch(/api/dashboard?email=${user.email});
       const d = await res.json();
-
-      const apiKey = localStorage.getItem('ovwi_api_key');
 
       setData({ ...d, apiKey });
     };
@@ -31,7 +34,7 @@ export default function Dashboard() {
       <p>Plan: {data.plan}</p>
       <p>Usage: {data.usage}</p>
       <p>Limit: {data.limit}</p>
-      <input value={data.apiKey || ''} readOnly />
+      <input value={data.apiKey} readOnly />
     </div>
   );
 }
