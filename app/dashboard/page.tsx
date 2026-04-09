@@ -12,8 +12,8 @@ export default function Dashboard() {
 
       const user = JSON.parse(userRaw);
 
-      const dash = await fetch(/api/dashboard?email=${user.email});
-      const d = await dash.json();
+      const res = await fetch(/api/dashboard?email=${user.email});
+      const d = await res.json();
 
       const apiKey = localStorage.getItem('ovwi_api_key');
 
@@ -33,8 +33,7 @@ export default function Dashboard() {
       <p>Usage: {data.usage}</p>
       <p>Limit: {data.limit}</p>
 
-      <input value={data.apiKey} readOnly />
-
+      <input value={data.apiKey || ''} readOnly style={{ width: 400 }} />
     </div>
   );
 }
