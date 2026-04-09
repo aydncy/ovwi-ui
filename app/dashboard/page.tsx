@@ -16,8 +16,6 @@ export default function Dashboard() {
       }
 
       const user = JSON.parse(userRaw);
-
-      // ✅ CRITICAL FIX
       const res = await fetch(`/api/dashboard?email=${user.email}`);
       const d = await res.json();
 

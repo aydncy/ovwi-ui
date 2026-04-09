@@ -1,50 +1,46 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const apiKey = localStorage.getItem('ovwi_api_key');
     if (apiKey) window.location.href = '/dashboard';
   }, []);
 
-  const sendMagic = async () => {
+  const handleLogin = async () => {
     if (!email) return;
-    setLoading(true);
-
-    await fetch('/api/auth/magic', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    });
-
-    alert('Magic link sent');
-    setLoading(false);
+    const apiKey = 'ovwi_live_' + Math.random().toString(36).substring(2);
+    localStorage.setItem('ovwi_api_key', apiKey);
+    localStorage.setItem('ovwi_user', JSON.stringify({ email }));
+    window.location.href = '/dashboard';
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-[420px] p-8 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10">
-        <h1 className="text-2xl font-semibold mb-2">Get your API key</h1>
-        <p className="text-sm opacity-70 mb-6">No password. No friction.</p>
-
-        <input
-          className="w-full p-3 rounded-lg bg-black/50 border border-white/10 mb-4"
-          placeholder="you@company.com"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-
-        <button
-          onClick={sendMagic}
-          disabled={loading}
-          className="w-full py-3 rounded-lg bg-cyan-500 hover:bg-cyan-400"
-        >
-          {loading ? 'Sending...' : 'Get API Key'}
-        </button>
+    <div className="flex items-center justify-center min-h-screen bg-[#0B0F1A]">
+      <div className="bg-[#111827] p-8 rounded-xl shadow-xl w-[400px]">
+        <h1 className="text-white text-2xl font-bold mb-2">
+          Get your API key
+        </h1>
+        <p className="text-gray-400 mb-6">
+          No password. No friction.
+        </p>
+        <div className="flex gap-2">
+          <input
+            className="flex-1 p-3 rounded bg-[#1F2937] text-white outline-none"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <button
+            onClick={handleLogin}
+            className="bg-cyan-500 px-4 rounded text-black font-semibold"
+          >
+            Get API Key
+          </button>
+        </div>
       </div>
     </div>
   );
