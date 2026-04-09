@@ -28,11 +28,9 @@ export default function Dashboard() {
   return (
     <div style={{ padding: 40 }}>
       <h1>Dashboard</h1>
-
       <p>Plan: {data.plan}</p>
       <p>Usage: {data.usage}</p>
       <p>Limit: {data.limit}</p>
-
       <input value={data.apiKey || ''} readOnly style={{ width: 400 }} />
     </div>
   );
