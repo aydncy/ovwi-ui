@@ -3,16 +3,15 @@
 import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const run = async () => {
       const userRaw = localStorage.getItem('ovwi_user');
-      if (!userRaw) return;
 
       const user = JSON.parse(userRaw);
 
-      const res = await fetch(/api/dashboard?email=${user.email});
+      const res = await fetch(\/api/dashboard?email=${user.email}\);
       const d = await res.json();
 
       const apiKey = localStorage.getItem('ovwi_api_key');
@@ -23,7 +22,6 @@ export default function Dashboard() {
     run();
   }, []);
 
-  if (!data) return null;
 
   return (
     <div style={{ padding: 40 }}>
@@ -31,7 +29,8 @@ export default function Dashboard() {
       <p>Plan: {data.plan}</p>
       <p>Usage: {data.usage}</p>
       <p>Limit: {data.limit}</p>
-      <input value={data.apiKey || ''} readOnly style={{ width: 400 }} />
+      <input value={data.apiKey || ''} readOnly />
     </div>
   );
 }
+//force-build-1775737823
