@@ -45,21 +45,9 @@ export default function Home() {
         <div className="bg-[#111827] p-6 rounded-xl border border-gray-800">
           <div className="mb-4 text-sm text-gray-400">Try endpoint</div>
 
-          <input
-            className="w-full mb-3 p-3 bg-[#1F2937] rounded"
-            placeholder="Email (login required)"
-          />
-
-          <textarea
-            className="w-full mb-3 p-3 bg-[#1F2937] rounded"
-            rows={4}
-            placeholder='{"type":"test"}'
-          />
-
-          <input
-            className="w-full mb-3 p-3 bg-[#1F2937] rounded"
-            placeholder="API key"
-          />
+          <input className="w-full mb-3 p-3 bg-[#1F2937] rounded" placeholder="Email" />
+          <textarea className="w-full mb-3 p-3 bg-[#1F2937] rounded" rows={4} />
+          <input className="w-full mb-3 p-3 bg-[#1F2937] rounded" placeholder="API key" />
 
           <button className="w-full bg-cyan-500 py-3 rounded text-black font-semibold">
             Verify Webhook
