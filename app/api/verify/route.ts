@@ -6,10 +6,17 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+const PLAN_LIMITS = {
+  free: 50,
+  pro: 1000,
+  enterprise: 10000,
+  scale: 100000
+};
+
 export async function POST(req: Request) {
   const { key } = await req.json();
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("api_keys")
     .select("*")
     .eq("key", key);
@@ -19,10 +26,27 @@ export async function POST(req: Request) {
   }
 
   const row = data[0];
+  const limit = PLAN_LIMITS[row.plan as keyof typeof PLAN_LIMITS] || 50;
+
+  // LIMIT CHECK í²£
+  if (row.usage_count >= limit) {
+    return NextResponse.json({
+      ok: false,
+      error: "limit_reached",
+      upgrade_url: "https://cyzora.lemonsqueezy.com"
+    });
+  }
+
+  // USAGE INCREMENT íº€
+  await supabase
+    .from("api_keys")
+    .update({ usage_count: row.usage_count + 1 })
+    .eq("key", key);
 
   return NextResponse.json({
     ok: true,
     plan: row.plan,
-    usage: row.usage_count
+    usage: row.usage_count + 1,
+    remaining: limit - (row.usage_count + 1)
   });
 }
