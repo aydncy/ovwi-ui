@@ -17,53 +17,33 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // Lemon custom field (apiKey)
-    const custom = data?.custom_data || data?.custom || {};
-    const apiKey =
-      custom?.apiKey ||
-      body?.data?.meta?.custom_data?.apiKey ||
-      body?.meta?.custom_data?.apiKey;
-
-    if (!apiKey) {
-      return NextResponse.json({ ok: false, error: "missing_api_key" });
-    }
-
+    const email = data?.user_email || data?.customer_email;
     const product = String(data?.product_name || '').toLowerCase();
 
     let plan = "free";
+
     if (product.includes("pro")) plan = "pro";
     if (product.includes("enterprise")) plan = "enterprise";
     if (product.includes("scale")) plan = "scale";
 
-    // api_keys tablosundan user bul
-    const { data: keyRow } = await supabase
-      .from("api_keys")
-      .select("email")
-      .eq("key", apiKey)
-      .single();
-
-    if (!keyRow?.email) {
-      return NextResponse.json({ ok: false, error: "key_not_found" });
-    }
-
-    // users update
     await supabase
       .from("users")
-      .upsert(
-        { email: keyRow.email, plan, usage_count: 0 },
-        { onConflict: "email" }
-      );
+      .upsert({
+        email,
+        plan,
+        usage_count: 0
+      }, { onConflict: "email" });
 
-    // payment log (opsiyonel)
-    await supabase.from("payments").insert({
-      email: keyRow.email,
-      plan,
-      amount: data?.total || 0,
-      source: "lemon"
-    });
+    await supabase
+      .from("payments")
+      .insert({
+        email,
+        plan,
+        amount: data?.total || 0
+      });
 
     return NextResponse.json({ ok: true });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
