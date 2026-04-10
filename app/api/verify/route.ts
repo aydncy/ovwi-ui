@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 const PLAN_LIMITS = {
@@ -13,8 +13,9 @@ const PLAN_LIMITS = {
   scale: 100000
 };
 
-export async function POST(req: Request) {
-  const { key } = await req.json();
+export async function POST(req) {
+  const body = await req.json();
+  const key = body.key;
 
   const { data } = await supabase
     .from("api_keys")
@@ -26,9 +27,8 @@ export async function POST(req: Request) {
   }
 
   const row = data[0];
-  const limit = PLAN_LIMITS[row.plan as keyof typeof PLAN_LIMITS] || 50;
+  const limit = PLAN_LIMITS[row.plan] || 50;
 
-  // LIMIT CHECK í²£
   if (row.usage_count >= limit) {
     return NextResponse.json({
       ok: false,
@@ -37,7 +37,6 @@ export async function POST(req: Request) {
     });
   }
 
-  // USAGE INCREMENT íº€
   await supabase
     .from("api_keys")
     .update({ usage_count: row.usage_count + 1 })
