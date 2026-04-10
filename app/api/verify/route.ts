@@ -7,37 +7,25 @@ const supabase = createClient(
 );
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { key } = body;
+  const { key } = await req.json();
 
   if (!key) {
     return NextResponse.json({ ok: false, error: 'no_key' });
   }
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('api_keys')
     .select('*')
     .eq('key', key)
     .single();
 
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json({ ok: false, error: 'invalid_key' });
   }
-
-  const limitMap: any = {
-    free: 50,
-    pro: 1000,
-    enterprise: 10000,
-    scale: 100000
-  };
-
-  const limit = limitMap[data.plan] || 50;
 
   return NextResponse.json({
     ok: true,
     plan: data.plan,
-    usage: data.usage_count,
-    limit,
-    remaining: limit - data.usage_count
+    usage: data.usage_count
   });
 }
