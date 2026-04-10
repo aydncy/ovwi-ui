@@ -14,8 +14,7 @@ const PLAN_LIMITS = {
 };
 
 export async function POST(req) {
-  const body = await req.json();
-  const key = body.key;
+  const { key } = await req.json();
 
   const { data } = await supabase
     .from("api_keys")
@@ -30,11 +29,7 @@ export async function POST(req) {
   const limit = PLAN_LIMITS[row.plan] || 50;
 
   if (row.usage_count >= limit) {
-    return NextResponse.json({
-      ok: false,
-      error: "limit_reached",
-      upgrade_url: "https://cyzora.lemonsqueezy.com"
-    });
+    return NextResponse.redirect("https://cyzora.lemonsqueezy.com");
   }
 
   await supabase
