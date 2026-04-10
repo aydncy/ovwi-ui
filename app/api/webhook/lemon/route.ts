@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -7,31 +7,23 @@ const supabase = createClient(
 );
 
 export async function POST(req: Request) {
-  try {
-    const body = await req.json();
+  const body = await req.json();
 
-    if (body?.meta?.event_name === 'order_created') {
-      const email = body.data.attributes.user_email;
-      const product = body.data.attributes.product_name;
+  const email = body?.data?.attributes?.user_email;
+  const product = body?.data?.attributes?.product_name?.toLowerCase();
 
-      let plan = 'free';
-      if (product?.toLowerCase().includes('pro')) plan = 'pro';
-      if (product?.toLowerCase().includes('enterprise')) plan = 'enterprise';
-      if (product?.toLowerCase().includes('scale')) plan = 'scale';
+  let plan = "free";
+  if (product?.includes("pro")) plan = "pro";
+  else if (product?.includes("enterprise")) plan = "enterprise";
+  else if (product?.includes("scale")) plan = "scale";
 
-      const key = 'ovwi_live_' + Math.random().toString(36).substring(2, 12);
+  const key = "ovwi_live_" + Math.random().toString(36).substring(2, 15);
 
-      await supabase.from('api_keys').insert({
-        key,
-        plan,
-        usage_count: 0
-      });
+  await supabase.from("api_keys").insert({
+    key,
+    plan,
+    usage_count: 0,
+  });
 
-      return NextResponse.json({ ok: true, key });
-    }
-
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    return NextResponse.json({ ok: false, error: 'server_error' });
-  }
+  return NextResponse.json({ ok: true, key, plan });
 }
