@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -7,25 +7,37 @@ const supabase = createClient(
 );
 
 export async function POST(req: Request) {
-  const { key } = await req.json();
+  const body = await req.json();
+  const key = body?.key?.trim();
 
   if (!key) {
-    return NextResponse.json({ ok: false, error: 'no_key' });
+    return NextResponse.json({ ok: false, error: "no_key" });
   }
 
-  const { data } = await supabase
-    .from('api_keys')
-    .select('*')
-    .eq('key', key)
-    .single();
+  const { data, error } = await supabase
+    .from("api_keys")
+    .select("*")
+    .eq("key", key)
+    .maybeSingle();
 
-  if (!data) {
-    return NextResponse.json({ ok: false, error: 'invalid_key' });
+  if (error || !data) {
+    return NextResponse.json({ ok: false, error: "invalid_key" });
   }
+
+  const limits = {
+    free: 50,
+    pro: 1000,
+    enterprise: 10000,
+    scale: 100000,
+  };
+
+  const limit = limits[data.plan] || 50;
 
   return NextResponse.json({
     ok: true,
     plan: data.plan,
-    usage: data.usage_count
+    usage: data.usage_count,
+    limit,
+    remaining: limit - data.usage_count,
   });
 }
