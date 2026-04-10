@@ -7,37 +7,22 @@ const supabase = createClient(
 );
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const key = body?.key?.trim();
-
-  if (!key) {
-    return NextResponse.json({ ok: false, error: "no_key" });
-  }
+  const { key } = await req.json();
 
   const { data, error } = await supabase
     .from("api_keys")
     .select("*")
-    .eq("key", key)
-    .maybeSingle();
+    .eq("key", key);
 
-  if (error || !data) {
+  if (!data || data.length === 0) {
     return NextResponse.json({ ok: false, error: "invalid_key" });
   }
 
-  const limits = {
-    free: 50,
-    pro: 1000,
-    enterprise: 10000,
-    scale: 100000,
-  };
-
-  const limit = limits[data.plan] || 50;
+  const row = data[0];
 
   return NextResponse.json({
     ok: true,
-    plan: data.plan,
-    usage: data.usage_count,
-    limit,
-    remaining: limit - data.usage_count,
+    plan: row.plan,
+    usage: row.usage_count
   });
 }
