@@ -6,27 +6,22 @@ import { supabase } from "../lib/supabase"
 
 export default function Nav(){
 
-  const [user,setUser] = useState(null)
+  const [user,setUser] = useState<any>(undefined)
 
   useEffect(()=>{
-    // mevcut session
     supabase.auth.getUser().then(({data})=>{
-      setUser(data.user)
+      setUser(data.user ?? null)
     })
 
-    // auth değişimini dinle
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session)=>{
+    const { data: listener } = supabase.auth.onAuthStateChange((_e,session)=>{
       setUser(session?.user ?? null)
     })
 
-    return () => {
-      listener.subscription.unsubscribe()
-    }
+    return ()=>listener.subscription.unsubscribe()
   },[])
 
-  const logout = async () => {
-    await supabase.auth.signOut()
-    window.location.href = '/'
+  if(user === undefined){
+    return null // flicker engel
   }
 
   return (
@@ -37,20 +32,18 @@ export default function Nav(){
         <Link href="/" className="btn">Home</Link>
         <Link href="/docs" className="btn">Docs</Link>
 
-        {user && (
-          <Link href="/dashboard" className="btn">
-            Dashboard
-          </Link>
-        )}
+        {user && <Link href="/dashboard" className="btn">Dashboard</Link>}
 
-        {!user && (
-          <Link href="/login" className="btn-primary">
-            Login
-          </Link>
-        )}
+        {!user && <Link href="/login" className="btn-primary">Login</Link>}
 
         {user && (
-          <button className="btn" onClick={logout}>
+          <button
+            className="btn"
+            onClick={async ()=>{
+              await supabase.auth.signOut()
+              window.location.href = '/'
+            }}
+          >
             Logout
           </button>
         )}

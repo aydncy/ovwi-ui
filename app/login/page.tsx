@@ -5,44 +5,34 @@ import { supabase } from '../lib/supabase'
 import { useRouter } from 'next/navigation'
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [code, setCode] = useState('')
-  const [step, setStep] = useState<'email' | 'code'>('email')
-  const [msg, setMsg] = useState('')
+
+  const [email,setEmail] = useState('')
+  const [code,setCode] = useState('')
+  const [step,setStep] = useState<'email'|'code'>('email')
+  const [msg,setMsg] = useState('')
   const router = useRouter()
 
-  // 1) kod gönder
-  const sendCode = async () => {
-    setMsg('')
+  const send = async () => {
+    const { error } = await supabase.auth.signInWithOtp({ email })
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: true
-      }
-    })
-
-    if (error) {
-      setMsg('Failed to send code')
+    if(error){
+      setMsg('Failed')
       return
     }
 
     setStep('code')
-    setMsg('Code sent to your email')
+    setMsg('Code sent')
   }
 
-  // 2) kod doğrula
-  const verifyCode = async () => {
-    setMsg('')
-
+  const verify = async () => {
     const { error } = await supabase.auth.verifyOtp({
       email,
       token: code,
       type: 'email'
     })
 
-    if (error) {
-      setMsg('Invalid or expired code')
+    if(error){
+      setMsg('Invalid code')
       return
     }
 
@@ -51,47 +41,51 @@ export default function Login() {
 
   return (
     <main className="container">
-      <h1>Login</h1>
 
-      {step === 'email' && (
-        <>
-          <input
-            className="input"
-            placeholder="you@company.com"
-            value={email}
-            onChange={(e)=>setEmail(e.target.value)}
-          />
+      <div className="card" style={{
+        maxWidth:400,
+        margin:"auto",
+        marginTop:80,
+        padding:30
+      }}>
 
-          <button
-            className="btn-primary"
-            onClick={sendCode}
-            style={{marginTop:10}}
-          >
-            Send Code
-          </button>
-        </>
-      )}
+        <h1 style={{marginBottom:20}}>Login</h1>
 
-      {step === 'code' && (
-        <>
-          <input
-            className="input"
-            placeholder="Enter code"
-            value={code}
-            onChange={(e)=>setCode(e.target.value)}
-          />
+        {step === 'email' && (
+          <>
+            <input
+              className="input"
+              placeholder="you@company.com"
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
+            />
 
-          <button
-            className="btn-primary"
-            onClick={verifyCode}
-            style={{marginTop:10}}
-          >
-            Verify
-          </button>
-        </>
-      )}
+            <button className="btn-primary" onClick={send} style={{marginTop:10}}>
+              Send Code
+            </button>
+          </>
+        )}
 
-      {msg && <p style={{marginTop:10}}>{msg}</p>}
+        {step === 'code' && (
+          <>
+            <input
+              className="input"
+              placeholder="123456"
+              value={code}
+              onChange={(e)=>setCode(e.target.value)}
+              style={{letterSpacing:6, textAlign:"center"}}
+            />
+
+            <button className="btn-primary" onClick={verify} style={{marginTop:10}}>
+              Verify
+            </button>
+          </>
+        )}
+
+        {msg && <p style={{marginTop:10, opacity:0.7}}>{msg}</p>}
+
+      </div>
+
     </main>
   )
 }
