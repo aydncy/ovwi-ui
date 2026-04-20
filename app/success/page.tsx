@@ -1,24 +1,22 @@
-'use client';
+'use client'
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function SuccessPage(){
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(()=>{
-    const email = localStorage.getItem('ovwi_email');
+    const email = localStorage.getItem('ovwi_email')
 
-    // kÄ±sa loading hissi
     setTimeout(()=>{
       if(email){
-        router.push("/dashboard");
-      }else{
-        router.push("/login");
+        router.push("/dashboard")
+      } else {
+        router.push("/login")
       }
-    },1200);
-
-  },[]);
+    },1000)
+  },[])
 
   return (
     <main style={{
@@ -28,11 +26,11 @@ export default function SuccessPage(){
       color:"white"
     }}>
       <div style={{textAlign:"center"}}>
-        <h1 style={{fontSize:48}}>Payment Successful í¾‰</h1>
+        <h1 style={{fontSize:42}}>Payment Successful</h1>
         <p style={{opacity:0.7, marginTop:10}}>
-          Preparing your dashboard...
+          Redirecting...
         </p>
       </div>
     </main>
-  );
+  )
 }
