@@ -20,7 +20,7 @@ export default async function Dashboard(){
 
       <h1>Dashboard</h1>
 
-      <VerifyBox apiKey={''} />
+      <VerifyBox /> {/* ✅ prop kaldırıldı */}
 
       <LiveData email={email} />
 
