@@ -1,0 +1,108 @@
+
+> ovwi-ui@1.0.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\aydin.ceylan\Desktop\AYC\dev\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\aydin.ceylan\Desktop\AYC\dev\ovwi-ui\package-lock.json
+
+(node:23240) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/aydin.ceylan/Desktop/AYC/dev/ovwi-ui/next.config.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\aydin.ceylan\Desktop\AYC\dev\ovwi-ui\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▲ Next.js 16.2.2 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+(node:23240) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/aydin.ceylan/Desktop/AYC/dev/ovwi-ui/next.config.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\aydin.ceylan\Desktop\AYC\dev\ovwi-ui\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> Build error occurred
+Error: Turbopack build failed with 5 errors:
+./ovwi-ui/app/api/dashboard/route.js:2:1
+Module not found: Can't resolve '@/app/lib/supabase-server'
+  [90m1 |[0m [36mimport[0m { [33mNextResponse[0m } [36mfrom[0m [32m'next/server'[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { createSupabaseAdmin, ensureUserAndKey, [33mPLAN_LIMITS[0m } [36mfrom[0m [32m'@/app/lib/supabase-server'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mexport[0m [36masync[0m [36mfunction[0m [33mGET[0m(req) {
+  [90m5 |[0m   [36mtry[0m {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./ovwi-ui/app/api/usage/route.js:2:1
+Module not found: Can't resolve '@/app/lib/supabase-server'
+  [90m1 |[0m [36mimport[0m { [33mNextResponse[0m } [36mfrom[0m [32m'next/server'[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { createSupabaseAdmin, ensureUserAndKey, [33mPLAN_LIMITS[0m } [36mfrom[0m [32m'@/app/lib/supabase-server'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mexport[0m [36masync[0m [36mfunction[0m [33mPOST[0m(req) {
+  [90m5 |[0m   [36mtry[0m {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./ovwi-ui/app/api/webhook/lemon/route.js:2:1
+Module not found: Can't resolve '@/app/lib/supabase-server'
+  [90m1 |[0m [36mimport[0m { [33mNextResponse[0m } [36mfrom[0m [32m'next/server'[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { createSupabaseAdmin, ensureUserAndKey } [36mfrom[0m [32m'@/app/lib/supabase-server'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [36mexport[0m [36masync[0m [36mfunction[0m [33mPOST[0m(req) {
+  [90m5 |[0m   [36mtry[0m {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./ovwi-ui/app/api/sync-usage/route.ts:3:1
+Module not found: Can't resolve '@/lib/upstash'
+  [90m1 |[0m [36mimport[0m { [33mNextResponse[0m } [36mfrom[0m [32m"next/server"[0m;
+  [90m2 |[0m [36mimport[0m { createClient } [36mfrom[0m [32m"@supabase/supabase-js"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { getRedis } [36mfrom[0m [32m"@/lib/upstash"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mexport[0m [36mconst[0m runtime = [32m"nodejs"[0m;
+  [90m6 |[0m
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./ovwi-ui/app/api/verify/route.ts:3:1
+Module not found: Can't resolve '@/lib/upstash'
+  [90m1 |[0m [36mimport[0m { [33mNextResponse[0m } [36mfrom[0m [32m"next/server"[0m;
+  [90m2 |[0m [36mimport[0m { createClient } [36mfrom[0m [32m"@supabase/supabase-js"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { getRedis } [36mfrom[0m [32m"@/lib/upstash"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mexport[0m [36mconst[0m runtime = [32m"nodejs"[0m;
+  [90m6 |[0m
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./ovwi-ui/app/api/dashboard/route.js:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./ovwi-ui/app/api/usage/route.js:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./ovwi-ui/app/api/webhook/lemon/route.js:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./ovwi-ui/app/api/sync-usage/route.ts:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./ovwi-ui/app/api/verify/route.ts:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
