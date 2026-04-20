@@ -11,7 +11,8 @@ export default function AdminLogin(){
       })
     })
 
-    window.location.href = '/dashboard'
+    // 
+    window.location.href = '/admin'
   }
 
   return (
@@ -19,7 +20,7 @@ export default function AdminLogin(){
       <h1>Admin Access</h1>
 
       <button className="btn-primary" onClick={login}>
-        Enter Dashboard
+        Enter Admin Panel
       </button>
     </main>
   )

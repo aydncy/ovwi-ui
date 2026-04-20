@@ -2,11 +2,20 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function proxy(req: NextRequest) {
-  const url = req.nextUrl
-  const path = url.pathname
 
+  const path = req.nextUrl.pathname
+  const admin = req.cookies.get('admin_auth')?.value === '1'
+
+  //  ADMIN PANEL KORUMA
+  if (path.startsWith('/admin') || path.startsWith('/founder') || path.startsWith('/investor')) {
+    if (!admin) {
+      return NextResponse.redirect(new URL('/', req.url))
+    }
+  }
+
+  //  DASHBOARD (normal user auth)
   if (path.startsWith('/dashboard')) {
-    const admin = req.cookies.get('admin_auth')?.value === '1'
+
     if (admin) return NextResponse.next()
 
     const hasSession =
@@ -22,5 +31,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*']
+  matcher: ['/dashboard/:path*','/admin/:path*','/founder/:path*','/investor/:path*']
 }
