@@ -13,26 +13,29 @@ export default function Nav(){
       setUser(data.user ?? null)
     })
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_e,session)=>{
-      setUser(session?.user ?? null)
-    })
+    const { data: listener } =
+      supabase.auth.onAuthStateChange((_e,session)=>{
+        setUser(session?.user ?? null)
+      })
 
     return ()=>listener.subscription.unsubscribe()
   },[])
 
-  if(user === undefined){
-    return null // flicker engel
-  }
+  if(user === undefined) return null
 
   return (
     <div className="nav">
-      <div className="logo">OVWI</div>
+      <div>OVWI</div>
 
-      <div className="nav-right">
+      <div>
         <Link href="/" className="btn">Home</Link>
         <Link href="/docs" className="btn">Docs</Link>
 
         {user && <Link href="/dashboard" className="btn">Dashboard</Link>}
+
+        {user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+          <Link href="/admin" className="btn">Admin</Link>
+        )}
 
         {!user && <Link href="/login" className="btn-primary">Login</Link>}
 
