@@ -10,21 +10,43 @@ export default function Login(){
   const [code,setCode] = useState(['','','','','',''])
   const [step,setStep] = useState('email')
   const [msg,setMsg] = useState('')
+  const [cooldown,setCooldown] = useState(0)
 
   const router = useRouter()
 
+  const startCooldown = () => {
+    setCooldown(30)
+    const i = setInterval(()=>{
+      setCooldown(c=>{
+        if(c<=1){ clearInterval(i); return 0 }
+        return c-1
+      })
+    },1000)
+  }
+
   const send = async () => {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options:{ shouldCreateUser:true }
+    if(cooldown > 0) return
+
+    const res = await fetch('/api/send-otp',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
     })
 
-    if(error){
-      setMsg(error.message)
+    const json = await res.json()
+
+    if(json.error === 'wait'){
+      setMsg('Please wait before retry')
+      return
+    }
+
+    if(json.error){
+      setMsg(json.error)
       return
     }
 
     setStep('code')
+    startCooldown()
   }
 
   const verify = async () => {
@@ -41,8 +63,7 @@ export default function Login(){
       return
     }
 
-    //  ONBOARDING'E GİT
-    router.push('/onboarding')
+    router.push('/dashboard')
   }
 
   return (
@@ -56,8 +77,13 @@ export default function Login(){
             value={email}
             onChange={(e)=>setEmail(e.target.value)}
           />
-          <button className="btn-primary" onClick={send}>
-            Send Code
+
+          <button
+            className="btn-primary"
+            onClick={send}
+            disabled={cooldown>0}
+          >
+            {cooldown>0 ? `Wait ${cooldown}s` : 'Send Code'}
           </button>
         </>
       )}
@@ -69,6 +95,7 @@ export default function Login(){
             value={code.join('')}
             onChange={(e)=>setCode(e.target.value.split(''))}
           />
+
           <button className="btn-primary" onClick={verify}>
             Verify
           </button>
