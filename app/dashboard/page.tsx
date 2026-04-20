@@ -15,7 +15,7 @@ export default async function Dashboard() {
 
   const email = session.user.email
 
-  // í´¥ REAL BACKEND DATA
+  // REAL BACKEND DATA
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/dashboard?email=${email}`,
     { cache: 'no-store' }
