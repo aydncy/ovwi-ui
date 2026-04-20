@@ -1,15 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export default function VerifyBox({ apiKey }){
+export default function VerifyBox(){
 
+  const [apiKey,setApiKey] = useState('')
   const [res,setRes] = useState<any>(null)
-  const [loading,setLoading] = useState(false)
+
+  useEffect(()=>{
+    fetch('/api/dashboard')
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.keys?.length){
+          setApiKey(d.keys[0])
+        }
+      })
+  },[])
 
   const run = async () => {
-    setLoading(true)
-
     const r = await fetch('/api/verify',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -17,9 +25,7 @@ export default function VerifyBox({ apiKey }){
     })
 
     const json = await r.json()
-
     setRes(json)
-    setLoading(false)
   }
 
   return (
@@ -27,23 +33,12 @@ export default function VerifyBox({ apiKey }){
 
       <h3>Quick Test</h3>
 
-      <button
-        className="btn-primary"
-        style={{marginTop:10}}
-        onClick={run}
-        disabled={loading}
-      >
-        {loading ? 'Running...' : 'Run Test'}
+      <button className="btn-primary" onClick={run}>
+        Run Test
       </button>
 
       {res && (
-        <pre style={{
-          marginTop:10,
-          background:'#020617',
-          padding:10,
-          borderRadius:8,
-          fontSize:12
-        }}>
+        <pre style={{marginTop:10}}>
           {JSON.stringify(res,null,2)}
         </pre>
       )}
