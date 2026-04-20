@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 
 export default async function Dashboard() {
 
-  const supabase = createSupabaseServer()
+  const supabase = await createSupabaseServer()
 
   const {
     data: { session }
