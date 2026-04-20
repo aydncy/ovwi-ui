@@ -8,6 +8,10 @@ export async function POST(req: Request){
   }
 
   const res = NextResponse.json({ ok:true })
-  res.cookies.set('admin_auth','1',{ path:'/' })
+  res.cookies.set('admin_auth','1',{
+    path:'/',
+    httpOnly:false
+  })
+
   return res
 }
