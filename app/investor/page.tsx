@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 export default async function Investor(){
 
@@ -18,39 +18,39 @@ export default async function Investor(){
   return (
     <main className="container" style={{textAlign:'center'}}>
 
-      <h1 style={{fontSize:56}}>OVWI</h1>
+      <h1 style={{fontSize:60}}>OVWI</h1>
 
-      <p style={{opacity:0.7}}>
+      <p style={{opacity:0.6}}>
         API Monetization Infrastructure
       </p>
 
-      <div style={{marginTop:60}}>
+      <div style={{marginTop:80}}>
 
-        <h2 style={{fontSize:48}}>
-          ${data.mrr} MRR
+        <h2 style={{fontSize:64}}>
+          ${data.mrr}
         </h2>
 
-        <p style={{opacity:0.6}}>Monthly Recurring Revenue</p>
+        <p>Monthly Recurring Revenue</p>
 
       </div>
 
-      <div style={{marginTop:40}}>
+      <div style={{marginTop:50}}>
 
-        <h2 style={{fontSize:40}}>
+        <h2 style={{fontSize:48}}>
           {data.conversion}%
         </h2>
 
-        <p style={{opacity:0.6}}>Free → Paid Conversion</p>
+        <p>Conversion Rate</p>
 
       </div>
 
-      <div style={{marginTop:40}}>
+      <div style={{marginTop:50}}>
 
-        <h2 style={{fontSize:40}}>
+        <h2 style={{fontSize:48}}>
           {data.totalUsers}
         </h2>
 
-        <p style={{opacity:0.6}}>Users</p>
+        <p>Users</p>
 
       </div>
 

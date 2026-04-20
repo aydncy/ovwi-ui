@@ -1,38 +1,64 @@
-export default async function Admin(){
+'use client'
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/growth`,
-    { cache:'no-store' }
-  )
+import { useEffect, useState } from 'react'
 
-  const data = await res.json()
+export default function Admin(){
+
+  const [users,setUsers] = useState<any[]>([])
+
+  const load = async () => {
+    const res = await fetch('/api/admin/users')
+    const data = await res.json()
+    setUsers(data)
+  }
+
+  useEffect(()=>{ load() },[])
+
+  const action = async (email:string, type:string, value?:string) => {
+    await fetch('/api/admin/users',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, action:type, value })
+    })
+    load()
+  }
 
   return (
     <main className="container">
 
-      <h1 style={{fontSize:36}}>Growth Analytics</h1>
+      <h1>Admin Control Panel</h1>
 
-      <div className="stats-grid">
+      <div style={{marginTop:20}}>
 
-        <div className="card stat-card">
-          <div>Total Users</div>
-          <h2>{data.totalUsers}</h2>
-        </div>
+        {users.map(u=>(
+          <div key={u.email} className="card" style={{marginTop:10}}>
 
-        <div className="card stat-card">
-          <div>Paid Users</div>
-          <h2>{data.paidUsers}</h2>
-        </div>
+            <div><b>{u.email}</b></div>
+            <div>Plan: {u.plan}</div>
+            <div>Usage: {u.usage_count}</div>
 
-        <div className="card stat-card">
-          <div>MRR</div>
-          <h2>${data.mrr}</h2>
-        </div>
+            <div style={{marginTop:10, display:'flex', gap:10}}>
 
-        <div className="card stat-card">
-          <div>Conversion %</div>
-          <h2>{data.conversion}%</h2>
-        </div>
+              <button onClick={()=>action(u.email,'upgrade','pro')}>
+                Upgrade Pro
+              </button>
+
+              <button onClick={()=>action(u.email,'upgrade','enterprise')}>
+                Enterprise
+              </button>
+
+              <button onClick={()=>action(u.email,'reset')}>
+                Reset Usage
+              </button>
+
+              <button onClick={()=>action(u.email,'create_key')}>
+                New API Key
+              </button>
+
+            </div>
+
+          </div>
+        ))}
 
       </div>
 
