@@ -33,10 +33,6 @@ export default function Nav(){
 
         {user && <Link href="/dashboard" className="btn">Dashboard</Link>}
 
-        {user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
-          <Link href="/admin" className="btn">Admin</Link>
-        )}
-
         {!user && <Link href="/login" className="btn-primary">Login</Link>}
 
         {user && (
