@@ -12,19 +12,31 @@ export default function Login() {
   const [msg,setMsg] = useState('')
   const router = useRouter()
 
+  // SEND OTP (signup + login)
   const send = async () => {
-    const { error } = await supabase.auth.signInWithOtp({ email })
+    setMsg('')
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true
+      }
+    })
 
     if(error){
-      setMsg('Failed')
+      console.log(error)
+      setMsg(error.message)
       return
     }
 
     setStep('code')
-    setMsg('Code sent')
+    setMsg('Code sent to your email')
   }
 
+  // VERIFY OTP
   const verify = async () => {
+    setMsg('')
+
     const { error } = await supabase.auth.verifyOtp({
       email,
       token: code,
@@ -32,7 +44,8 @@ export default function Login() {
     })
 
     if(error){
-      setMsg('Invalid code')
+      console.log(error)
+      setMsg(error.message)
       return
     }
 
@@ -43,13 +56,13 @@ export default function Login() {
     <main className="container">
 
       <div className="card" style={{
-        maxWidth:400,
+        maxWidth:420,
         margin:"auto",
-        marginTop:80,
+        marginTop:100,
         padding:30
       }}>
 
-        <h1 style={{marginBottom:20}}>Login</h1>
+        <h1 style={{marginBottom:20}}>Sign up / Login</h1>
 
         {step === 'email' && (
           <>
@@ -60,8 +73,12 @@ export default function Login() {
               onChange={(e)=>setEmail(e.target.value)}
             />
 
-            <button className="btn-primary" onClick={send} style={{marginTop:10}}>
-              Send Code
+            <button
+              className="btn-primary"
+              onClick={send}
+              style={{marginTop:10, width:"100%"}}
+            >
+              Continue
             </button>
           </>
         )}
@@ -70,19 +87,27 @@ export default function Login() {
           <>
             <input
               className="input"
-              placeholder="123456"
+              placeholder="Enter 6 digit code"
               value={code}
               onChange={(e)=>setCode(e.target.value)}
               style={{letterSpacing:6, textAlign:"center"}}
             />
 
-            <button className="btn-primary" onClick={verify} style={{marginTop:10}}>
+            <button
+              className="btn-primary"
+              onClick={verify}
+              style={{marginTop:10, width:"100%"}}
+            >
               Verify
             </button>
           </>
         )}
 
-        {msg && <p style={{marginTop:10, opacity:0.7}}>{msg}</p>}
+        {msg && (
+          <p style={{marginTop:10, opacity:0.7}}>
+            {msg}
+          </p>
+        )}
 
       </div>
 
