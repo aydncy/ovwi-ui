@@ -22,7 +22,7 @@ export default function Onboarding(){
       return
     }
 
-    // í´¥ API KEY VAR MI?
+    //  API KEY VAR MI?
     const res = await fetch(`/api/dashboard?email=${user.email}`)
     const data = await res.json()
 

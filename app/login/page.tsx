@@ -41,7 +41,7 @@ export default function Login(){
       return
     }
 
-    // í´¥ ONBOARDING'E GÄ°T
+    //  ONBOARDING'E GÄ°T
     router.push('/onboarding')
   }
 

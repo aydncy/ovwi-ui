@@ -20,7 +20,7 @@ export default async function Dashboard(){
 
   const data = await res.json()
 
-  // í´¥ KEY YOKSA ONBOARDING
+  //  KEY YOKSA ONBOARDING
   if(!data.keys || data.keys.length === 0){
     redirect('/onboarding')
   }
