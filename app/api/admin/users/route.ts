@@ -6,43 +6,82 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-// GET → tüm kullanıcılar
-export async function GET(){
-  const { data } = await supabase
+export async function GET() {
+  const { data: users, error } = await supabase
     .from('users')
     .select('*')
-    .order('created_at',{ ascending:false })
+    .order('created_at', { ascending: false })
 
-  return NextResponse.json(data || [])
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json(users || [])
 }
 
-// POST → aksiyonlar
-export async function POST(req: Request){
+export async function POST(req: Request) {
   const { email, action, value } = await req.json()
 
-  if(action === 'upgrade'){
-    await supabase
-      .from('users')
-      .update({ plan:value, usage_count:0 })
-      .eq('email', email)
+  if (!email || !action) {
+    return NextResponse.json({ error: 'missing_fields' }, { status: 400 })
   }
 
-  if(action === 'reset'){
-    await supabase
+  if (action === 'upgrade') {
+    const { error } = await supabase
       .from('users')
-      .update({ usage_count:0 })
+      .update({ plan: value, usage_count: 0 })
       .eq('email', email)
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ ok: true })
   }
 
-  if(action === 'create_key'){
-    const key = 'ovwi_' + Date.now()
+  if (action === 'reset_usage') {
+    const { error } = await supabase
+      .from('users')
+      .update({ usage_count: 0 })
+      .eq('email', email)
 
-    await supabase
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ ok: true })
+  }
+
+  if (action === 'create_key') {
+    const key = `ovwi_live_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+
+    const { error } = await supabase
       .from('api_keys')
-      .insert({ email, key })
+      .insert({
+        email,
+        key,
+        plan: 'free'
+      })
 
-    return NextResponse.json({ key })
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ ok: true, key })
   }
 
-  return NextResponse.json({ ok:true })
+  if (action === 'delete_keys') {
+    const { error } = await supabase
+      .from('api_keys')
+      .delete()
+      .eq('email', email)
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ ok: true })
+  }
+
+  return NextResponse.json({ error: 'unknown_action' }, { status: 400 })
 }
