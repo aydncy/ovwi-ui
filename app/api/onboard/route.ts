@@ -14,7 +14,6 @@ export async function POST(req: Request){
     return NextResponse.json({ ok:false })
   }
 
-  // USER VAR MI?
   const { data: existing } = await supabase
     .from('users')
     .select('*')
@@ -23,7 +22,6 @@ export async function POST(req: Request){
 
   if(!existing){
 
-    // USER CREATE
     await supabase.from('users').insert({
       email,
       plan:'free',
@@ -31,12 +29,9 @@ export async function POST(req: Request){
       limit:50
     })
 
-    // API KEY CREATE
-    const key = 'ovwi_live_' + Date.now()
-
     await supabase.from('api_keys').insert({
       email,
-      key,
+      key: 'ovwi_live_' + Date.now(),
       plan:'free'
     })
   }
