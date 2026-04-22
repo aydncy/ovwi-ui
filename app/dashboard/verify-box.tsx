@@ -1,45 +1,51 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-export default function VerifyBox(){
+export default function VerifyBox({ apiKey }:{ apiKey:string }){
 
-  const [apiKey,setApiKey] = useState('')
-  const [res,setRes] = useState<any>(null)
-
-  useEffect(()=>{
-    fetch('/api/dashboard')
-      .then(r=>r.json())
-      .then(d=>{
-        if(d.keys?.length){
-          setApiKey(d.keys[0])
-        }
-      })
-  },[])
+  const [loading,setLoading] = useState(false)
+  const [result,setResult] = useState<any>(null)
 
   const run = async () => {
-    const r = await fetch('/api/verify',{
+    setLoading(true)
+
+    const res = await fetch('/api/verify',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ apiKey })
+      body: JSON.stringify({
+        apiKey
+      })
     })
 
-    const json = await r.json()
-    setRes(json)
+    const data = await res.json()
+
+    setResult(data)
+    setLoading(false)
   }
 
   return (
-    <div className="card" style={{marginTop:20}}>
+    <div className="card" style={{marginTop:20, padding:20}}>
 
-      <h3>Quick Test</h3>
+      <h3>One Click Verify</h3>
 
-      <button className="btn-primary" onClick={run}>
-        Run Test
+      <button
+        className="btn-primary"
+        onClick={run}
+        disabled={loading}
+        style={{marginTop:10}}
+      >
+        {loading ? 'Running...' : 'Run Verify'}
       </button>
 
-      {res && (
-        <pre style={{marginTop:10}}>
-          {JSON.stringify(res,null,2)}
+      {result && (
+        <pre style={{
+          marginTop:15,
+          background:'#020617',
+          padding:10,
+          borderRadius:8
+        }}>
+{JSON.stringify(result,null,2)}
         </pre>
       )}
 
