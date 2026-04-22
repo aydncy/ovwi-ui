@@ -681,3 +681,11 @@ button, input, textarea {
     grid-template-columns: 1fr;
   }
 }
+
+.glow-success {
+  box-shadow: 0 0 20px rgba(34,197,94,0.6),
+              0 0 40px rgba(34,197,94,0.4);
+  border: 1px solid rgba(34,197,94,0.6);
+  transition: all 0.3s ease;
+}
+
