@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createSupabaseServer } from '../lib/supabaseServer'
+import { createSupabaseServer } from '../lib/supabaseClient'
 
 export default async function Nav(){
 
