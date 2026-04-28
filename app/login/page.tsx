@@ -1,40 +1,23 @@
-'use client'
+import { createSupabaseServer } from '../lib/supabaseServer'
+import { redirect } from 'next/navigation'
 
-import { supabase } from '../lib/supabase'
+export default async function Login(){
 
-export default function Login(){
+  const supabase = await createSupabaseServer()
+  const { data:{ session } } = await supabase.auth.getSession()
 
-  const loginGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider:'google',
-      options:{
-        redirectTo: `${window.location.origin}/auth/callback`
-      }
-    })
+  if(session){
+    redirect('/dashboard')
   }
 
   return (
-    <main className="container" style={{
-      display:'flex',
-      justifyContent:'center',
-      alignItems:'center',
-      minHeight:'80vh'
-    }}>
-      <div className="card" style={{
-        width:420,
-        padding:30,
-        textAlign:'center'
-      }}>
-        <h1 style={{fontSize:32}}>Login</h1>
+    <main className="container">
+      <h1>Login</h1>
 
-        <button
-          className="btn-primary"
-          style={{width:'100%', marginTop:20}}
-          onClick={loginGoogle}
-        >
-          Continue with Google
-        </button>
-      </div>
+      <a href="/api/auth/google">
+        <button className="btn-primary">Login with Google</button>
+      </a>
+
     </main>
   )
 }

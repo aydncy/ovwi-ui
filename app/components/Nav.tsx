@@ -1,52 +1,35 @@
-'use client'
+import Link from 'next/link'
+import { createSupabaseServer } from '../lib/supabaseServer'
 
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { supabase } from "../lib/supabase"
+export default async function Nav(){
 
-export default function Nav(){
-
-  const [user,setUser] = useState<any>(undefined)
-
-  useEffect(()=>{
-    supabase.auth.getUser().then(({data})=>{
-      setUser(data.user ?? null)
-    })
-
-    const { data: listener } =
-      supabase.auth.onAuthStateChange((_e,session)=>{
-        setUser(session?.user ?? null)
-      })
-
-    return ()=>listener.subscription.unsubscribe()
-  },[])
-
-  if(user === undefined) return null
+  const supabase = await createSupabaseServer()
+  const { data:{ session } } = await supabase.auth.getSession()
 
   return (
-    <div className="nav">
+    <nav style={{
+      display:'flex',
+      justifyContent:'space-between',
+      padding:'20px 40px'
+    }}>
+
       <div>OVWI</div>
 
-      <div>
-        <Link href="/" className="btn">Home</Link>
-        <Link href="/docs" className="btn">Docs</Link>
+      <div style={{display:'flex', gap:10}}>
 
-        {user && <Link href="/dashboard" className="btn">Dashboard</Link>}
+        <Link href="/">Home</Link>
 
-        {!user && <Link href="/login" className="btn-primary">Login</Link>}
-
-        {user && (
-          <button
-            className="btn"
-            onClick={async ()=>{
-              await supabase.auth.signOut()
-              window.location.href = '/'
-            }}
-          >
-            Logout
-          </button>
+        {session ? (
+          <>
+            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/logout">Logout</Link>
+          </>
+        ) : (
+          <Link href="/login">Login</Link>
         )}
+
       </div>
-    </div>
+
+    </nav>
   )
 }
