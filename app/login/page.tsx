@@ -6,6 +6,7 @@ export default async function Login(){
   const supabase = await createSupabaseServer()
   const { data:{ session } } = await supabase.auth.getSession()
 
+  // zaten login ise dashboard
   if(session){
     redirect('/dashboard')
   }
@@ -15,7 +16,9 @@ export default async function Login(){
       <h1>Login</h1>
 
       <a href="/api/auth/google">
-        <button className="btn-primary">Login with Google</button>
+        <button className="btn-primary">
+          Login with Google
+        </button>
       </a>
 
     </main>
