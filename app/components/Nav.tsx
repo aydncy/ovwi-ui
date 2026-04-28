@@ -1,22 +1,17 @@
 import Link from 'next/link'
 import { createSupabaseServer } from '../lib/supabaseServer'
 
-export default async function Nav(){
-
+export default async function Nav() {
   const supabase = await createSupabaseServer()
-  const { data:{ session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
   return (
-    <nav style={{
-      display:'flex',
-      justifyContent:'space-between',
-      padding:'20px 40px'
-    }}>
+    <nav className="nav">
+      <div className="nav-brand">OVWI</div>
 
-      <div>OVWI</div>
-
-      <div style={{display:'flex', gap:10}}>
-
+      <div className="nav-links">
         <Link href="/">Home</Link>
 
         {session ? (
@@ -27,9 +22,7 @@ export default async function Nav(){
         ) : (
           <Link href="/login">Login</Link>
         )}
-
       </div>
-
     </nav>
   )
 }
