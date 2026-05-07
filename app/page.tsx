@@ -5,6 +5,29 @@ import {
   Rocket
 } from 'lucide-react'
 
+const products = [
+  {
+    icon: Shield,
+    title: 'Authentication',
+    desc: 'Google OAuth, session management and zero flicker auth flows.'
+  },
+  {
+    icon: KeyRound,
+    title: 'API Verification',
+    desc: 'Issue, verify and monetize production API keys instantly.'
+  },
+  {
+    icon: BarChart3,
+    title: 'Analytics',
+    desc: 'Track requests, growth, usage and conversion in real time.'
+  },
+  {
+    icon: Rocket,
+    title: 'Infrastructure',
+    desc: 'Deploy scalable AI products with enterprise-grade reliability.'
+  }
+]
+
 export default function Home(){
 
   return (
@@ -175,46 +198,25 @@ export default function Home(){
 
           <div className="products-grid">
 
-            {[
-              [
-                Shield,
-                'Authentication',
-                'Google OAuth, session management and zero flicker auth flows.'
-              ],
-              [
-                KeyRound,
-                'API Verification',
-                'Issue, verify and monetize production API keys instantly.'
-              ],
-              [
-                BarChart3,
-                'Analytics',
-                'Track requests, growth, usage and conversion in real time.'
-              ],
-              [
-                Rocket,
-                'Infrastructure',
-                'Deploy scalable AI products with enterprise-grade reliability.'
-              ]
-            ].map(([Icon,title,desc])=>{
+            {products.map((item)=>{
 
-              const I = Icon as any
+              const Icon = item.icon
 
               return (
 
                 <div
-                  key={title as string}
+                  key={item.title}
                   className="glass product-card"
                 >
 
-                  <I size={34} />
+                  <Icon size={34} />
 
                   <div className="product-title">
-                    {title}
+                    {item.title}
                   </div>
 
                   <div className="product-desc">
-                    {desc}
+                    {item.desc}
                   </div>
 
                 </div>
