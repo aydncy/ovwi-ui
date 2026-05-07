@@ -1,313 +1,233 @@
-export default function Home() {
+import {
+  Shield,
+  BarChart3,
+  KeyRound,
+  Rocket
+} from 'lucide-react'
+
+export default function Home(){
 
   return (
-    <main
-      style={{
-        minHeight:'100vh',
-        background:'#050816',
-        color:'white',
-        fontFamily:'Inter, sans-serif'
-      }}
-    >
+    <main>
 
-      {/* NAV */}
-      <header
-        style={{
-          borderBottom:'1px solid rgba(255,255,255,.06)',
-          position:'sticky',
-          top:0,
-          backdropFilter:'blur(18px)',
-          background:'rgba(5,8,22,.7)',
-          zIndex:50
-        }}
-      >
-        <div
-          style={{
-            maxWidth:1300,
-            margin:'0 auto',
-            padding:'20px 32px',
-            display:'flex',
-            justifyContent:'space-between',
-            alignItems:'center'
-          }}
-        >
+      <div className="container">
 
-          <div
-            style={{
-              fontWeight:900,
-              fontSize:28
-            }}
-          >
+        <nav className="nav">
+
+          <div className="logo">
             OVWI
           </div>
 
-          <div
-            style={{
-              display:'flex',
-              gap:16,
-              alignItems:'center'
-            }}
-          >
+          <div className="nav-links">
 
-            <a
-              href="/docs"
-              style={{
-                color:'rgba(255,255,255,.7)',
-                textDecoration:'none'
-              }}
-            >
+            <a href="/docs">
               Docs
             </a>
 
-            <a
-              href="/dashboard"
-              style={{
-                color:'rgba(255,255,255,.7)',
-                textDecoration:'none'
-              }}
-            >
+            <a href="/dashboard">
               Dashboard
             </a>
 
             <a
               href="/login"
-              style={{
-                background:'#2563eb',
-                padding:'12px 18px',
-                borderRadius:14,
-                textDecoration:'none',
-                color:'white',
-                fontWeight:700
-              }}
+              className="btn btn-primary"
             >
               Get API Key
             </a>
 
           </div>
 
-        </div>
-      </header>
+        </nav>
 
-      {/* HERO */}
-      <section
-        style={{
-          maxWidth:1300,
-          margin:'0 auto',
-          padding:'90px 32px'
-        }}
-      >
+        <section className="hero">
 
-        <div
-          style={{
-            display:'grid',
-            gridTemplateColumns:'1.1fr .9fr',
-            gap:40,
-            alignItems:'center'
-          }}
-        >
-
-          {/* LEFT */}
           <div>
 
-            <div
-              style={{
-                display:'inline-flex',
-                padding:'10px 14px',
-                border:'1px solid rgba(255,255,255,.08)',
-                borderRadius:999,
-                background:'rgba(255,255,255,.03)',
-                marginBottom:28,
-                color:'rgba(255,255,255,.7)'
-              }}
-            >
-              AI Infrastructure + API Monetization
+            <div className="badge">
+              AI Infrastructure + Monetization
             </div>
 
-            <h1
-              style={{
-                fontSize:'clamp(64px,9vw,110px)',
-                lineHeight:.9,
-                margin:0,
-                letterSpacing:'-0.08em'
-              }}
-            >
-              Ship AI
+            <h1 className="hero-title">
+              Build.
               <br />
-              products
+              Scale.
               <br />
-              faster.
+              Monetize.
             </h1>
 
-            <p
-              style={{
-                marginTop:30,
-                fontSize:22,
-                lineHeight:1.7,
-                color:'rgba(255,255,255,.68)',
-                maxWidth:700
-              }}
-            >
-              Authentication, API verification,
-              analytics, monetization, onboarding
-              and infrastructure — unified into one
-              developer platform.
+            <p className="hero-desc">
+              Production-grade authentication,
+              API verification, analytics,
+              onboarding and monetization for
+              modern AI products.
             </p>
 
-            <div
-              style={{
-                display:'flex',
-                gap:18,
-                marginTop:40
-              }}
-            >
+            <div className="hero-actions">
 
               <a
                 href="/login"
-                style={{
-                  padding:'18px 30px',
-                  background:'#2563eb',
-                  borderRadius:18,
-                  color:'white',
-                  textDecoration:'none',
-                  fontWeight:800
-                }}
+                className="btn btn-primary"
               >
                 Start Free
               </a>
 
               <a
                 href="/docs"
-                style={{
-                  padding:'18px 30px',
-                  border:'1px solid rgba(255,255,255,.08)',
-                  borderRadius:18,
-                  color:'white',
-                  textDecoration:'none',
-                  background:'rgba(255,255,255,.03)'
-                }}
+                className="btn btn-secondary"
               >
-                Read Docs
+                View Docs
               </a>
 
             </div>
 
           </div>
 
-          {/* RIGHT */}
-          <div>
+          <div className="glass dashboard-preview">
 
             <div
               style={{
-                border:'1px solid rgba(255,255,255,.08)',
-                borderRadius:28,
-                background:'rgba(255,255,255,.03)',
-                padding:24
+                display:'flex',
+                justifyContent:'space-between',
+                marginBottom:20
               }}
             >
+              <div>
 
-              <div
-                style={{
-                  display:'flex',
-                  justifyContent:'space-between',
-                  marginBottom:20
-                }}
-              >
-                <div style={{fontWeight:700}}>
-                  Live API Verify
+                <div className="stat-label">
+                  Monthly Revenue
                 </div>
 
-                <div
-                  style={{
-                    color:'#4ade80'
-                  }}
-                >
-                  operational
+                <div className="stat-value">
+                  $48,320
                 </div>
+
               </div>
 
               <div
                 style={{
-                  background:'#020617',
+                  width:56,
+                  height:56,
                   borderRadius:18,
-                  padding:18,
-                  border:'1px solid rgba(255,255,255,.06)',
-                  fontFamily:'monospace',
-                  fontSize:14,
-                  overflow:'auto'
+                  background:'linear-gradient(135deg,#3b82f6,#2563eb)'
                 }}
-              >
+              />
+
+            </div>
+
+            <div
+              style={{
+                padding:18,
+                borderRadius:18,
+                background:'#020617',
+                border:'1px solid rgba(255,255,255,.06)',
+                fontFamily:'monospace',
+                lineHeight:1.7
+              }}
+            >
 {`POST /api/verify
 
 {
   "apiKey":"ovwi_live_sk_••••"
 }
 
-response:
-
 {
   "ok": true,
   "plan": "pro",
   "remaining": 8421
 }`}
-              </div>
+            </div>
 
-              <div
-                style={{
-                  marginTop:22,
-                  display:'grid',
-                  gridTemplateColumns:'1fr 1fr',
-                  gap:16
-                }}
-              >
+            <div className="stats-grid">
 
-                {[
-                  ['Requests','2.8M'],
-                  ['MRR','$48k'],
-                  ['Latency','42ms'],
-                  ['Uptime','99.99%']
-                ].map(([k,v]) => (
+              {[
+                ['Requests','2.8M'],
+                ['Growth','+182%'],
+                ['Latency','42ms'],
+                ['Uptime','99.99%']
+              ].map(([k,v])=>(
 
-                  <div
-                    key={k}
-                    style={{
-                      border:'1px solid rgba(255,255,255,.06)',
-                      borderRadius:18,
-                      padding:18,
-                      background:'rgba(255,255,255,.03)'
-                    }}
-                  >
-                    <div
-                      style={{
-                        color:'rgba(255,255,255,.55)',
-                        fontSize:14
-                      }}
-                    >
-                      {k}
-                    </div>
-
-                    <div
-                      style={{
-                        marginTop:8,
-                        fontSize:28,
-                        fontWeight:900
-                      }}
-                    >
-                      {v}
-                    </div>
-
+                <div
+                  key={k}
+                  className="stat-card"
+                >
+                  <div className="stat-label">
+                    {k}
                   </div>
 
-                ))}
+                  <div className="stat-value">
+                    {v}
+                  </div>
+                </div>
 
-              </div>
+              ))}
 
             </div>
 
           </div>
 
-        </div>
+        </section>
 
-      </section>
+        <section className="products">
+
+          <div className="badge">
+            Platform Products
+          </div>
+
+          <div className="products-grid">
+
+            {[
+              [
+                Shield,
+                'Authentication',
+                'Google OAuth, session management and zero flicker auth flows.'
+              ],
+              [
+                KeyRound,
+                'API Verification',
+                'Issue, verify and monetize production API keys instantly.'
+              ],
+              [
+                BarChart3,
+                'Analytics',
+                'Track requests, growth, usage and conversion in real time.'
+              ],
+              [
+                Rocket,
+                'Infrastructure',
+                'Deploy scalable AI products with enterprise-grade reliability.'
+              ]
+            ].map(([Icon,title,desc])=>{
+
+              const I = Icon as any
+
+              return (
+
+                <div
+                  key={title as string}
+                  className="glass product-card"
+                >
+
+                  <I size={34} />
+
+                  <div className="product-title">
+                    {title}
+                  </div>
+
+                  <div className="product-desc">
+                    {desc}
+                  </div>
+
+                </div>
+
+              )
+
+            })}
+
+          </div>
+
+        </section>
+
+      </div>
 
     </main>
   )
