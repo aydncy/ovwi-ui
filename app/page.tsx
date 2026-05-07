@@ -4,158 +4,315 @@ export default function Home() {
       style={{
         minHeight: '100vh',
         background:
-          'radial-gradient(circle at top,#13254a 0%,#081120 45%,#050b16 100%)',
+          'radial-gradient(circle at top,#1e3a8a 0%,#0b1120 40%,#020617 100%)',
         color: 'white',
         overflow: 'hidden',
+        position: 'relative',
+        fontFamily:
+          'Inter, ui-sans-serif, system-ui, sans-serif',
       }}
     >
 
+      {/* glow */}
+      <div
+        style={{
+          position: 'absolute',
+          width: 700,
+          height: 700,
+          background: '#2563eb',
+          filter: 'blur(140px)',
+          opacity: 0.18,
+          top: -250,
+          right: -200,
+          borderRadius: '50%',
+        }}
+      />
+
+      {/* navbar */}
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          backdropFilter: 'blur(18px)',
+          background: 'rgba(2,6,23,.45)',
+          borderBottom: '1px solid rgba(255,255,255,.06)',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1280,
+            margin: '0 auto',
+            padding: '22px 32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div
+            style={{
+              fontWeight: 900,
+              fontSize: 28,
+              letterSpacing: '-0.05em',
+            }}
+          >
+            OVWI
+          </div>
+
+          <nav
+            style={{
+              display: 'flex',
+              gap: 28,
+              alignItems: 'center',
+            }}
+          >
+            <a
+              href="/docs"
+              style={{
+                color: 'rgba(255,255,255,.72)',
+                textDecoration: 'none',
+                fontSize: 15,
+              }}
+            >
+              Docs
+            </a>
+
+            <a
+              href="/login"
+              style={{
+                padding: '12px 18px',
+                borderRadius: 14,
+                background:
+                  'linear-gradient(135deg,#3b82f6,#2563eb)',
+                textDecoration: 'none',
+                color: 'white',
+                fontWeight: 700,
+                boxShadow:
+                  '0 10px 40px rgba(37,99,235,.35)',
+              }}
+            >
+              Get Started
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      {/* hero */}
       <section
         style={{
-          maxWidth: 1200,
+          maxWidth: 1280,
           margin: '0 auto',
-          padding: '140px 32px 120px',
-          position: 'relative',
+          padding: '120px 32px 100px',
+          display: 'grid',
+          gridTemplateColumns: '1.1fr .9fr',
+          gap: 40,
+          alignItems: 'center',
         }}
       >
 
-        <div
-          style={{
-            display: 'inline-flex',
-            padding: '8px 14px',
-            border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 999,
-            background: 'rgba(255,255,255,0.04)',
-            backdropFilter: 'blur(10px)',
-            fontSize: 14,
-            marginBottom: 28,
-            color: 'rgba(255,255,255,.82)',
-          }}
-        >
-          AI Infrastructure Platform
-        </div>
+        {/* left */}
+        <div>
 
-        <h1
-          style={{
-            fontSize: 'clamp(58px,10vw,110px)',
-            lineHeight: 0.9,
-            fontWeight: 900,
-            letterSpacing: '-0.06em',
-            margin: 0,
-            maxWidth: 980,
-          }}
-        >
-          Build.
-          <br />
-          Scale.
-          <br />
-          Monetize.
-        </h1>
-
-        <p
-          style={{
-            marginTop: 34,
-            maxWidth: 720,
-            fontSize: 22,
-            lineHeight: 1.7,
-            color: 'rgba(255,255,255,.72)',
-          }}
-        >
-          OVWI gives developers a production-ready AI infrastructure:
-          authentication, analytics, API management, monetization,
-          onboarding and growth systems in one platform.
-        </p>
-
-        <div
-          style={{
-            display: 'flex',
-            gap: 18,
-            marginTop: 46,
-            flexWrap: 'wrap',
-          }}
-        >
-          <a
-            href="/login"
+          <div
             style={{
-              padding: '18px 34px',
-              borderRadius: 18,
-              background:
-                'linear-gradient(135deg,#42a5ff 0%,#2563eb 100%)',
-              color: 'white',
-              textDecoration: 'none',
-              fontWeight: 700,
-              fontSize: 17,
-              boxShadow: '0 10px 40px rgba(37,99,235,.45)',
+              display: 'inline-flex',
+              padding: '10px 16px',
+              borderRadius: 999,
+              background: 'rgba(255,255,255,.06)',
+              border: '1px solid rgba(255,255,255,.08)',
+              fontSize: 14,
+              marginBottom: 28,
+              color: 'rgba(255,255,255,.75)',
             }}
           >
-            Start Free
-          </a>
+            AI Infrastructure Platform
+          </div>
 
-          <a
-            href="/docs"
+          <h1
             style={{
-              padding: '18px 34px',
-              borderRadius: 18,
-              border: '1px solid rgba(255,255,255,.12)',
-              background: 'rgba(255,255,255,.04)',
-              color: 'white',
-              textDecoration: 'none',
-              fontWeight: 600,
-              fontSize: 17,
-              backdropFilter: 'blur(10px)',
+              fontSize: 'clamp(72px,10vw,120px)',
+              lineHeight: .88,
+              letterSpacing: '-0.08em',
+              margin: 0,
+              fontWeight: 900,
             }}
           >
-            View Docs
-          </a>
-        </div>
+            Build.
+            <br />
+            Scale.
+            <br />
+            Monetize.
+          </h1>
 
-        <div
-          style={{
-            marginTop: 90,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))',
-            gap: 24,
-          }}
-        >
+          <p
+            style={{
+              marginTop: 34,
+              maxWidth: 720,
+              fontSize: 22,
+              lineHeight: 1.7,
+              color: 'rgba(255,255,255,.68)',
+            }}
+          >
+            Authentication, onboarding, analytics,
+            monetization and AI infrastructure —
+            unified into one modern developer platform.
+          </p>
 
-          {[
-            ['Authentication','Google OAuth + zero flicker session system'],
-            ['Analytics','Real-time usage and revenue tracking'],
-            ['Monetization','Subscription and API upgrade flows'],
-            ['Infrastructure','Production-grade deployment architecture'],
-          ].map(([title,desc]) => (
-            <div
-              key={title}
+          <div
+            style={{
+              display: 'flex',
+              gap: 18,
+              marginTop: 42,
+              flexWrap: 'wrap',
+            }}
+          >
+
+            <a
+              href="/login"
               style={{
-                borderRadius: 28,
-                padding: 28,
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                backdropFilter: 'blur(18px)',
+                padding: '18px 34px',
+                borderRadius: 18,
+                background:
+                  'linear-gradient(135deg,#60a5fa,#2563eb)',
+                color: 'white',
+                textDecoration: 'none',
+                fontWeight: 800,
+                fontSize: 17,
+                boxShadow:
+                  '0 20px 60px rgba(37,99,235,.45)',
               }}
             >
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: 22,
-                  marginBottom: 14,
-                }}
-              >
-                {title}
-              </h3>
+              Start Building
+            </a>
 
-              <p
+            <a
+              href="/docs"
+              style={{
+                padding: '18px 34px',
+                borderRadius: 18,
+                background: 'rgba(255,255,255,.05)',
+                border: '1px solid rgba(255,255,255,.08)',
+                color: 'white',
+                textDecoration: 'none',
+                fontWeight: 700,
+                fontSize: 17,
+                backdropFilter: 'blur(12px)',
+              }}
+            >
+              Documentation
+            </a>
+
+          </div>
+
+        </div>
+
+        {/* right dashboard */}
+        <div
+          style={{
+            position: 'relative',
+          }}
+        >
+
+          <div
+            style={{
+              borderRadius: 32,
+              background: 'rgba(255,255,255,.05)',
+              border: '1px solid rgba(255,255,255,.08)',
+              backdropFilter: 'blur(18px)',
+              padding: 28,
+              boxShadow:
+                '0 30px 120px rgba(0,0,0,.35)',
+            }}
+          >
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: 28,
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontSize: 14,
+                    color: 'rgba(255,255,255,.55)',
+                  }}
+                >
+                  Revenue
+                </div>
+
+                <div
+                  style={{
+                    fontSize: 40,
+                    fontWeight: 900,
+                    marginTop: 8,
+                  }}
+                >
+                  $48,320
+                </div>
+              </div>
+
+              <div
                 style={{
-                  margin: 0,
-                  color: 'rgba(255,255,255,.7)',
-                  lineHeight: 1.7,
-                  fontSize: 15,
+                  width: 58,
+                  height: 58,
+                  borderRadius: 18,
+                  background:
+                    'linear-gradient(135deg,#3b82f6,#2563eb)',
                 }}
-              >
-                {desc}
-              </p>
+              />
             </div>
-          ))}
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 18,
+              }}
+            >
+
+              {[
+                ['API Requests','2.1M'],
+                ['Growth','+182%'],
+                ['Active Users','18,492'],
+                ['Conversion','12.4%'],
+              ].map(([k,v]) => (
+                <div
+                  key={k}
+                  style={{
+                    borderRadius: 22,
+                    padding: 22,
+                    background:
+                      'rgba(255,255,255,.04)',
+                    border:
+                      '1px solid rgba(255,255,255,.06)',
+                  }}
+                >
+                  <div
+                    style={{
+                      color:'rgba(255,255,255,.55)',
+                      fontSize:14,
+                    }}
+                  >
+                    {k}
+                  </div>
+
+                  <div
+                    style={{
+                      marginTop:10,
+                      fontWeight:900,
+                      fontSize:28,
+                    }}
+                  >
+                    {v}
+                  </div>
+                </div>
+              ))}
+
+            </div>
+
+          </div>
 
         </div>
 
