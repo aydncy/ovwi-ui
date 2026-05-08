@@ -1,36 +1,216 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import {
   Shield,
   BarChart3,
   KeyRound,
-  Rocket
+  Rocket,
+  CheckCircle2
 } from 'lucide-react'
 
 const products = [
   {
     icon: Shield,
     title: 'Authentication',
-    desc: 'Google OAuth, session management and zero flicker auth flows.'
+    desc: 'Google OAuth and zero flicker auth.'
   },
   {
     icon: KeyRound,
     title: 'API Verification',
-    desc: 'Issue, verify and monetize production API keys instantly.'
+    desc: 'Issue and verify production API keys.'
   },
   {
     icon: BarChart3,
     title: 'Analytics',
-    desc: 'Track requests, growth, usage and conversion in real time.'
+    desc: 'Track usage and growth in real time.'
   },
   {
     icon: Rocket,
     title: 'Infrastructure',
-    desc: 'Deploy scalable AI products with enterprise-grade reliability.'
+    desc: 'Enterprise-grade AI deployment stack.'
   }
 ]
+
+function VerifyDemo(){
+
+  const [step,setStep] = useState(0)
+
+  useEffect(()=>{
+
+    const t = setInterval(()=>{
+
+      setStep(v => (v + 1) % 4)
+
+    },1200)
+
+    return ()=>clearInterval(t)
+
+  },[])
+
+  const states = [
+    'Initializing request...',
+    'Validating API key...',
+    'Loading usage limits...',
+    'Verification successful'
+  ]
+
+  return (
+
+    <div
+      style={{
+        marginTop:20,
+        borderRadius:18,
+        padding:18,
+        background:'#020617',
+        border:'1px solid rgba(255,255,255,.06)',
+        fontFamily:'monospace'
+      }}
+    >
+
+      <div
+        style={{
+          color:'#4ade80',
+          marginBottom:14
+        }}
+      >
+        POST /api/verify
+      </div>
+
+      <div
+        style={{
+          color:'rgba(255,255,255,.7)',
+          minHeight:24
+        }}
+      >
+        {states[step]}
+      </div>
+
+      {step === 3 && (
+
+        <div
+          style={{
+            marginTop:16,
+            padding:14,
+            borderRadius:14,
+            background:'rgba(74,222,128,.08)',
+            border:'1px solid rgba(74,222,128,.2)',
+            display:'flex',
+            alignItems:'center',
+            gap:10
+          }}
+        >
+
+          <CheckCircle2 size={18} />
+
+          <span>
+            PRO PLAN • 8421 REQUESTS LEFT
+          </span>
+
+        </div>
+
+      )}
+
+    </div>
+
+  )
+
+}
+
+function PricingSection(){
+
+  const plans = [
+    {
+      name:'Pro',
+      price:'$29',
+      desc:'For indie AI builders',
+      href:process.env.NEXT_PUBLIC_LEMON_CHECKOUT_PRO
+    },
+    {
+      name:'Scale',
+      price:'$199',
+      desc:'For growing startups',
+      href:process.env.NEXT_PUBLIC_LEMON_CHECKOUT_SCALE
+    },
+    {
+      name:'Enterprise',
+      price:'Custom',
+      desc:'Advanced infra and support',
+      href:process.env.NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE
+    }
+  ]
+
+  return (
+
+    <section
+      style={{
+        padding:'40px 0 120px'
+      }}
+    >
+
+      <div className="badge">
+        Pricing
+      </div>
+
+      <div className="products-grid">
+
+        {plans.map(plan=>(
+
+          <div
+            key={plan.name}
+            className="glass product-card"
+          >
+
+            <div
+              style={{
+                fontSize:30,
+                fontWeight:900
+              }}
+            >
+              {plan.name}
+            </div>
+
+            <div
+              style={{
+                marginTop:12,
+                fontSize:48,
+                fontWeight:900
+              }}
+            >
+              {plan.price}
+            </div>
+
+            <div className="product-desc">
+              {plan.desc}
+            </div>
+
+            <a
+              href={plan.href || '/login'}
+              className="btn btn-primary"
+              style={{
+                marginTop:24,
+                display:'inline-block'
+              }}
+            >
+              Upgrade
+            </a>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </section>
+
+  )
+
+}
 
 export default function Home(){
 
   return (
+
     <main>
 
       <div className="container">
@@ -79,10 +259,9 @@ export default function Home(){
             </h1>
 
             <p className="hero-desc">
-              Production-grade authentication,
-              API verification, analytics,
-              onboarding and monetization for
-              modern AI products.
+              Authentication, API verification,
+              analytics and monetization for
+              AI products.
             </p>
 
             <div className="hero-actions">
@@ -110,10 +289,10 @@ export default function Home(){
             <div
               style={{
                 display:'flex',
-                justifyContent:'space-between',
-                marginBottom:20
+                justifyContent:'space-between'
               }}
             >
+
               <div>
 
                 <div className="stat-label">
@@ -137,28 +316,7 @@ export default function Home(){
 
             </div>
 
-            <div
-              style={{
-                padding:18,
-                borderRadius:18,
-                background:'#020617',
-                border:'1px solid rgba(255,255,255,.06)',
-                fontFamily:'monospace',
-                lineHeight:1.7
-              }}
-            >
-{`POST /api/verify
-
-{
-  "apiKey":"ovwi_live_sk_••••"
-}
-
-{
-  "ok": true,
-  "plan": "pro",
-  "remaining": 8421
-}`}
-            </div>
+            <VerifyDemo />
 
             <div className="stats-grid">
 
@@ -173,6 +331,7 @@ export default function Home(){
                   key={k}
                   className="stat-card"
                 >
+
                   <div className="stat-label">
                     {k}
                   </div>
@@ -180,6 +339,7 @@ export default function Home(){
                   <div className="stat-value">
                     {v}
                   </div>
+
                 </div>
 
               ))}
@@ -198,7 +358,7 @@ export default function Home(){
 
           <div className="products-grid">
 
-            {products.map((item)=>{
+            {products.map(item=>{
 
               const Icon = item.icon
 
@@ -229,115 +389,12 @@ export default function Home(){
 
         </section>
 
+        <PricingSection />
+
       </div>
 
-<PricingSection />
     </main>
-  )
-}
-
-function PricingSection(){
-
-  const pro =
-    process.env.NEXT_PUBLIC_LEMON_CHECKOUT_PRO
-
-  const scale =
-    process.env.NEXT_PUBLIC_LEMON_CHECKOUT_SCALE
-
-  const enterprise =
-    process.env.NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE
-
-  const plans = [
-    {
-      name:'Pro',
-      price:'$29',
-      desc:'For indie AI builders',
-      href:pro
-    },
-    {
-      name:'Scale',
-      price:'$199',
-      desc:'For growing startups',
-      href:scale
-    },
-    {
-      name:'Enterprise',
-      price:'Custom',
-      desc:'Advanced infra and support',
-      href:enterprise
-    }
-  ]
-
-  return (
-
-    <section
-      style={{
-        padding:'40px 0 120px'
-      }}
-    >
-
-      <div className="badge">
-        Monetization
-      </div>
-
-      <div
-        className="products-grid"
-        style={{
-          marginTop:30
-        }}
-      >
-
-        {plans.map(plan=>(
-
-          <div
-            key={plan.name}
-            className="glass product-card"
-          >
-
-            <div
-              style={{
-                fontSize:28,
-                fontWeight:900
-              }}
-            >
-              {plan.name}
-            </div>
-
-            <div
-              style={{
-                marginTop:10,
-                fontSize:46,
-                fontWeight:900
-              }}
-            >
-              {plan.price}
-            </div>
-
-            <div
-              className="product-desc"
-            >
-              {plan.desc}
-            </div>
-
-            <a
-              href={plan.href || '/login'}
-              className="btn btn-primary"
-              style={{
-                display:'inline-block',
-                marginTop:24
-              }}
-            >
-              Upgrade
-            </a>
-
-          </div>
-
-        ))}
-
-      </div>
-
-    </section>
 
   )
-}
 
+}
