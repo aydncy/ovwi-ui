@@ -16,7 +16,9 @@ export async function POST(req: Request){
     .eq('key', apiKey)
     .single()
 
-  if(!key) return NextResponse.json({ ok:false })
+  if(!key){
+    return NextResponse.json({ ok:false })
+  }
 
   const { data: user } = await supabase
     .from('users')
@@ -24,8 +26,11 @@ export async function POST(req: Request){
     .eq('email', key.email)
     .single()
 
-  if(!user) return NextResponse.json({ ok:false })
+  if(!user){
+    return NextResponse.json({ ok:false })
+  }
 
+  // LIMIT CHECK
   if(user.usage_count >= user.limit){
     return NextResponse.json({
       ok:false,
@@ -34,21 +39,18 @@ export async function POST(req: Request){
     })
   }
 
+  // INCREMENT
   const newUsage = user.usage_count + 1
 
   await supabase
     .from('users')
-    .update({ usage_count:newUsage })
+    .update({ usage_count: newUsage })
     .eq('email', key.email)
-
-  //  HISTORY INSERT
-  await supabase.from('usage_history').insert({
-    email:key.email,
-    usage:newUsage
-  })
 
   return NextResponse.json({
     ok:true,
-    usage:newUsage
+    usage:newUsage,
+    remaining:user.limit - newUsage,
+    plan:user.plan
   })
 }

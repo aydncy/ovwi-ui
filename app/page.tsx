@@ -231,6 +231,113 @@ export default function Home(){
 
       </div>
 
+<PricingSection />
     </main>
   )
 }
+
+function PricingSection(){
+
+  const pro =
+    process.env.NEXT_PUBLIC_LEMON_CHECKOUT_PRO
+
+  const scale =
+    process.env.NEXT_PUBLIC_LEMON_CHECKOUT_SCALE
+
+  const enterprise =
+    process.env.NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE
+
+  const plans = [
+    {
+      name:'Pro',
+      price:'$29',
+      desc:'For indie AI builders',
+      href:pro
+    },
+    {
+      name:'Scale',
+      price:'$199',
+      desc:'For growing startups',
+      href:scale
+    },
+    {
+      name:'Enterprise',
+      price:'Custom',
+      desc:'Advanced infra and support',
+      href:enterprise
+    }
+  ]
+
+  return (
+
+    <section
+      style={{
+        padding:'40px 0 120px'
+      }}
+    >
+
+      <div className="badge">
+        Monetization
+      </div>
+
+      <div
+        className="products-grid"
+        style={{
+          marginTop:30
+        }}
+      >
+
+        {plans.map(plan=>(
+
+          <div
+            key={plan.name}
+            className="glass product-card"
+          >
+
+            <div
+              style={{
+                fontSize:28,
+                fontWeight:900
+              }}
+            >
+              {plan.name}
+            </div>
+
+            <div
+              style={{
+                marginTop:10,
+                fontSize:46,
+                fontWeight:900
+              }}
+            >
+              {plan.price}
+            </div>
+
+            <div
+              className="product-desc"
+            >
+              {plan.desc}
+            </div>
+
+            <a
+              href={plan.href || '/login'}
+              className="btn btn-primary"
+              style={{
+                display:'inline-block',
+                marginTop:24
+              }}
+            >
+              Upgrade
+            </a>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </section>
+
+  )
+}
+
