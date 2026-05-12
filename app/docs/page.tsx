@@ -1,60 +1,84 @@
-import Nav from "../components/Nav";
+import Nav from '../components/Nav'
 
-export default function Docs() {
+export default function DocsPage(){
+
   return (
-    <main className="container">
+    <main>
+
       <Nav />
 
-      <section className="docs-hero">
-        <div>
-          <div className="kicker">Developer Docs</div>
+      <section
+        style={{
+          padding:'120px 0'
+        }}
+      >
 
-          <h1 className="docs-title">
-            Ship webhook verification with usage tracking, limits, and upgrades.
-          </h1>
+        <div className="container">
 
-          <p className="docs-copy">
-            OVWI gives you a clean request verification endpoint, request counting, and an upgrade path when the free plan runs out.
-          </p>
+          <div
+            style={{
+              maxWidth:900
+            }}
+          >
 
-          <div className="pill-row">
-            <div className="pill">POST /api/create-key</div>
-            <div className="pill">POST /api/verify</div>
-            <div className="pill">Free 50 requests</div>
-            <div className="pill">Upgrade-ready</div>
+            <div className="badge">
+              Documentation
+            </div>
+
+            <h1
+              style={{
+                fontSize:72,
+                lineHeight:1,
+                letterSpacing:-3,
+                margin:'24px 0'
+              }}
+            >
+              Production-ready
+              API Infrastructure
+            </h1>
+
+            <p
+              style={{
+                color:'rgba(255,255,255,.7)',
+                fontSize:20,
+                lineHeight:1.8
+              }}
+            >
+              Authenticate users, verify
+              webhooks, manage API keys,
+              track analytics and monetize
+              your infrastructure with OVWI.
+            </p>
+
+            <div
+              className="glass"
+              style={{
+                marginTop:40,
+                borderRadius:28,
+                padding:32
+              }}
+            >
+
+<pre
+style={{
+  overflow:'auto',
+  color:'#60a5fa'
+}}
+>{`curl -X POST https://ovwi.cyzora.com/api/verify \\
+-H "Content-Type: application/json" \\
+-d '{
+  "apiKey":"ovwi_live_xxxx"
+}'`}
+</pre>
+
+            </div>
+
           </div>
+
         </div>
 
-        <div className="docs-stack">
-          <div className="card docs-card">
-            <div className="label">Endpoints</div>
-            <pre className="code">POST /api/create-key{"\n"}POST /api/verify</pre>
-          </div>
-
-          <div className="card docs-card">
-            <div className="label">Request Shape</div>
-            <pre className="code">{`{
-  "apiKey": "...",
-  "email": "..."
-}`}</pre>
-          </div>
-
-          <div className="card docs-card">
-            <div className="label">Response Shape</div>
-            <pre className="code">{`{
-  "ok": true,
-  "plan": "pro",
-  "limit": 1000,
-  "remaining": 1000
-}`}</pre>
-          </div>
-
-          <div className="card docs-card">
-            <div className="label">Upgrade Path</div>
-            <p className="panel-copy">Redirect users to checkout when the limit is reached and continue verifying on the next plan.</p>
-          </div>
-        </div>
       </section>
+
     </main>
-  );
+  )
 }

@@ -3,33 +3,58 @@ import { createSupabaseServer } from '../lib/supabaseServer'
 
 export default async function Nav(){
 
-  const supabase = await createSupabaseServer()
-  const { data:{ session } } = await supabase.auth.getSession()
+  const supabase =
+    await createSupabaseServer()
+
+  const {
+    data:{ session }
+  } = await supabase.auth.getSession()
 
   return (
-    <nav style={{
-      display:'flex',
-      justifyContent:'space-between',
-      padding:'20px 40px'
-    }}>
+    <header className="topbar">
 
-      <div>OVWI</div>
+      <div className="container topbar-inner">
 
-      <div style={{display:'flex', gap:10}}>
+        <div className="logo">
+          OVWI
+        </div>
 
-        <Link href="/">Home</Link>
+        <nav className="nav">
 
-        {session ? (
-          <>
-            <Link href="/dashboard">Dashboard</Link>
-            <Link href="/logout">Logout</Link>
-          </>
-        ) : (
-          <Link href="/login">Login</Link>
-        )}
+          <Link href="/">
+            Home
+          </Link>
+
+          <Link href="/docs">
+            Docs
+          </Link>
+
+          {session ? (
+            <>
+              <Link href="/dashboard">
+                Dashboard
+              </Link>
+
+              <Link
+                href="/logout"
+                className="primary-btn"
+              >
+                Logout
+              </Link>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="primary-btn"
+            >
+              Login
+            </Link>
+          )}
+
+        </nav>
 
       </div>
 
-    </nav>
+    </header>
   )
 }
