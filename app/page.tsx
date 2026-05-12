@@ -1,400 +1,227 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import {
-  Shield,
-  BarChart3,
-  KeyRound,
-  Rocket,
-  CheckCircle2
-} from 'lucide-react'
+import Link from 'next/link'
 
-const products = [
-  {
-    icon: Shield,
-    title: 'Authentication',
-    desc: 'Google OAuth and zero flicker auth.'
-  },
-  {
-    icon: KeyRound,
-    title: 'API Verification',
-    desc: 'Issue and verify production API keys.'
-  },
-  {
-    icon: BarChart3,
-    title: 'Analytics',
-    desc: 'Track usage and growth in real time.'
-  },
-  {
-    icon: Rocket,
-    title: 'Infrastructure',
-    desc: 'Enterprise-grade AI deployment stack.'
-  }
-]
-
-function VerifyDemo(){
-
-  const [step,setStep] = useState(0)
-
-  useEffect(()=>{
-
-    const t = setInterval(()=>{
-
-      setStep(v => (v + 1) % 4)
-
-    },1200)
-
-    return ()=>clearInterval(t)
-
-  },[])
-
-  const states = [
-    'Initializing request...',
-    'Validating API key...',
-    'Loading usage limits...',
-    'Verification successful'
-  ]
+export default function Home() {
 
   return (
+    <main className="landing">
 
-    <div
-      style={{
-        marginTop:20,
-        borderRadius:18,
-        padding:18,
-        background:'#020617',
-        border:'1px solid rgba(255,255,255,.06)',
-        fontFamily:'monospace'
-      }}
-    >
+      <header className="topbar">
 
-      <div
-        style={{
-          color:'#4ade80',
-          marginBottom:14
-        }}
-      >
-        POST /api/verify
-      </div>
+        <div className="logo">
+          OVWI
+        </div>
 
-      <div
-        style={{
-          color:'rgba(255,255,255,.7)',
-          minHeight:24
-        }}
-      >
-        {states[step]}
-      </div>
+        <div className="toplinks">
 
-      {step === 3 && (
+          <Link href="/docs">
+            Docs
+          </Link>
 
-        <div
-          style={{
-            marginTop:16,
-            padding:14,
-            borderRadius:14,
-            background:'rgba(74,222,128,.08)',
-            border:'1px solid rgba(74,222,128,.2)',
-            display:'flex',
-            alignItems:'center',
-            gap:10
-          }}
-        >
-
-          <CheckCircle2 size={18} />
-
-          <span>
-            PRO PLAN • 8421 REQUESTS LEFT
-          </span>
+          <Link
+            href="/login"
+            className="primary-btn"
+          >
+            Login
+          </Link>
 
         </div>
 
-      )}
+      </header>
 
-    </div>
+      <section className="hero">
 
-  )
-
-}
-
-function PricingSection(){
-
-  const plans = [
-    {
-      name:'Pro',
-      price:'$29',
-      desc:'For indie AI builders',
-      href:process.env.NEXT_PUBLIC_LEMON_CHECKOUT_PRO
-    },
-    {
-      name:'Scale',
-      price:'$199',
-      desc:'For growing startups',
-      href:process.env.NEXT_PUBLIC_LEMON_CHECKOUT_SCALE
-    },
-    {
-      name:'Enterprise',
-      price:'Custom',
-      desc:'Advanced infra and support',
-      href:process.env.NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE
-    }
-  ]
-
-  return (
-
-    <section
-      style={{
-        padding:'40px 0 120px'
-      }}
-    >
-
-      <div className="badge">
-        Pricing
-      </div>
-
-      <div className="products-grid">
-
-        {plans.map(plan=>(
-
-          <div
-            key={plan.name}
-            className="glass product-card"
-          >
-
-            <div
-              style={{
-                fontSize:30,
-                fontWeight:900
-              }}
-            >
-              {plan.name}
-            </div>
-
-            <div
-              style={{
-                marginTop:12,
-                fontSize:48,
-                fontWeight:900
-              }}
-            >
-              {plan.price}
-            </div>
-
-            <div className="product-desc">
-              {plan.desc}
-            </div>
-
-            <a
-              href={plan.href || '/login'}
-              className="btn btn-primary"
-              style={{
-                marginTop:24,
-                display:'inline-block'
-              }}
-            >
-              Upgrade
-            </a>
-
-          </div>
-
-        ))}
-
-      </div>
-
-    </section>
-
-  )
-
-}
-
-export default function Home(){
-
-  return (
-
-    <main>
-
-      <div className="container">
-
-        <nav className="nav">
-
-          <div className="logo">
-            OVWI
-          </div>
-
-          <div className="nav-links">
-
-            <a href="/docs">
-              Docs
-            </a>
-
-            <a href="/dashboard">
-              Dashboard
-            </a>
-
-            <a
-              href="/login"
-              className="btn btn-primary"
-            >
-              Get API Key
-            </a>
-
-          </div>
-
-        </nav>
-
-        <section className="hero">
-
-          <div>
-
-            <div className="badge">
-              AI Infrastructure + Monetization
-            </div>
-
-            <h1 className="hero-title">
-              Build.
-              <br />
-              Scale.
-              <br />
-              Monetize.
-            </h1>
-
-            <p className="hero-desc">
-              Authentication, API verification,
-              analytics and monetization for
-              AI products.
-            </p>
-
-            <div className="hero-actions">
-
-              <a
-                href="/login"
-                className="btn btn-primary"
-              >
-                Start Free
-              </a>
-
-              <a
-                href="/docs"
-                className="btn btn-secondary"
-              >
-                View Docs
-              </a>
-
-            </div>
-
-          </div>
-
-          <div className="glass dashboard-preview">
-
-            <div
-              style={{
-                display:'flex',
-                justifyContent:'space-between'
-              }}
-            >
-
-              <div>
-
-                <div className="stat-label">
-                  Monthly Revenue
-                </div>
-
-                <div className="stat-value">
-                  $48,320
-                </div>
-
-              </div>
-
-              <div
-                style={{
-                  width:56,
-                  height:56,
-                  borderRadius:18,
-                  background:'linear-gradient(135deg,#3b82f6,#2563eb)'
-                }}
-              />
-
-            </div>
-
-            <VerifyDemo />
-
-            <div className="stats-grid">
-
-              {[
-                ['Requests','2.8M'],
-                ['Growth','+182%'],
-                ['Latency','42ms'],
-                ['Uptime','99.99%']
-              ].map(([k,v])=>(
-
-                <div
-                  key={k}
-                  className="stat-card"
-                >
-
-                  <div className="stat-label">
-                    {k}
-                  </div>
-
-                  <div className="stat-value">
-                    {v}
-                  </div>
-
-                </div>
-
-              ))}
-
-            </div>
-
-          </div>
-
-        </section>
-
-        <section className="products">
+        <div className="hero-left">
 
           <div className="badge">
-            Platform Products
+            Now available
           </div>
 
-          <div className="products-grid">
+          <h1>
+            Stop debugging.
+            <br />
+            Start <span>verifying.</span>
+          </h1>
 
-            {products.map(item=>{
+          <p>
+            Verify webhooks instantly with
+            real-time feedback, live usage
+            tracking, and upgrade paths built
+            in from day one.
+          </p>
 
-              const Icon = item.icon
+          <div className="hero-actions">
 
-              return (
+            <Link
+              href="/login"
+              className="primary-btn"
+            >
+              Get Started
+            </Link>
 
-                <div
-                  key={item.title}
-                  className="glass product-card"
-                >
-
-                  <Icon size={34} />
-
-                  <div className="product-title">
-                    {item.title}
-                  </div>
-
-                  <div className="product-desc">
-                    {item.desc}
-                  </div>
-
-                </div>
-
-              )
-
-            })}
+            <Link
+              href="/docs"
+              className="secondary-btn"
+            >
+              View Docs
+            </Link>
 
           </div>
 
-        </section>
+          <div className="stats">
 
-        <PricingSection />
+            <div>
+              <strong>1M+</strong>
+              <span>Verifications</span>
+            </div>
 
-      </div>
+            <div>
+              <strong>99.9%</strong>
+              <span>Success Rate</span>
+            </div>
+
+            <div>
+              <strong>45ms</strong>
+              <span>Latency</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="verify-box">
+
+          <label>Email</label>
+
+          <input
+            value="Login required"
+            readOnly
+          />
+
+          <label>Payload</label>
+
+          <textarea
+            readOnly
+            value={`{
+  "id": "evt_123456789",
+  "type": "charge.succeeded"
+}`}
+          />
+
+          <label>API Key</label>
+
+          <input
+            value="Generated after login"
+            readOnly
+          />
+
+          <div className="verify-actions">
+
+            <button className="primary-btn">
+              Verify Webhook
+            </button>
+
+            <button className="secondary-btn">
+              Reset
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <section className="pricing">
+
+        <h2>
+          Simple Pricing
+        </h2>
+
+        <div className="pricing-grid">
+
+          <div className="price-card">
+
+            <h3>Starter</h3>
+
+            <p>50 / month</p>
+
+            <strong>$0</strong>
+
+            <button className="secondary-btn">
+              Get Started
+            </button>
+
+          </div>
+
+          <div className="price-card featured">
+
+            <div className="popular">
+              MOST POPULAR
+            </div>
+
+            <h3>Pro</h3>
+
+            <p>1,000 / month</p>
+
+            <strong>€6</strong>
+
+            <a
+              href={
+                process.env
+                  .NEXT_PUBLIC_LEMON_CHECKOUT_PRO
+              }
+              className="primary-btn"
+            >
+              Get Started
+            </a>
+
+          </div>
+
+          <div className="price-card">
+
+            <h3>Enterprise</h3>
+
+            <p>10,000 / month</p>
+
+            <strong>€18</strong>
+
+            <a
+              href={
+                process.env
+                  .NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE
+              }
+              className="secondary-btn"
+            >
+              Get Started
+            </a>
+
+          </div>
+
+          <div className="price-card">
+
+            <h3>Scale</h3>
+
+            <p>100,000 / month</p>
+
+            <strong>€49</strong>
+
+            <a
+              href={
+                process.env
+                  .NEXT_PUBLIC_LEMON_CHECKOUT_SCALE
+              }
+              className="secondary-btn"
+            >
+              Get Started
+            </a>
+
+          </div>
+
+        </div>
+
+      </section>
 
     </main>
-
   )
-
 }
