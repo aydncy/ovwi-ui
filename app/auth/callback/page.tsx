@@ -16,33 +16,37 @@ export default function AuthCallbackPage(){
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       )
 
-    supabase.auth.getSession()
-      .then(({ data })=>{
+    async function init(){
 
-        if(data.session){
-          router.replace('/dashboard')
-        }else{
-          router.replace('/login')
-        }
+      const {
+        data:{ session }
+      } = await supabase.auth.getSession()
 
-      })
+      if(session){
+        router.replace('/dashboard')
+      }else{
+        router.replace('/login')
+      }
+    }
+
+    init()
 
   },[])
 
   return (
     <main
       style={{
+        background:'#030712',
         minHeight:'100vh',
         display:'flex',
         alignItems:'center',
         justifyContent:'center',
-        background:'#050816',
         color:'white',
-        fontSize:22,
+        fontSize:24,
         fontWeight:700
       }}
     >
-      Signing you in...
+      Connecting your workspace...
     </main>
   )
 }
