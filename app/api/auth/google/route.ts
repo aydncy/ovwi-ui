@@ -8,25 +8,15 @@ export async function GET(){
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  const origin =
-    'https://ovwi.cyzora.com'
-
-  const { data,error } =
+  const { data } =
     await supabase.auth.signInWithOAuth({
       provider:'google',
       options:{
         redirectTo:
-          `${origin}/auth/callback`
+          'https://ovwi.cyzora.com/auth/callback',
+        skipBrowserRedirect:false
       }
     })
 
-  if(error){
-    return NextResponse.redirect(
-      `${origin}/login`
-    )
-  }
-
-  return NextResponse.redirect(
-    data.url
-  )
+  return NextResponse.redirect(data.url)
 }
