@@ -1,30 +1,40 @@
-'use client'
-
 import Link from 'next/link'
 
-export default function Home() {
+export default function Home(){
 
   return (
-    <main className="landing">
+    <main>
 
       <header className="topbar">
 
-        <div className="logo">
-          OVWI
-        </div>
+        <div className="container topbar-inner">
 
-        <div className="toplinks">
+          <div className="logo">
+            OVWI
+          </div>
 
-          <Link href="/docs">
-            Docs
-          </Link>
+          <nav className="nav">
 
-          <Link
-            href="/login"
-            className="primary-btn"
-          >
-            Login
-          </Link>
+            <Link href="/">
+              Home
+            </Link>
+
+            <Link href="/docs">
+              Docs
+            </Link>
+
+            <Link href="/dashboard">
+              Dashboard
+            </Link>
+
+            <Link
+              href="/login"
+              className="primary-btn"
+            >
+              Login
+            </Link>
+
+          </nav>
 
         </div>
 
@@ -32,99 +42,109 @@ export default function Home() {
 
       <section className="hero">
 
-        <div className="hero-left">
+        <div className="container hero-grid">
 
-          <div className="badge">
-            Now available
-          </div>
+          <div>
 
-          <h1>
-            Stop debugging.
-            <br />
-            Start <span>verifying.</span>
-          </h1>
-
-          <p>
-            Verify webhooks instantly with
-            real-time feedback, live usage
-            tracking, and upgrade paths built
-            in from day one.
-          </p>
-
-          <div className="hero-actions">
-
-            <Link
-              href="/login"
-              className="primary-btn"
-            >
-              Get Started
-            </Link>
-
-            <Link
-              href="/docs"
-              className="secondary-btn"
-            >
-              View Docs
-            </Link>
-
-          </div>
-
-          <div className="stats">
-
-            <div>
-              <strong>1M+</strong>
-              <span>Verifications</span>
+            <div className="badge">
+              AI Infrastructure Platform
             </div>
 
-            <div>
-              <strong>99.9%</strong>
-              <span>Success Rate</span>
+            <h1>
+              Build.
+              <br />
+              Scale.
+              <br />
+              <span>Monetize.</span>
+            </h1>
+
+            <p>
+              OVWI gives developers a
+              production-ready AI
+              infrastructure:
+              authentication, analytics,
+              API management,
+              monetization, onboarding
+              and growth systems in one
+              platform.
+            </p>
+
+            <div className="hero-actions">
+
+              <Link
+                href="/login"
+                className="primary-btn"
+              >
+                Start Free
+              </Link>
+
+              <Link
+                href="/docs"
+                className="secondary-btn"
+              >
+                View Docs
+              </Link>
+
             </div>
 
-            <div>
-              <strong>45ms</strong>
-              <span>Latency</span>
+            <div className="metrics">
+
+              <div className="metric">
+                <strong>1M+</strong>
+                <span>API Requests</span>
+              </div>
+
+              <div className="metric">
+                <strong>99.9%</strong>
+                <span>Uptime</span>
+              </div>
+
+              <div className="metric">
+                <strong>45ms</strong>
+                <span>Latency</span>
+              </div>
+
             </div>
 
           </div>
 
-        </div>
+          <div className="glass verify-card">
 
-        <div className="verify-box">
+            <label>Email</label>
 
-          <label>Email</label>
+            <input
+              readOnly
+              value="Login required"
+            />
 
-          <input
-            value="Login required"
-            readOnly
-          />
+            <label>Payload</label>
 
-          <label>Payload</label>
-
-          <textarea
-            readOnly
-            value={`{
-  "id": "evt_123456789",
-  "type": "charge.succeeded"
+            <textarea
+              readOnly
+              value={`{
+  "id":"evt_123456789",
+  "type":"charge.succeeded"
 }`}
-          />
+            />
 
-          <label>API Key</label>
+            <label>API Key</label>
 
-          <input
-            value="Generated after login"
-            readOnly
-          />
+            <input
+              readOnly
+              value="Generated after login"
+            />
 
-          <div className="verify-actions">
+            <div className="verify-actions">
 
-            <button className="primary-btn">
-              Verify Webhook
-            </button>
+              <button className="primary-btn">
+                Verify Webhook
+              </button>
 
-            <button className="secondary-btn">
-              Reset
-            </button>
+              <button className="secondary-btn">
+                Reset
+              </button>
+
+            </div>
 
           </div>
 
@@ -134,87 +154,91 @@ export default function Home() {
 
       <section className="pricing">
 
-        <h2>
-          Simple Pricing
-        </h2>
+        <div className="container">
 
-        <div className="pricing-grid">
+          <h2 className="section-title">
+            Simple Pricing
+          </h2>
 
-          <div className="price-card">
+          <div className="pricing-grid">
 
-            <h3>Starter</h3>
+            <div className="glass price-card">
 
-            <p>50 / month</p>
+              <h3>Starter</h3>
 
-            <strong>$0</strong>
+              <p>50 / month</p>
 
-            <button className="secondary-btn">
-              Get Started
-            </button>
+              <strong>$0</strong>
 
-          </div>
+              <button className="secondary-btn">
+                Get Started
+              </button>
 
-          <div className="price-card featured">
-
-            <div className="popular">
-              MOST POPULAR
             </div>
 
-            <h3>Pro</h3>
+            <div className="glass price-card featured">
 
-            <p>1,000 / month</p>
+              <div className="popular">
+                MOST POPULAR
+              </div>
 
-            <strong>€6</strong>
+              <h3>Pro</h3>
 
-            <a
-              href={
-                process.env
-                  .NEXT_PUBLIC_LEMON_CHECKOUT_PRO
-              }
-              className="primary-btn"
-            >
-              Get Started
-            </a>
+              <p>1,000 / month</p>
 
-          </div>
+              <strong>€6</strong>
 
-          <div className="price-card">
+              <a
+                className="primary-btn"
+                href={
+                  process.env
+                    .NEXT_PUBLIC_LEMON_CHECKOUT_PRO
+                }
+              >
+                Get Started
+              </a>
 
-            <h3>Enterprise</h3>
+            </div>
 
-            <p>10,000 / month</p>
+            <div className="glass price-card">
 
-            <strong>€18</strong>
+              <h3>Enterprise</h3>
 
-            <a
-              href={
-                process.env
-                  .NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE
-              }
-              className="secondary-btn"
-            >
-              Get Started
-            </a>
+              <p>10,000 / month</p>
 
-          </div>
+              <strong>€18</strong>
 
-          <div className="price-card">
+              <a
+                className="secondary-btn"
+                href={
+                  process.env
+                    .NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE
+                }
+              >
+                Get Started
+              </a>
 
-            <h3>Scale</h3>
+            </div>
 
-            <p>100,000 / month</p>
+            <div className="glass price-card">
 
-            <strong>€49</strong>
+              <h3>Scale</h3>
 
-            <a
-              href={
-                process.env
-                  .NEXT_PUBLIC_LEMON_CHECKOUT_SCALE
-              }
-              className="secondary-btn"
-            >
-              Get Started
-            </a>
+              <p>100,000 / month</p>
+
+              <strong>€49</strong>
+
+              <a
+                className="secondary-btn"
+                href={
+                  process.env
+                    .NEXT_PUBLIC_LEMON_CHECKOUT_SCALE
+                }
+              >
+                Get Started
+              </a>
+
+            </div>
 
           </div>
 
