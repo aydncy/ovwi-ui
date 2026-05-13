@@ -2,23 +2,24 @@
 
 import Link from 'next/link'
 import { useEffect,useState } from 'react'
-import { usePathname,useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabaseBrowser'
 
 export default function AuthNav(){
 
-  const pathname = usePathname()
   const router = useRouter()
 
-  const [session,setSession] =
-    useState<any>(null)
+  const [logged,setLogged] =
+    useState(false)
 
   useEffect(()=>{
 
     supabase.auth.getSession()
       .then(({data})=>{
 
-        setSession(data.session)
+        setLogged(
+          !!data.session
+        )
 
       })
 
@@ -27,7 +28,7 @@ export default function AuthNav(){
     } = supabase.auth.onAuthStateChange(
       (_e,s)=>{
 
-        setSession(s)
+        setLogged(!!s)
 
       }
     )
@@ -36,12 +37,10 @@ export default function AuthNav(){
 
   },[])
 
-  const logged = !!session
-
   return (
     <nav
       style={{
-        height:84,
+        height:82,
         display:'flex',
         alignItems:'center',
         justifyContent:'space-between',
@@ -60,8 +59,8 @@ export default function AuthNav(){
         style={{
           color:'white',
           textDecoration:'none',
-          fontSize:30,
-          fontWeight:900
+          fontWeight:900,
+          fontSize:30
         }}
       >
         OVWI
@@ -86,53 +85,53 @@ export default function AuthNav(){
           Docs
         </Link>
 
-        {logged && pathname !== '/dashboard' && (
-          <Link
-            href="/dashboard"
-            style={{
-              color:'white',
-              textDecoration:'none'
-            }}
-          >
-            Dashboard
-          </Link>
-        )}
+        {logged ? (
+          <>
+            <Link
+              href="/dashboard"
+              style={{
+                color:'white',
+                textDecoration:'none'
+              }}
+            >
+              Dashboard
+            </Link>
 
-        {!logged ? (
+            <button
+              onClick={async()=>{
+
+                await supabase.auth.signOut()
+
+                router.replace('/')
+
+              }}
+              style={{
+                border:'none',
+                background:'#2563eb',
+                color:'white',
+                padding:'12px 18px',
+                borderRadius:14,
+                fontWeight:700,
+                cursor:'pointer'
+              }}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
           <Link
             href="/login"
             style={{
               background:'#2563eb',
               color:'white',
               textDecoration:'none',
-              padding:'12px 20px',
+              padding:'12px 18px',
               borderRadius:14,
               fontWeight:700
             }}
           >
             Login
           </Link>
-        ) : (
-          <button
-            onClick={async()=>{
-
-              await supabase.auth.signOut()
-
-              router.replace('/')
-
-            }}
-            style={{
-              border:'none',
-              background:'#2563eb',
-              color:'white',
-              padding:'12px 20px',
-              borderRadius:14,
-              fontWeight:700,
-              cursor:'pointer'
-            }}
-          >
-            Logout
-          </button>
         )}
 
       </div>
