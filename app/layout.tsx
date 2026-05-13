@@ -12,7 +12,10 @@ export default function RootLayout({
       <body
         style={{
           margin:0,
-          background:'#020617'
+          background:'#020617',
+          color:'white',
+          fontFamily:
+            'Inter, sans-serif'
         }}
       >
         <AuthNav />

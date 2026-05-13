@@ -1,11 +1,9 @@
-import Nav from '../components/Nav'
 
 export default function DocsPage(){
 
   return (
     <main>
 
-      <Nav />
 
       <section
         style={{

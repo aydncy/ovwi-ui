@@ -37,7 +37,7 @@ const plans = [
 export default function Pricing(){
   return (
     <section className="pricing">
-      <h2 className="section-title">Simple Pricing</h2>
+      <h2 className="section-title">Transparent Pricing</h2>
 
       <div className="pricing-grid">
         {plans.map((p,i)=>(
