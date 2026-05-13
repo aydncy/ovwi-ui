@@ -1,16 +1,10 @@
 import { NextResponse } from 'next/server';
 
-let usage = 12;
-
 export async function POST(){
-
-  usage++;
 
   return NextResponse.json({
     ok:true,
-    usage,
-    limit:50,
-    remaining:50-usage
+    apiKey:'ovwi_'+Math.random().toString(36).slice(2)
   });
 
 }

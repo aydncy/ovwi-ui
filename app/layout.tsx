@@ -1,29 +1,19 @@
-import './globals.css'
-import AuthNav from './components/AuthNav'
+import './globals.css';
+import type { Metadata } from 'next';
 
-export const metadata = {
-  title:'OVWI'
-}
+export const metadata: Metadata = {
+  title: 'OVWI',
+  description: 'AI infrastructure platform'
+};
 
 export default function RootLayout({
   children
-}:{
-  children:React.ReactNode
-}){
-
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body
-        style={{
-          margin:0,
-          background:'#020617',
-          color:'white',
-          fontFamily:'Inter,sans-serif'
-        }}
-      >
-        <AuthNav />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
-  )
+  );
 }

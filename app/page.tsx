@@ -1,210 +1,267 @@
-import Link from 'next/link'
-import VerifyBox from './components/VerifyBox'
+'use client';
 
-export default function Home(){
+import { useEffect, useState } from 'react';
+import Navbar from './components/Navbar';
+import { CHECKOUTS } from '@/lib/checkout';
+import { supabase } from '@/lib/supabase-browser';
+
+export default function Home() {
+
+  const [loggedIn,setLoggedIn] = useState(false);
+
+  const [email,setEmail] = useState('');
+  const [result,setResult] = useState<any>(null);
+  const [loading,setLoading] = useState(false);
+
+  useEffect(()=>{
+    supabase.auth.getSession().then(({data})=>{
+      setLoggedIn(!!data.session);
+    });
+  },[]);
+
+  const verify = async () => {
+
+    setLoading(true);
+
+    try{
+
+      const res = await fetch('/api/verify',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+          email
+        })
+      });
+
+      const data = await res.json();
+
+      setResult(data);
+
+    } finally{
+      setLoading(false);
+    }
+  };
+
+  const secureCheckout = (url:string) => {
+    if(!loggedIn){
+      window.location.href='/auth/login';
+      return;
+    }
+
+    window.location.href=url;
+  };
 
   return (
-    <main
-      style={{
-        minHeight:'100vh',
-        background:
-          'radial-gradient(circle at top,#0f172a,#020617)',
-        color:'white',
-        overflow:'hidden'
-      }}
-    >
+    <>
+      <Navbar />
 
-      <section
-        style={{
-          maxWidth:1280,
-          margin:'0 auto',
-          padding:'120px 40px'
-        }}
-      >
+      <section className="hero">
 
-        <div
-          style={{
-            display:'grid',
-            gridTemplateColumns:
-              '1.2fr 1fr',
-            gap:60,
-            alignItems:'center'
-          }}
-        >
+        <div>
 
-          <div>
+          <h1>
+            Build.<br/>
+            Scale.<br/>
+            <span>Monetize.</span>
+          </h1>
 
-            <div
-              style={{
-                display:'inline-flex',
-                padding:'10px 16px',
-                borderRadius:999,
-                background:
-                  'rgba(59,130,246,.12)',
-                border:
-                  '1px solid rgba(59,130,246,.25)',
-                marginBottom:26,
-                fontSize:14,
-                fontWeight:700,
-                color:'#93c5fd'
-              }}
-            >
-              AI Infrastructure Platform
-            </div>
+          <p>
+            Production-ready AI infrastructure with verification,
+            API management, analytics, usage tracking,
+            onboarding and monetization in one platform.
+          </p>
 
-            <h1
-              style={{
-                fontSize:78,
-                lineHeight:1,
-                margin:'0 0 24px',
-                fontWeight:900
-              }}
-            >
-              Build.
-              <br/>
-              Scale.
-              <br/>
-              Monetize.
-            </h1>
-
-            <p
-              style={{
-                fontSize:20,
-                opacity:.7,
-                maxWidth:760,
-                lineHeight:1.7
-              }}
-            >
-              Production-ready AI infrastructure
-              with authentication, analytics,
-              onboarding, monetization,
-              API management and growth systems.
-            </p>
-
-            <div
-              style={{
-                display:'flex',
-                gap:18,
-                marginTop:40
-              }}
-            >
-
-              <Link
-                href="/login"
-                style={{
-                  background:
-                    'linear-gradient(90deg,#2563eb,#06b6d4)',
-                  color:'white',
-                  textDecoration:'none',
-                  padding:'18px 30px',
-                  borderRadius:18,
-                  fontWeight:800,
-                  fontSize:16,
-                  boxShadow:
-                    '0 20px 60px rgba(37,99,235,.35)'
-                }}
-              >
+          <div className="hero-actions">
+            <a href="/auth/signup">
+              <button className="nav-btn primary-btn">
                 Start Free
-              </Link>
+              </button>
+            </a>
 
-              <Link
-                href="/docs"
-                style={{
-                  background:
-                    'rgba(255,255,255,.05)',
-                  color:'white',
-                  textDecoration:'none',
-                  padding:'18px 30px',
-                  borderRadius:18,
-                  border:
-                    '1px solid rgba(255,255,255,.08)',
-                  fontWeight:700
-                }}
-              >
+            <a href="/docs">
+              <button className="nav-btn">
                 View Docs
-              </Link>
-
-            </div>
-
-            <VerifyBox />
-
+              </button>
+            </a>
           </div>
 
-          <div>
+        </div>
 
-            <div
-              style={{
-                background:
-                  'rgba(255,255,255,.04)',
-                border:
-                  '1px solid rgba(255,255,255,.08)',
-                borderRadius:32,
-                padding:32,
-                backdropFilter:'blur(20px)'
-              }}
-            >
+        <div className="hero-card">
 
-              <div
-                style={{
-                  display:'grid',
-                  gridTemplateColumns:'1fr 1fr',
-                  gap:18
-                }}
-              >
+          <label className="label">
+            Email
+          </label>
 
-                {[
-                  ['Authentication','Google OAuth'],
-                  ['Analytics','Realtime tracking'],
-                  ['Monetization','Upgrade flows'],
-                  ['API Keys','Instant verify'],
-                  ['Growth','Activation boost'],
-                  ['Infrastructure','Production ready']
-                ].map(([t,d])=>(
+          <input
+            className="input"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
+            placeholder="you@company.com"
+          />
 
-                  <div
-                    key={t}
-                    style={{
-                      background:'#0f172a',
-                      borderRadius:24,
-                      padding:24,
-                      border:
-                        '1px solid rgba(255,255,255,.05)'
-                    }}
-                  >
+          <label className="label">
+            Webhook Payload
+          </label>
 
-                    <div
-                      style={{
-                        fontSize:18,
-                        fontWeight:800,
-                        marginBottom:10
-                      }}
-                    >
-                      {t}
-                    </div>
+          <textarea
+            className="textarea"
+            defaultValue={`{
+  "event":"charge.succeeded",
+  "amount":499
+}`}
+          />
 
-                    <div
-                      style={{
-                        opacity:.65,
-                        lineHeight:1.6
-                      }}
-                    >
-                      {d}
-                    </div>
+          <button
+            onClick={verify}
+            className="verify-btn"
+          >
+            {loading ? 'Verifying...' : 'Verify Webhook'}
+          </button>
 
-                  </div>
-
-                ))}
-
-              </div>
-
+          {result && (
+            <div className="result">
+<pre>{JSON.stringify(result,null,2)}</pre>
             </div>
+          )}
 
+        </div>
+
+      </section>
+
+      <section className="section">
+
+        <h2 className="section-title">
+          Infrastructure Features
+        </h2>
+
+        <div className="features">
+
+          <div className="feature">
+            <h3>Authentication</h3>
+            <p>
+              Secure session system with Supabase auth and production-grade login flows.
+            </p>
+          </div>
+
+          <div className="feature">
+            <h3>Analytics</h3>
+            <p>
+              Real-time usage counters, request analytics and limit tracking.
+            </p>
+          </div>
+
+          <div className="feature">
+            <h3>Monetization</h3>
+            <p>
+              Lemon Squeezy upgrade flows with plan management and webhook sync.
+            </p>
           </div>
 
         </div>
 
       </section>
 
-    </main>
-  )
+      <section className="section">
+
+        <h2 className="section-title">
+          Pricing
+        </h2>
+
+        <div className="pricing">
+
+          <div className="price-card">
+            <h3>Starter</h3>
+            <div className="price">
+              Free
+            </div>
+
+            <p>50 requests/month</p>
+
+            <br/>
+
+            <a href="/auth/signup">
+              <button className="verify-btn">
+                Start Free
+              </button>
+            </a>
+          </div>
+
+          <div className="price-card popular">
+
+            <div className="badge">
+              MOST POPULAR
+            </div>
+
+            <h3>Pro</h3>
+
+            <div className="price">
+              €6
+              <small>/mo</small>
+            </div>
+
+            <p>1,000 requests/month</p>
+
+            <br/>
+
+            <button
+              onClick={()=>secureCheckout(CHECKOUTS.pro)}
+              className="verify-btn"
+            >
+              Upgrade
+            </button>
+
+          </div>
+
+          <div className="price-card">
+            <h3>Enterprise</h3>
+
+            <div className="price">
+              €18
+              <small>/mo</small>
+            </div>
+
+            <p>10,000 requests/month</p>
+
+            <br/>
+
+            <button
+              onClick={()=>secureCheckout(CHECKOUTS.enterprise)}
+              className="verify-btn"
+            >
+              Upgrade
+            </button>
+          </div>
+
+          <div className="price-card">
+            <h3>Scale</h3>
+
+            <div className="price">
+              €49
+              <small>/mo</small>
+            </div>
+
+            <p>100,000 requests/month</p>
+
+            <br/>
+
+            <button
+              onClick={()=>secureCheckout(CHECKOUTS.scale)}
+              className="verify-btn"
+            >
+              Upgrade
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+      <div className="footer">
+        2026 OVWI Infrastructure Platform
+      </div>
+    </>
+  );
 }
