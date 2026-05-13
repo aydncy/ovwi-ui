@@ -157,7 +157,7 @@ export default function Home(){
         <div className="container">
 
           <h2 className="section-title">
-            Simple Pricing
+            Transparent Pricing
           </h2>
 
           <div className="pricing-grid">

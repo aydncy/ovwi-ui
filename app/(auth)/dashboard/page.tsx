@@ -264,3 +264,61 @@ export default function Dashboard(){
     </main>
   )
 }
+
+<div
+  style={{
+    marginTop:24,
+    background:'rgba(255,255,255,.05)',
+    border:'1px solid rgba(255,255,255,.08)',
+    borderRadius:28,
+    padding:30
+  }}
+>
+
+  <h2
+    style={{
+      marginTop:0,
+      fontSize:32
+    }}
+  >
+    API Usage
+  </h2>
+
+  <div
+    style={{
+      marginTop:24
+    }}
+  >
+
+    <div
+      style={{
+        display:'flex',
+        justifyContent:'space-between',
+        marginBottom:10
+      }}
+    >
+      <span>Remaining Requests</span>
+      <span>7,421 / 10,000</span>
+    </div>
+
+    <div
+      style={{
+        height:18,
+        borderRadius:999,
+        overflow:'hidden',
+        background:'#111827'
+      }}
+    >
+      <div
+        style={{
+          width:'74%',
+          height:'100%',
+          background:
+            'linear-gradient(90deg,#2563eb,#06b6d4)'
+        }}
+      />
+    </div>
+
+  </div>
+
+</div>
