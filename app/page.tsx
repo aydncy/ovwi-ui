@@ -166,11 +166,11 @@ export default function Home(){
 
             <div className="glass price-card">
 
-              <h3>Starter</h3>
+              <h3>Free</h3>
 
               <p>50 / month</p>
 
-              <strong>$0</strong>
+              <strong>FREE</strong>
 
               <button className="secondary-btn">
                 Get Started

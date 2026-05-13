@@ -2,7 +2,7 @@
 
 const plans = [
   {
-    name: "Starter",
+    name: "Free",
     limit: "50 / month",
     price: "€0",
     highlight: false,
@@ -51,7 +51,7 @@ export default function Pricing(){
               style={{marginTop:16, width:"100%"}}
               onClick={p.cta}
             >
-              {p.name === 'Starter' ? 'Start Free' : 'Upgrade'}
+              {p.name === 'Free' ? 'Start Free' : 'Upgrade'}
             </button>
           </div>
         ))}

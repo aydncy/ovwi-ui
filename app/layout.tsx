@@ -1,6 +1,10 @@
 import './globals.css'
 import AuthNav from './components/AuthNav'
 
+export const metadata = {
+  title:'OVWI'
+}
+
 export default function RootLayout({
   children
 }:{
@@ -14,11 +18,14 @@ export default function RootLayout({
           margin:0,
           background:'#020617',
           color:'white',
-          fontFamily:
-            'Inter, sans-serif'
+          fontFamily:'Inter,sans-serif'
         }}
       >
+
+        <AuthNav />
+
         {children}
+
       </body>
     </html>
   )

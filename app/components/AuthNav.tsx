@@ -9,6 +9,9 @@ export default function AuthNav(){
 
   const router = useRouter()
 
+  const [loading,setLoading] =
+    useState(true)
+
   const [logged,setLogged] =
     useState(false)
 
@@ -20,6 +23,8 @@ export default function AuthNav(){
         setLogged(
           !!data.session
         )
+
+        setLoading(false)
 
       })
 
@@ -37,10 +42,14 @@ export default function AuthNav(){
 
   },[])
 
+  if(loading){
+    return null
+  }
+
   return (
     <nav
       style={{
-        height:82,
+        height:84,
         display:'flex',
         alignItems:'center',
         justifyContent:'space-between',
