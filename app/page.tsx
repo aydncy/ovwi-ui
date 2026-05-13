@@ -1,3 +1,4 @@
+import VerifyBox from "./components/VerifyBox"
 import Link from 'next/link'
 
 export default function Home(){
@@ -83,6 +84,7 @@ export default function Home(){
                 className="secondary-btn"
               >
                 View Docs
+<VerifyBox />
               </Link>
 
             </div>
