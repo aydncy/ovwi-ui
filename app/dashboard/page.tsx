@@ -4,34 +4,16 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase-browser';
 import { CHECKOUTS } from '@/lib/checkout';
 
-type DashboardStats = {
-  verifications: number;
-  successRate: number;
-  plan: string;
-  apiKey: string;
-  remaining: number;
-  limit: number;
-};
-
-export default function Dashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
-    verifications: 0,
-    successRate: 99.9,
-    plan: 'Free',
-    apiKey: '',
-    remaining: 50,
-    limit: 50
-  });
-
+export default function DashboardPage() {
   const [email, setEmail] = useState('Loading...');
+  const [apiKey, setApiKey] = useState('');
+  const [usage, setUsage] = useState(0);
+  const [limit, setLimit] = useState(50);
   const [loading, setLoading] = useState(false);
 
-  const [activity, setActivity] = useState<
-    Array<{ action: string; time: string; ok: boolean }>
-  >([
+  const [logs, setLogs] = useState([
     {
-      action: 'Dashboard initialized',
-      time: 'just now',
+      title: 'OVWI initialized',
       ok: true
     }
   ]);
@@ -39,18 +21,21 @@ export default function Dashboard() {
   useEffect(() => {
     const init = async () => {
       try {
-        const { data } = await supabase.auth.getUser();
+        const {
+          data: { user }
+        } = await supabase.auth.getUser();
 
-        if (!data.user) {
+        if (!user) {
           window.location.href = '/auth/login';
           return;
         }
 
-        setEmail(data.user.email || 'Welcome back');
+        setEmail(user.email || 'Developer');
 
-        let storedKey = localStorage.getItem('ovwi_api_key') || '';
+        let key =
+          localStorage.getItem('ovwi_api_key') || '';
 
-        if (!storedKey) {
+        if (!key) {
           const res = await fetch('/api/create-key', {
             method: 'POST'
           });
@@ -58,15 +43,16 @@ export default function Dashboard() {
           const json = await res.json();
 
           if (json.ok && json.apiKey) {
-            storedKey = json.apiKey;
-            localStorage.setItem('ovwi_api_key', storedKey);
+            key = json.apiKey;
+
+            localStorage.setItem(
+              'ovwi_api_key',
+              key
+            );
           }
         }
 
-        setStats((prev) => ({
-          ...prev,
-          apiKey: storedKey
-        }));
+        setApiKey(key);
       } catch {
         window.location.href = '/auth/login';
       }
@@ -76,7 +62,7 @@ export default function Dashboard() {
   }, []);
 
   const runVerification = async () => {
-    if (!stats.apiKey) return;
+    if (!apiKey) return;
 
     setLoading(true);
 
@@ -87,98 +73,136 @@ export default function Dashboard() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          apiKey: stats.apiKey
+          apiKey
         })
       });
 
       const data = await res.json();
 
-      const usage = Number(data.usage || 0);
-      const limit = Number(data.limit || 50);
-      const remaining = Number(data.remaining || 0);
+      const nextUsage = Number(data.usage || 0);
+      const nextLimit = Number(data.limit || 50);
 
-      setStats((prev) => ({
-        ...prev,
-        verifications: usage,
-        remaining,
-        limit,
-        plan: data.plan || 'Free'
-      }));
+      setUsage(nextUsage);
+      setLimit(nextLimit);
 
-      setActivity((prev) => [
+      setLogs((prev) => [
         {
-          action: data.upgrade
+          title: data.upgrade
             ? 'Monthly limit reached'
-            : 'Webhook verification successful',
-          time: 'just now',
+            : 'Webhook verified successfully',
           ok: !data.upgrade
         },
-        ...prev.slice(0, 5)
+        ...prev
       ]);
 
       if (data.upgrade) {
         setTimeout(() => {
-          window.location.href = CHECKOUTS.pro;
-        }, 1200);
+          window.location.href =
+            CHECKOUTS.pro;
+        }, 1000);
       }
     } catch {
-      setActivity((prev) => [
+      setLogs((prev) => [
         {
-          action: 'Verification failed',
-          time: 'just now',
+          title: 'Verification failed',
           ok: false
         },
-        ...prev.slice(0, 5)
+        ...prev
       ]);
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
-  const copyKey = async () => {
-    if (!stats.apiKey) return;
-
-    await navigator.clipboard.writeText(stats.apiKey);
-
-    setActivity((prev) => [
-      {
-        action: 'API key copied',
-        time: 'just now',
-        ok: true
-      },
-      ...prev.slice(0, 5)
-    ]);
-  };
-
-  const logout = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem('ovwi_api_key');
-    window.location.href = '/';
-  };
-
-  const usagePercent =
-    stats.limit > 0
-      ? Math.min((stats.verifications / stats.limit) * 100, 100)
+  const percent =
+    limit > 0
+      ? Math.min((usage / limit) * 100, 100)
       : 0;
 
   return (
-    <div className="page-shell">
-      <nav className="nav">
-        <div className="nav-inner">
-          <a href="/" className="brand">
+    <div
+      style={{
+        minHeight: '100vh',
+        background:
+          'radial-gradient(circle at top left,#1e3a8a 0%,#020617 40%,#000 100%)',
+        color: '#fff'
+      }}
+    >
+      <nav
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          backdropFilter: 'blur(20px)',
+          background: 'rgba(2,6,23,0.75)',
+          borderBottom:
+            '1px solid rgba(255,255,255,0.06)'
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1400,
+            margin: '0 auto',
+            padding: '18px 32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <a
+            href="/"
+            style={{
+              fontSize: 28,
+              fontWeight: 900,
+              color: '#60a5fa',
+              textDecoration: 'none'
+            }}
+          >
             OVWI
           </a>
 
-          <div className="nav-links">
+          <div
+            style={{
+              display: 'flex',
+              gap: 14
+            }}
+          >
             <a href="/docs">
-              <button className="btn btn-secondary btn-small">
+              <button
+                style={{
+                  background:
+                    'rgba(255,255,255,0.06)',
+                  border:
+                    '1px solid rgba(255,255,255,0.08)',
+                  color: '#fff',
+                  padding:
+                    '10px 18px',
+                  borderRadius: 12,
+                  cursor: 'pointer'
+                }}
+              >
                 Docs
               </button>
             </a>
 
             <button
-              className="btn btn-primary btn-small"
-              onClick={logout}
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.href = '/';
+              }}
+              style={{
+                background:
+                  'linear-gradient(135deg,#2563eb,#06b6d4)',
+                border: 'none',
+                color: '#fff',
+                padding:
+                  '10px 18px',
+                borderRadius: 12,
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
             >
               Logout
             </button>
@@ -186,222 +210,341 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <div className="dashboard-shell">
-        <div className="dashboard-header">
-          <div>
-            <h1 className="dashboard-title">
-              Verification Dashboard
-            </h1>
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: '0 auto',
+          padding:
+            '130px 32px 60px'
+        }}
+      >
+        <div
+          style={{
+            marginBottom: 42
+          }}
+        >
+          <div
+            style={{
+              color: '#60a5fa',
+              fontWeight: 700,
+              marginBottom: 12
+            }}
+          >
+            ENTERPRISE WEBHOOK INFRASTRUCTURE
+          </div>
 
-            <div className="dashboard-subtitle">
-              {email}
-            </div>
+          <h1
+            style={{
+              fontSize: 72,
+              lineHeight: 1,
+              margin: 0,
+              fontWeight: 900
+            }}
+          >
+            Verification Dashboard
+          </h1>
+
+          <div
+            style={{
+              marginTop: 18,
+              color: '#94a3b8',
+              fontSize: 18
+            }}
+          >
+            {email}
           </div>
         </div>
 
-        <div className="stats-grid">
-          <div className="card stat-card">
-            <div className="stat-label">
-              Verifications
-            </div>
-
-            <div className="stat-value stat-blue">
-              {stats.verifications}
-            </div>
-          </div>
-
-          <div className="card stat-card">
-            <div className="stat-label">
-              Success Rate
-            </div>
-
-            <div className="stat-value stat-green">
-              {stats.successRate}%
-            </div>
-          </div>
-
-          <div className="card stat-card">
-            <div className="stat-label">
-              Remaining Requests
-            </div>
-
-            <div className="stat-value stat-yellow">
-              {stats.remaining}
-            </div>
-          </div>
-        </div>
-
-        <div className="dashboard-grid">
-          <div className="card panel">
-            <h2 className="panel-title">
-              API Verification
-            </h2>
-
-            <p className="panel-copy">
-              Run a real webhook verification request
-              against your OVWI API infrastructure.
-            </p>
-
-            <div className="field">
-              <label className="label">
-                Your API Key
-              </label>
-
-              <div className="api-row">
-                <input
-                  className="input-mono"
-                  value={stats.apiKey}
-                  readOnly
-                />
-
-                <button
-                  className="btn btn-secondary"
-                  onClick={copyKey}
-                >
-                  Copy
-                </button>
-              </div>
-            </div>
-
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              'repeat(auto-fit,minmax(280px,1fr))',
+            gap: 24,
+            marginBottom: 28
+          }}
+        >
+          {[
+            {
+              label: 'Verifications',
+              value: usage,
+              color: '#60a5fa'
+            },
+            {
+              label: 'Remaining',
+              value: Math.max(
+                limit - usage,
+                0
+              ),
+              color: '#10b981'
+            },
+            {
+              label: 'Success Rate',
+              value: '99.9%',
+              color: '#fbbf24'
+            }
+          ].map((item, i) => (
             <div
+              key={i}
               style={{
-                marginTop: 22
+                borderRadius: 24,
+                padding: 30,
+                background:
+                  'rgba(255,255,255,0.04)',
+                border:
+                  '1px solid rgba(255,255,255,0.08)',
+                backdropFilter:
+                  'blur(14px)'
               }}
             >
               <div
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: 8,
-                  color: '#9eb3d2',
-                  fontSize: 13
+                  color: '#94a3b8',
+                  marginBottom: 16
                 }}
               >
-                <span>Usage</span>
-
-                <span>
-                  {stats.verifications} / {stats.limit}
-                </span>
+                {item.label}
               </div>
 
-              <div className="progress-wrap">
-                <div
-                  className={`progress-bar ${
-                    usagePercent >= 100
-                      ? 'progress-danger'
-                      : usagePercent >= 80
-                      ? 'progress-warn'
-                      : 'progress-normal'
-                  }`}
-                  style={{
-                    width: `${usagePercent}%`
-                  }}
-                />
+              <div
+                style={{
+                  fontSize: 52,
+                  fontWeight: 900,
+                  color: item.color
+                }}
+              >
+                {item.value}
               </div>
+            </div>
+          ))}
+        </div>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              '1.2fr 0.8fr',
+            gap: 24
+          }}
+        >
+          <div
+            style={{
+              borderRadius: 28,
+              padding: 34,
+              background:
+                'rgba(255,255,255,0.04)',
+              border:
+                '1px solid rgba(255,255,255,0.08)',
+              backdropFilter:
+                'blur(16px)'
+            }}
+          >
+            <div
+              style={{
+                fontSize: 28,
+                fontWeight: 800,
+                marginBottom: 12
+              }}
+            >
+              API Verification
             </div>
 
             <div
-              className="helper-row"
               style={{
-                marginTop: 22
+                color: '#94a3b8',
+                lineHeight: 1.7,
+                marginBottom: 28
+              }}
+            >
+              Test your webhook verification
+              system with live usage tracking.
+            </div>
+
+            <div
+              style={{
+                marginBottom: 14,
+                color: '#94a3b8',
+                fontSize: 13
+              }}
+            >
+              API KEY
+            </div>
+
+            <input
+              value={apiKey}
+              readOnly
+              style={{
+                width: '100%',
+                padding:
+                  '16px 18px',
+                borderRadius: 16,
+                background:
+                  'rgba(0,0,0,0.35)',
+                border:
+                  '1px solid rgba(255,255,255,0.08)',
+                color: '#60a5fa',
+                marginBottom: 22
+              }}
+            />
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent:
+                  'space-between',
+                marginBottom: 10,
+                color: '#94a3b8'
+              }}
+            >
+              <span>Usage</span>
+
+              <span>
+                {usage} / {limit}
+              </span>
+            </div>
+
+            <div
+              style={{
+                height: 10,
+                background:
+                  'rgba(255,255,255,0.08)',
+                borderRadius: 999,
+                overflow: 'hidden',
+                marginBottom: 28
+              }}
+            >
+              <div
+                style={{
+                  width: `${percent}%`,
+                  height: '100%',
+                  background:
+                    percent >= 80
+                      ? 'linear-gradient(90deg,#f59e0b,#ef4444)'
+                      : 'linear-gradient(90deg,#2563eb,#06b6d4)'
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                gap: 14
               }}
             >
               <button
-                className="btn btn-primary"
                 onClick={runVerification}
                 disabled={loading}
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  borderRadius: 16,
+                  padding:
+                    '16px 22px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  background:
+                    'linear-gradient(135deg,#2563eb,#06b6d4)',
+                  color: '#fff',
+                  boxShadow:
+                    '0 20px 60px rgba(37,99,235,0.35)'
+                }}
               >
                 {loading
                   ? 'Running Verification...'
                   : 'Run Verification'}
               </button>
 
-              <a href={CHECKOUTS.pro}>
-                <button className="btn btn-secondary">
-                  Upgrade Plan
+              <a
+                href={CHECKOUTS.pro}
+                style={{
+                  flex: 1
+                }}
+              >
+                <button
+                  style={{
+                    width: '100%',
+                    borderRadius: 16,
+                    padding:
+                      '16px 22px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    background:
+                      'rgba(255,255,255,0.06)',
+                    border:
+                      '1px solid rgba(255,255,255,0.08)',
+                    color: '#fff'
+                  }}
+                >
+                  Upgrade
                 </button>
               </a>
             </div>
           </div>
 
-          <div className="card panel">
-            <h2 className="panel-title">
-              Live Verification Feed
-            </h2>
-
-            <p className="panel-copy">
-              Real-time activity from your workspace.
-            </p>
-
-            <div className="activity-list">
-              {activity.map((item, index) => (
-                <div
-                  className="activity-item"
-                  key={index}
-                >
-                  <div>
-                    <div className="activity-main">
-                      {item.action}
-                    </div>
-
-                    <div className="activity-time">
-                      {item.time}
-                    </div>
-                  </div>
-
-                  <div
-                    className="activity-ok"
-                    style={{
-                      color: item.ok
-                        ? '#10b981'
-                        : '#ff5d73'
-                    }}
-                  >
-                    {item.ok ? 'SUCCESS' : 'ERROR'}
-                  </div>
-                </div>
-              ))}
+          <div
+            style={{
+              borderRadius: 28,
+              padding: 34,
+              background:
+                'rgba(255,255,255,0.04)',
+              border:
+                '1px solid rgba(255,255,255,0.08)',
+              backdropFilter:
+                'blur(16px)'
+            }}
+          >
+            <div
+              style={{
+                fontSize: 28,
+                fontWeight: 800,
+                marginBottom: 26
+              }}
+            >
+              Live Activity
             </div>
-          </div>
-
-          <div className="card panel">
-            <h2 className="panel-title">
-              Current Plan
-            </h2>
-
-            <p className="panel-copy">
-              Your workspace currently runs on the{' '}
-              <strong>{stats.plan}</strong> plan.
-            </p>
 
             <div
               style={{
-                display: 'grid',
-                gap: 14,
-                marginTop: 18
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16
               }}
             >
-              <div className="result-box result-ok">
-                <div className="result-title ok">
-                  Included Requests
-                </div>
+              {logs.map((log, i) => (
+                <div
+                  key={i}
+                  style={{
+                    paddingBottom: 16,
+                    borderBottom:
+                      '1px solid rgba(255,255,255,0.06)',
+                    display: 'flex',
+                    justifyContent:
+                      'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#e2e8f0'
+                    }}
+                  >
+                    {log.title}
+                  </div>
 
-                <div>
-                  {stats.limit.toLocaleString()} monthly
-                  webhook verifications included.
+                  <div
+                    style={{
+                      fontWeight: 700,
+                      color: log.ok
+                        ? '#10b981'
+                        : '#ef4444'
+                    }}
+                  >
+                    {log.ok
+                      ? 'SUCCESS'
+                      : 'ERROR'}
+                  </div>
                 </div>
-              </div>
-
-              <div className="result-box result-warn">
-                <div className="result-title warn">
-                  Scale Instantly
-                </div>
-
-                <div>
-                  Upgrade anytime for higher request
-                  limits and production scaling.
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
