@@ -18,7 +18,6 @@ export default function RootLayout({
             'Inter, sans-serif'
         }}
       >
-        <AuthNav />
         {children}
       </body>
     </html>
