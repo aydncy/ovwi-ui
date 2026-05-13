@@ -1,10 +1,27 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 
-export async function POST(){
+const usageStore = globalThis as any;
+
+if (!usageStore.ovwi_usage_db) {
+  usageStore.ovwi_usage_db = {};
+}
+
+export async function POST() {
+  const apiKey = 'ovwi_' + crypto.randomBytes(24).toString('hex');
+
+  usageStore.ovwi_usage_db[apiKey] = {
+    usage: 0,
+    plan: 'free',
+    createdAt: Date.now()
+  };
 
   return NextResponse.json({
-    ok:true,
-    apiKey:'ovwi_'+Math.random().toString(36).slice(2)
+    ok: true,
+    apiKey,
+    usage: 0,
+    limit: 50,
+    remaining: 50,
+    plan: 'free'
   });
-
 }
