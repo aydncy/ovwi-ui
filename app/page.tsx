@@ -1,244 +1,201 @@
-import VerifyBox from "./components/VerifyBox"
 import Link from 'next/link'
+import VerifyBox from './components/VerifyBox'
 
 export default function Home(){
 
   return (
-    <main>
+    <main
+      style={{
+        minHeight:'100vh',
+        background:
+          'radial-gradient(circle at top,#0f172a,#020617)',
+        color:'white',
+        overflow:'hidden'
+      }}
+    >
 
-      <header className="topbar">
+      <section
+        style={{
+          maxWidth:1280,
+          margin:'0 auto',
+          padding:'120px 40px'
+        }}
+      >
 
-        <div className="container topbar-inner">
-
-          <div className="logo">
-            OVWI
-          </div>
-
-          <nav className="nav">
-
-            <Link href="/">
-              Home
-            </Link>
-
-            <Link href="/docs">
-              Docs
-            </Link>
-
-            <Link href="/dashboard">
-              Dashboard
-            </Link>
-
-            <Link
-              href="/login"
-              className="primary-btn"
-            >
-              Login
-            </Link>
-
-          </nav>
-
-        </div>
-
-      </header>
-
-      <section className="hero">
-
-        <div className="container hero-grid">
+        <div
+          style={{
+            display:'grid',
+            gridTemplateColumns:
+              '1.2fr 1fr',
+            gap:60,
+            alignItems:'center'
+          }}
+        >
 
           <div>
 
-            <div className="badge">
+            <div
+              style={{
+                display:'inline-flex',
+                padding:'10px 16px',
+                borderRadius:999,
+                background:
+                  'rgba(59,130,246,.12)',
+                border:
+                  '1px solid rgba(59,130,246,.25)',
+                marginBottom:26,
+                fontSize:14,
+                fontWeight:700,
+                color:'#93c5fd'
+              }}
+            >
               AI Infrastructure Platform
             </div>
 
-            <h1>
+            <h1
+              style={{
+                fontSize:78,
+                lineHeight:1,
+                margin:'0 0 24px',
+                fontWeight:900
+              }}
+            >
               Build.
-              <br />
+              <br/>
               Scale.
-              <br />
-              <span>Monetize.</span>
+              <br/>
+              Monetize.
             </h1>
 
-            <p>
-              OVWI gives developers a
-              production-ready AI
-              infrastructure:
-              authentication, analytics,
-              API management,
-              monetization, onboarding
-              and growth systems in one
-              platform.
+            <p
+              style={{
+                fontSize:20,
+                opacity:.7,
+                maxWidth:760,
+                lineHeight:1.7
+              }}
+            >
+              Production-ready AI infrastructure
+              with authentication, analytics,
+              onboarding, monetization,
+              API management and growth systems.
             </p>
 
-            <div className="hero-actions">
+            <div
+              style={{
+                display:'flex',
+                gap:18,
+                marginTop:40
+              }}
+            >
 
               <Link
                 href="/login"
-                className="primary-btn"
+                style={{
+                  background:
+                    'linear-gradient(90deg,#2563eb,#06b6d4)',
+                  color:'white',
+                  textDecoration:'none',
+                  padding:'18px 30px',
+                  borderRadius:18,
+                  fontWeight:800,
+                  fontSize:16,
+                  boxShadow:
+                    '0 20px 60px rgba(37,99,235,.35)'
+                }}
               >
                 Start Free
               </Link>
 
               <Link
                 href="/docs"
-                className="secondary-btn"
+                style={{
+                  background:
+                    'rgba(255,255,255,.05)',
+                  color:'white',
+                  textDecoration:'none',
+                  padding:'18px 30px',
+                  borderRadius:18,
+                  border:
+                    '1px solid rgba(255,255,255,.08)',
+                  fontWeight:700
+                }}
               >
                 View Docs
-<VerifyBox />
               </Link>
 
             </div>
 
-            <div className="metrics">
-
-              <div className="metric">
-                <strong>1M+</strong>
-                <span>API Requests</span>
-              </div>
-
-              <div className="metric">
-                <strong>99.9%</strong>
-                <span>Uptime</span>
-              </div>
-
-              <div className="metric">
-                <strong>45ms</strong>
-                <span>Latency</span>
-              </div>
-
-            </div>
+            <VerifyBox />
 
           </div>
 
-          <div className="glass verify-card">
+          <div>
 
-            <label>Email</label>
+            <div
+              style={{
+                background:
+                  'rgba(255,255,255,.04)',
+                border:
+                  '1px solid rgba(255,255,255,.08)',
+                borderRadius:32,
+                padding:32,
+                backdropFilter:'blur(20px)'
+              }}
+            >
 
-            <input
-              readOnly
-              value="Login required"
-            />
+              <div
+                style={{
+                  display:'grid',
+                  gridTemplateColumns:'1fr 1fr',
+                  gap:18
+                }}
+              >
 
-            <label>Payload</label>
+                {[
+                  ['Authentication','Google OAuth'],
+                  ['Analytics','Realtime tracking'],
+                  ['Monetization','Upgrade flows'],
+                  ['API Keys','Instant verify'],
+                  ['Growth','Activation boost'],
+                  ['Infrastructure','Production ready']
+                ].map(([t,d])=>(
 
-            <textarea
-              readOnly
-              value={`{
-  "id":"evt_123456789",
-  "type":"charge.succeeded"
-}`}
-            />
+                  <div
+                    key={t}
+                    style={{
+                      background:'#0f172a',
+                      borderRadius:24,
+                      padding:24,
+                      border:
+                        '1px solid rgba(255,255,255,.05)'
+                    }}
+                  >
 
-            <label>API Key</label>
+                    <div
+                      style={{
+                        fontSize:18,
+                        fontWeight:800,
+                        marginBottom:10
+                      }}
+                    >
+                      {t}
+                    </div>
 
-            <input
-              readOnly
-              value="Generated after login"
-            />
+                    <div
+                      style={{
+                        opacity:.65,
+                        lineHeight:1.6
+                      }}
+                    >
+                      {d}
+                    </div>
 
-            <div className="verify-actions">
+                  </div>
 
-              <button className="primary-btn">
-                Verify Webhook
-              </button>
+                ))}
 
-              <button className="secondary-btn">
-                Reset
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      <section className="pricing">
-
-        <div className="container">
-
-          <h2 className="section-title">
-            Transparent Pricing
-          </h2>
-
-          <div className="pricing-grid">
-
-            <div className="glass price-card">
-
-              <h3>Free</h3>
-
-              <p>50 / month</p>
-
-              <strong>FREE</strong>
-
-              <button className="secondary-btn">
-                Get Started
-              </button>
-
-            </div>
-
-            <div className="glass price-card featured">
-
-              <div className="popular">
-                MOST POPULAR
               </div>
-
-              <h3>Pro</h3>
-
-              <p>1,000 / month</p>
-
-              <strong>€6</strong>
-
-              <a
-                className="primary-btn"
-                href={
-                  process.env
-                    .NEXT_PUBLIC_LEMON_CHECKOUT_PRO
-                }
-              >
-                Get Started
-              </a>
-
-            </div>
-
-            <div className="glass price-card">
-
-              <h3>Enterprise</h3>
-
-              <p>10,000 / month</p>
-
-              <strong>€18</strong>
-
-              <a
-                className="secondary-btn"
-                href={
-                  process.env
-                    .NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE
-                }
-              >
-                Get Started
-              </a>
-
-            </div>
-
-            <div className="glass price-card">
-
-              <h3>Scale</h3>
-
-              <p>100,000 / month</p>
-
-              <strong>€49</strong>
-
-              <a
-                className="secondary-btn"
-                href={
-                  process.env
-                    .NEXT_PUBLIC_LEMON_CHECKOUT_SCALE
-                }
-              >
-                Get Started
-              </a>
 
             </div>
 

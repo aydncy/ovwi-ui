@@ -21,11 +21,8 @@ export default function RootLayout({
           fontFamily:'Inter,sans-serif'
         }}
       >
-
         <AuthNav />
-
         {children}
-
       </body>
     </html>
   )
