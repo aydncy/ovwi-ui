@@ -1,11 +1,4 @@
 import { NextResponse } from 'next/server';
-import crypto from 'crypto';
-
-const usageStore = globalThis as any;
-
-if (!usageStore.ovwi_usage_db) {
-  usageStore.ovwi_usage_db = {};
-}
 
 const LIMITS: any = {
   free: 50,
@@ -19,6 +12,8 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const apiKey = body?.apiKey;
+    const usage = Number(body?.usage || 0);
+    const plan = body?.plan || 'free';
 
     if (!apiKey) {
       return NextResponse.json({
@@ -27,43 +22,30 @@ export async function POST(req: Request) {
       }, { status: 400 });
     }
 
-    if (!usageStore.ovwi_usage_db[apiKey]) {
-      usageStore.ovwi_usage_db[apiKey] = {
-        usage: 0,
-        plan: 'free',
-        createdAt: Date.now()
-      };
-    }
+    const limit = LIMITS[plan] || 50;
 
-    const user = usageStore.ovwi_usage_db[apiKey];
-
-    const limit = LIMITS[user.plan] || 50;
-
-    if (user.usage >= limit) {
+    if (usage >= limit) {
       return NextResponse.json({
         ok: false,
         upgrade: true,
         error: 'limit_reached',
-        usage: user.usage,
+        usage,
         limit,
         remaining: 0,
-        plan: user.plan
+        plan
       });
     }
 
-    user.usage += 1;
-
-    const remaining = Math.max(limit - user.usage, 0);
+    const nextUsage = usage + 1;
 
     return NextResponse.json({
       ok: true,
       verified: true,
-      id: crypto.randomUUID(),
-      usage: user.usage,
+      usage: nextUsage,
       limit,
-      remaining,
-      plan: user.plan,
-      upgrade: remaining <= 0
+      remaining: Math.max(limit - nextUsage, 0),
+      upgrade: nextUsage >= limit,
+      plan
     });
 
   } catch (e: any) {
