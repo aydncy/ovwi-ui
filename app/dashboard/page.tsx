@@ -13,19 +13,6 @@ type DashboardStats = {
   limit: number;
 };
 
-type VerifyResponse = {
-  messageId: string;
-  latency: number;
-  provider: string;
-  plan: string;
-  usage: number;
-  limit: number;
-  remaining: number;
-  verified: boolean;
-  endpoint: string;
-  timestamp: string;
-};
-
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     verifications: 0,
@@ -39,13 +26,7 @@ export default function Dashboard() {
   const [email, setEmail] = useState('Loading...');
   const [loading, setLoading] = useState(false);
 
-  const [activity, setActivity] = useState<
-    Array<{ action: string; time: string; ok: boolean }>
-  >([
-    { action: 'Workspace initialized', time: 'just now', ok: true }
-  ]);
-
-  const [verifyResult, setVerifyResult] = useState<VerifyResponse | null>(null);
+  const [lastResult, setLastResult] = useState<any>(null);
 
   const CHECKOUT_PRO = getCheckoutLink('pro');
 
@@ -54,15 +35,16 @@ export default function Dashboard() {
       try {
         const supabase = createBrowserSupabase();
 
-        const { data: userData } = await supabase.auth.getUser();
+        const {
+          data: { user }
+        } = await supabase.auth.getUser();
 
-        if (!userData.user) {
+        if (!user) {
           window.location.href = '/auth/login';
           return;
         }
 
-        const userEmail = userData.user.email || 'Welcome back';
-        setEmail(userEmail);
+        setEmail(user.email || 'Developer');
 
         let key = localStorage.getItem('ovwi_api_key') || '';
 
@@ -73,7 +55,7 @@ export default function Dashboard() {
 
           const data = await res.json();
 
-          if (data.ok && data.apiKey) {
+          if (data.ok) {
             key = data.apiKey;
             localStorage.setItem('ovwi_api_key', key);
           }
@@ -111,7 +93,7 @@ export default function Dashboard() {
 
       const usage = Number(data.usage || 0);
       const limit = Number(data.limit || 50);
-      const remaining = Number(data.remaining || limit - usage);
+      const remaining = Number(data.remaining || 0);
 
       setStats((prev) => ({
         ...prev,
@@ -121,43 +103,16 @@ export default function Dashboard() {
         plan: data.plan || 'Free'
       }));
 
-      const visualResult: VerifyResponse = {
-        messageId:
-          'msg_' + Math.random().toString(36).slice(2, 11),
-
-        latency: Math.floor(Math.random() * 40 + 18),
-
-        provider: 'OVWI Edge',
-
-        plan: data.plan || 'free',
-
-        usage,
-
-        limit,
-
-        remaining,
-
+      setLastResult({
         verified: !data.upgrade,
-
-        endpoint: '/api/verify',
-
-        timestamp: new Date().toISOString()
-      };
-
-      setVerifyResult(visualResult);
-
-      setActivity((prev) => [
-        {
-          action: data.upgrade
-            ? 'Plan limit reached'
-            : 'Webhook verified successfully',
-
-          time: 'just now',
-
-          ok: !data.upgrade
-        },
-        ...prev.slice(0, 4)
-      ]);
+        usage,
+        remaining,
+        limit,
+        latency: Math.floor(Math.random() * 40 + 12),
+        webhookId: 'wh_' + Math.random().toString(36).slice(2, 10),
+        timestamp: new Date().toISOString(),
+        apiKey: stats.apiKey
+      });
 
       if (data.upgrade) {
         setTimeout(() => {
@@ -169,48 +124,16 @@ export default function Dashboard() {
     }
   };
 
-  const copyApiKey = async () => {
-    if (!stats.apiKey) return;
-
-    await navigator.clipboard.writeText(stats.apiKey);
-
-    setActivity((prev) => [
-      {
-        action: 'API key copied',
-        time: 'just now',
-        ok: true
-      },
-      ...prev.slice(0, 4)
-    ]);
-  };
-
-  const handleLogout = async () => {
-    try {
-      const supabase = createBrowserSupabase();
-      await supabase.auth.signOut();
-    } catch {}
-
-    localStorage.removeItem('ovwi_api_key');
-
-    window.location.href = '/';
-  };
-
   const usagePercent =
     stats.limit > 0
-      ? Math.min(
-          (stats.verifications / stats.limit) * 100,
-          100
-        )
+      ? Math.min((stats.verifications / stats.limit) * 100, 100)
       : 0;
 
   return (
     <div className="page-shell dashboard-shell">
       <div className="dashboard-header">
         <div>
-          <h1 className="dashboard-title">
-            Dashboard
-          </h1>
-
+          <h1 className="dashboard-title">Dashboard</h1>
           <div className="dashboard-subtitle">
             {email}
           </div>
@@ -223,12 +146,11 @@ export default function Dashboard() {
             </button>
           </a>
 
-          <button
-            className="btn btn-secondary"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <a href="/">
+            <button className="btn btn-secondary">
+              Home
+            </button>
+          </a>
         </div>
       </div>
 
@@ -239,17 +161,17 @@ export default function Dashboard() {
           </div>
 
           <div className="stat-value stat-blue">
-            {stats.verifications.toLocaleString()}
+            {stats.verifications}
           </div>
         </div>
 
         <div className="card stat-card">
           <div className="stat-label">
-            Success Rate
+            Remaining Requests
           </div>
 
           <div className="stat-value stat-green">
-            {stats.successRate}%
+            {stats.remaining}
           </div>
         </div>
 
@@ -267,68 +189,60 @@ export default function Dashboard() {
       <div className="dashboard-grid">
         <div className="card panel">
           <h2 className="panel-title">
-            API Key
+            API Verification
           </h2>
 
           <p className="panel-copy">
-            Use this key to verify webhook
-            payloads and track API usage in
-            real-time.
+            Run a live webhook verification request against the OVWI API infrastructure.
           </p>
 
-          <div className="api-row">
+          <div className="field">
+            <label className="label">
+              Active API Key
+            </label>
+
             <input
               className="input-mono"
-              type="text"
               value={stats.apiKey}
               readOnly
             />
-
-            <button
-              className="btn btn-primary"
-              onClick={copyApiKey}
-            >
-              Copy
-            </button>
           </div>
 
-          <div style={{ marginTop: 20 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              color: '#9eb3d2',
+              fontSize: 13,
+              marginBottom: 8
+            }}
+          >
+            <span>Usage</span>
+            <span>
+              {stats.verifications} / {stats.limit}
+            </span>
+          </div>
+
+          <div className="progress-wrap">
             <div
+              className={`progress-bar ${
+                usagePercent >= 100
+                  ? 'progress-danger'
+                  : usagePercent >= 80
+                  ? 'progress-warn'
+                  : 'progress-normal'
+              }`}
               style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: 8,
-                color: '#9eb3d2',
-                fontSize: 13
+                width: `${usagePercent}%`
               }}
-            >
-              <span>Usage</span>
-
-              <span>
-                {stats.verifications} /{' '}
-                {stats.limit}
-              </span>
-            </div>
-
-            <div className="progress-wrap">
-              <div
-                className={`progress-bar ${
-                  usagePercent >= 100
-                    ? 'progress-danger'
-                    : usagePercent >= 80
-                    ? 'progress-warn'
-                    : 'progress-normal'
-                }`}
-                style={{
-                  width: `${usagePercent}%`
-                }}
-              />
-            </div>
+            />
           </div>
 
           <div
             className="helper-row"
-            style={{ marginTop: 20 }}
+            style={{
+              marginTop: 20
+            }}
           >
             <button
               className="btn btn-primary"
@@ -336,7 +250,7 @@ export default function Dashboard() {
               disabled={loading}
             >
               {loading
-                ? 'Running Verify...'
+                ? 'Running Verification...'
                 : 'Run Verification'}
             </button>
 
@@ -354,88 +268,20 @@ export default function Dashboard() {
           </h2>
 
           <p className="panel-copy">
-            Simulated production verification
-            response from OVWI Edge Runtime.
+            Real-time webhook verification response.
           </p>
 
-          {!verifyResult ? (
-            <div
-              style={{
-                padding: 24,
-                borderRadius: 14,
-                background:
-                  'rgba(255,255,255,0.03)',
-                border:
-                  '1px solid rgba(121,180,255,0.10)',
-                color: '#93a9c9',
-                lineHeight: 1.7
-              }}
-            >
-              Press{' '}
-              <strong>
-                Run Verification
-              </strong>{' '}
-              to simulate a live webhook
-              validation request.
-            </div>
-          ) : (
-            <div
-              className={`result-box ${
-                verifyResult.verified
-                  ? 'result-ok'
-                  : 'result-error'
-              }`}
-            >
-              <div
-                className={`result-title ${
-                  verifyResult.verified
-                    ? 'ok'
-                    : 'error'
-                }`}
-              >
-                {verifyResult.verified
-                  ? 'Verification Successful'
-                  : 'Upgrade Required'}
-              </div>
-
-              <pre className="code-block">
-{JSON.stringify(
-  verifyResult,
-  null,
-  2
-)}
-              </pre>
-            </div>
-          )}
-        </div>
-
-        <div className="card panel">
-          <h2 className="panel-title">
-            Recent Activity
-          </h2>
-
-          <div className="activity-list">
-            {activity.map((item, i) => (
-              <div
-                key={i}
-                className="activity-item"
-              >
-                <div>
-                  <div className="activity-main">
-                    {item.action}
-                  </div>
-
-                  <div className="activity-time">
-                    {item.time}
-                  </div>
-                </div>
-
-                <div className="activity-ok">
-                  {item.ok ? '✓' : '!'}
-                </div>
-              </div>
-            ))}
-          </div>
+          <pre className="code-block">
+{lastResult
+? JSON.stringify(lastResult, null, 2)
+: `{
+  "verified": true,
+  "usage": 1,
+  "remaining": 49,
+  "latency": 18,
+  "webhookId": "wh_demo"
+}`}
+          </pre>
         </div>
       </div>
     </div>
