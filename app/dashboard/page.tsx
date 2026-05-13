@@ -4,16 +4,34 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase-browser';
 import { CHECKOUTS } from '@/lib/checkout';
 
+type DashboardStats = {
+  verifications: number;
+  successRate: number;
+  plan: string;
+  apiKey: string;
+  remaining: number;
+  limit: number;
+};
+
 export default function Dashboard() {
+  const [stats, setStats] = useState<DashboardStats>({
+    verifications: 0,
+    successRate: 99.9,
+    plan: 'Free',
+    apiKey: '',
+    remaining: 50,
+    limit: 50
+  });
+
   const [email, setEmail] = useState('Loading...');
-  const [apiKey, setApiKey] = useState('');
-  const [usage, setUsage] = useState(0);
-  const [limit, setLimit] = useState(50);
   const [loading, setLoading] = useState(false);
 
-  const [logs, setLogs] = useState([
+  const [activity, setActivity] = useState<
+    Array<{ action: string; time: string; ok: boolean }>
+  >([
     {
-      text: 'OVWI dashboard initialized',
+      action: 'Dashboard initialized',
+      time: 'just now',
       ok: true
     }
   ]);
@@ -21,20 +39,18 @@ export default function Dashboard() {
   useEffect(() => {
     const init = async () => {
       try {
-        const {
-          data: { user }
-        } = await supabase.auth.getUser();
+        const { data } = await supabase.auth.getUser();
 
-        if (!user) {
+        if (!data.user) {
           window.location.href = '/auth/login';
           return;
         }
 
-        setEmail(user.email || 'Developer');
+        setEmail(data.user.email || 'Welcome back');
 
-        let key = localStorage.getItem('ovwi_api_key') || '';
+        let storedKey = localStorage.getItem('ovwi_api_key') || '';
 
-        if (!key) {
+        if (!storedKey) {
           const res = await fetch('/api/create-key', {
             method: 'POST'
           });
@@ -42,12 +58,15 @@ export default function Dashboard() {
           const json = await res.json();
 
           if (json.ok && json.apiKey) {
-            key = json.apiKey;
-            localStorage.setItem('ovwi_api_key', key);
+            storedKey = json.apiKey;
+            localStorage.setItem('ovwi_api_key', storedKey);
           }
         }
 
-        setApiKey(key);
+        setStats((prev) => ({
+          ...prev,
+          apiKey: storedKey
+        }));
       } catch {
         window.location.href = '/auth/login';
       }
@@ -57,7 +76,7 @@ export default function Dashboard() {
   }, []);
 
   const runVerification = async () => {
-    if (!apiKey) return;
+    if (!stats.apiKey) return;
 
     setLoading(true);
 
@@ -68,26 +87,33 @@ export default function Dashboard() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          apiKey
+          apiKey: stats.apiKey
         })
       });
 
       const data = await res.json();
 
-      const newUsage = Number(data.usage || 0);
-      const newLimit = Number(data.limit || 50);
+      const usage = Number(data.usage || 0);
+      const limit = Number(data.limit || 50);
+      const remaining = Number(data.remaining || 0);
 
-      setUsage(newUsage);
-      setLimit(newLimit);
+      setStats((prev) => ({
+        ...prev,
+        verifications: usage,
+        remaining,
+        limit,
+        plan: data.plan || 'Free'
+      }));
 
-      setLogs((prev) => [
+      setActivity((prev) => [
         {
-          text: data.upgrade
+          action: data.upgrade
             ? 'Monthly limit reached'
-            : 'Webhook verified successfully',
+            : 'Webhook verification successful',
+          time: 'just now',
           ok: !data.upgrade
         },
-        ...prev
+        ...prev.slice(0, 5)
       ]);
 
       if (data.upgrade) {
@@ -96,21 +122,43 @@ export default function Dashboard() {
         }, 1200);
       }
     } catch {
-      setLogs((prev) => [
+      setActivity((prev) => [
         {
-          text: 'Verification failed',
+          action: 'Verification failed',
+          time: 'just now',
           ok: false
         },
-        ...prev
+        ...prev.slice(0, 5)
       ]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  const percent =
-    limit > 0
-      ? Math.min((usage / limit) * 100, 100)
+  const copyKey = async () => {
+    if (!stats.apiKey) return;
+
+    await navigator.clipboard.writeText(stats.apiKey);
+
+    setActivity((prev) => [
+      {
+        action: 'API key copied',
+        time: 'just now',
+        ok: true
+      },
+      ...prev.slice(0, 5)
+    ]);
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem('ovwi_api_key');
+    window.location.href = '/';
+  };
+
+  const usagePercent =
+    stats.limit > 0
+      ? Math.min((stats.verifications / stats.limit) * 100, 100)
       : 0;
 
   return (
@@ -130,10 +178,7 @@ export default function Dashboard() {
 
             <button
               className="btn btn-primary btn-small"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                window.location.href = '/';
-              }}
+              onClick={logout}
             >
               Logout
             </button>
@@ -157,11 +202,21 @@ export default function Dashboard() {
         <div className="stats-grid">
           <div className="card stat-card">
             <div className="stat-label">
-              Total Verifications
+              Verifications
             </div>
 
             <div className="stat-value stat-blue">
-              {usage}
+              {stats.verifications}
+            </div>
+          </div>
+
+          <div className="card stat-card">
+            <div className="stat-label">
+              Success Rate
+            </div>
+
+            <div className="stat-value stat-green">
+              {stats.successRate}%
             </div>
           </div>
 
@@ -170,18 +225,8 @@ export default function Dashboard() {
               Remaining Requests
             </div>
 
-            <div className="stat-value stat-green">
-              {Math.max(limit - usage, 0)}
-            </div>
-          </div>
-
-          <div className="card stat-card">
-            <div className="stat-label">
-              Active Plan
-            </div>
-
             <div className="stat-value stat-yellow">
-              Free
+              {stats.remaining}
             </div>
           </div>
         </div>
@@ -193,50 +238,66 @@ export default function Dashboard() {
             </h2>
 
             <p className="panel-copy">
-              Test your webhook verification pipeline live.
+              Run a real webhook verification request
+              against your OVWI API infrastructure.
             </p>
 
             <div className="field">
               <label className="label">
-                API KEY
+                Your API Key
               </label>
 
-              <input
-                className="input-mono"
-                value={apiKey}
-                readOnly
-              />
+              <div className="api-row">
+                <input
+                  className="input-mono"
+                  value={stats.apiKey}
+                  readOnly
+                />
+
+                <button
+                  className="btn btn-secondary"
+                  onClick={copyKey}
+                >
+                  Copy
+                </button>
+              </div>
             </div>
 
             <div
               style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: 10,
-                color: '#94a3b8',
-                fontSize: 13
+                marginTop: 22
               }}
             >
-              <span>Usage</span>
-
-              <span>
-                {usage} / {limit}
-              </span>
-            </div>
-
-            <div className="progress-wrap">
               <div
-                className={`progress-bar ${
-                  percent >= 100
-                    ? 'progress-danger'
-                    : percent >= 80
-                    ? 'progress-warn'
-                    : 'progress-normal'
-                }`}
                 style={{
-                  width: `${percent}%`
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginBottom: 8,
+                  color: '#9eb3d2',
+                  fontSize: 13
                 }}
-              />
+              >
+                <span>Usage</span>
+
+                <span>
+                  {stats.verifications} / {stats.limit}
+                </span>
+              </div>
+
+              <div className="progress-wrap">
+                <div
+                  className={`progress-bar ${
+                    usagePercent >= 100
+                      ? 'progress-danger'
+                      : usagePercent >= 80
+                      ? 'progress-warn'
+                      : 'progress-normal'
+                  }`}
+                  style={{
+                    width: `${usagePercent}%`
+                  }}
+                />
+              </div>
             </div>
 
             <div
@@ -251,13 +312,13 @@ export default function Dashboard() {
                 disabled={loading}
               >
                 {loading
-                  ? 'Running...'
+                  ? 'Running Verification...'
                   : 'Run Verification'}
               </button>
 
               <a href={CHECKOUTS.pro}>
                 <button className="btn btn-secondary">
-                  Upgrade
+                  Upgrade Plan
                 </button>
               </a>
             </div>
@@ -265,31 +326,82 @@ export default function Dashboard() {
 
           <div className="card panel">
             <h2 className="panel-title">
-              Live Activity
+              Live Verification Feed
             </h2>
 
+            <p className="panel-copy">
+              Real-time activity from your workspace.
+            </p>
+
             <div className="activity-list">
-              {logs.map((log, i) => (
+              {activity.map((item, index) => (
                 <div
                   className="activity-item"
-                  key={i}
+                  key={index}
                 >
-                  <div className="activity-main">
-                    {log.text}
+                  <div>
+                    <div className="activity-main">
+                      {item.action}
+                    </div>
+
+                    <div className="activity-time">
+                      {item.time}
+                    </div>
                   </div>
 
                   <div
                     className="activity-ok"
                     style={{
-                      color: log.ok
+                      color: item.ok
                         ? '#10b981'
                         : '#ff5d73'
                     }}
                   >
-                    {log.ok ? 'OK' : 'ERR'}
+                    {item.ok ? 'SUCCESS' : 'ERROR'}
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="card panel">
+            <h2 className="panel-title">
+              Current Plan
+            </h2>
+
+            <p className="panel-copy">
+              Your workspace currently runs on the{' '}
+              <strong>{stats.plan}</strong> plan.
+            </p>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: 14,
+                marginTop: 18
+              }}
+            >
+              <div className="result-box result-ok">
+                <div className="result-title ok">
+                  Included Requests
+                </div>
+
+                <div>
+                  {stats.limit.toLocaleString()} monthly
+                  webhook verifications included.
+                </div>
+              </div>
+
+              <div className="result-box result-warn">
+                <div className="result-title warn">
+                  Scale Instantly
+                </div>
+
+                <div>
+                  Upgrade anytime for higher request
+                  limits and production scaling.
+                </div>
+              </div>
             </div>
           </div>
         </div>
