@@ -39,36 +39,22 @@ export async function POST(req: Request) {
       }
     }
 
+    const usage = db[id].usage || 0
     const currentPlan = db[id].plan || plan
     const limit = LIMITS[currentPlan] || 50
 
-    if (db[id].usage >= limit) {
-      return NextResponse.json({
-        ok: false,
-        error: 'limit_reached',
-        usage: db[id].usage,
-        limit,
-        remaining: 0,
-        plan: currentPlan,
-        upgrade: true
-      })
-    }
-
-    db[id].usage += 1
-
     return NextResponse.json({
       ok: true,
-      verified: true,
-      usage: db[id].usage,
+      usage,
       limit,
-      remaining: Math.max(limit - db[id].usage, 0),
+      remaining: Math.max(limit - usage, 0),
       plan: currentPlan
     })
 
   } catch (e: any) {
     return NextResponse.json({
       ok: false,
-      error: e.message || 'server_error'
+      error: e.message
     }, { status: 500 })
   }
 }

@@ -19,6 +19,35 @@ export default function DashboardPage() {
   ]);
 
   useEffect(() => {
+
+    const loadUsage = async () => {
+      try {
+        const res = await fetch("/api/usage", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: localStorage.getItem("ovwi_email"),
+            apiKey: localStorage.getItem("ovwi_api_key")
+          })
+        })
+
+        const data = await res.json()
+
+        if (data?.ok) {
+          setStats((prev:any) => ({
+            ...prev,
+            remaining: data.remaining,
+            usage: data.usage,
+            limit: data.limit,
+            plan: data.plan
+          }))
+        }
+      } catch (e) {}
+    }
+
+    loadUsage();
     const init = async () => {
       try {
         const {
