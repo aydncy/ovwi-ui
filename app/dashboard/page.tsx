@@ -1,11 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase-browser'
 import { CHECKOUTS } from '@/lib/checkout'
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<any>({
+  const [stats, setStats] = useState({
     email: '',
     apiKey: '',
     usage: 0,
@@ -37,15 +36,14 @@ export default function DashboardPage() {
         const data = await res.json()
 
         if (data?.ok) {
-          setStats((prev:any) => ({
-            ...prev,
+          setStats({
             email,
             apiKey,
             usage: data.usage,
             remaining: data.remaining,
             limit: data.limit,
             plan: data.plan
-          }))
+          })
         }
       } catch (e) {
         console.error(e)
@@ -72,7 +70,7 @@ export default function DashboardPage() {
       const data = await res.json()
 
       if (data?.ok) {
-        setStats((prev:any) => ({
+        setStats(prev => ({
           ...prev,
           usage: data.usage,
           remaining: data.remaining,
@@ -86,69 +84,110 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-10">
-      <div className="max-w-5xl mx-auto">
+    <main className="min-h-screen bg-[#050505] text-white overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,180,0.12),transparent_40%)]" />
 
-        <div className="flex items-center justify-between mb-10">
+      <div className="relative z-10 max-w-7xl mx-auto px-8 py-14">
+
+        <div className="flex items-center justify-between mb-14">
+
           <div>
-            <h1 className="text-5xl font-bold">
-              OVWI Dashboard
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 text-sm mb-5">
+              LIVE SYSTEM
+            </div>
+
+            <h1 className="text-6xl font-black tracking-tight">
+              OVWI
             </h1>
 
-            <p className="text-zinc-400 mt-2">
-              Real persistent usage system
+            <p className="text-zinc-400 text-xl mt-3">
+              Enterprise Verification Dashboard
             </p>
           </div>
 
           <button
             onClick={() => window.location.href = CHECKOUTS.pro}
-            className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
+            className="rounded-2xl px-8 py-4 bg-white text-black font-bold hover:scale-105 transition-all"
           >
-            Upgrade
+            Upgrade Plan
           </button>
+
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
-            <div className="text-zinc-400 text-sm mb-2">
-              Remaining
+          <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl">
+            <div className="text-zinc-400 text-sm mb-3">
+              Remaining Credits
             </div>
 
-            <div className="text-5xl font-bold">
+            <div className="text-6xl font-black">
               {stats.remaining}
             </div>
+
+            <div className="mt-5 h-2 rounded-full bg-zinc-800 overflow-hidden">
+              <div
+                className="h-full bg-emerald-400"
+                style={{
+                  width: `${(stats.remaining / stats.limit) * 100}%`
+                }}
+              />
+            </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
-            <div className="text-zinc-400 text-sm mb-2">
-              Usage
+          <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl">
+            <div className="text-zinc-400 text-sm mb-3">
+              Total Usage
             </div>
 
-            <div className="text-5xl font-bold">
+            <div className="text-6xl font-black">
               {stats.usage}
             </div>
+
+            <div className="mt-6 text-emerald-300 text-sm">
+              Real persistent sync active
+            </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
-            <div className="text-zinc-400 text-sm mb-2">
-              Plan
+          <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl">
+            <div className="text-zinc-400 text-sm mb-3">
+              Active Plan
             </div>
 
-            <div className="text-5xl font-bold uppercase">
+            <div className="text-5xl font-black uppercase">
               {stats.plan}
+            </div>
+
+            <div className="mt-6 text-zinc-400 text-sm">
+              Limit: {stats.limit}
             </div>
           </div>
 
         </div>
 
-        <div className="mt-10">
-          <button
-            onClick={runVerification}
-            className="bg-white text-black px-8 py-4 rounded-2xl font-bold text-lg"
-          >
-            Run Verification
-          </button>
+        <div className="mt-12 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-10">
+
+          <div className="flex items-center justify-between flex-wrap gap-6">
+
+            <div>
+              <h2 className="text-3xl font-bold">
+                Verification Engine
+              </h2>
+
+              <p className="text-zinc-400 mt-2">
+                Real-time AI verification pipeline
+              </p>
+            </div>
+
+            <button
+              onClick={runVerification}
+              className="rounded-2xl px-10 py-5 bg-emerald-400 text-black font-black text-lg hover:scale-105 transition-all shadow-[0_0_40px_rgba(74,222,128,0.4)]"
+            >
+              Run Verification
+            </button>
+
+          </div>
+
         </div>
 
       </div>
