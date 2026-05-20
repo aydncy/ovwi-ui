@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
-const globalAny: any = globalThis
-
-if (!globalAny.ovwi_usage_db) {
-  globalAny.ovwi_usage_db = {}
-}
-
-const db = globalAny.ovwi_usage_db
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 const LIMITS: any = {
   free: 50,
@@ -20,55 +18,71 @@ export async function POST(req: Request) {
     const body = await req.json()
 
     const email = body?.email
-    const apiKey = body?.apiKey
-    const plan = body?.plan || 'free'
 
-    if (!email && !apiKey) {
+    if (!email) {
       return NextResponse.json({
         ok: false,
-        error: 'missing_identity'
+        error: 'missing_email'
       }, { status: 400 })
     }
 
-    const id = email || apiKey
+    let { data } = await supabase
+      .from('ovwi_usage')
+      .select('*')
+      .eq('email', email)
+      .single()
 
-    if (!db[id]) {
-      db[id] = {
-        usage: 0,
-        plan
-      }
+    if (!data) {
+      const inserted = await supabase
+        .from('ovwi_usage')
+        .insert({
+          email,
+          plan: 'free',
+          usage: 0
+        })
+        .select()
+        .single()
+
+      data = inserted.data
     }
 
-    const currentPlan = db[id].plan || plan
-    const limit = LIMITS[currentPlan] || 50
+    const limit = LIMITS[data.plan] || 50
 
-    if (db[id].usage >= limit) {
+    if (data.usage >= limit) {
       return NextResponse.json({
         ok: false,
         error: 'limit_reached',
-        usage: db[id].usage,
+        usage: data.usage,
         limit,
         remaining: 0,
-        plan: currentPlan,
-        upgrade: true
+        upgrade: true,
+        plan: data.plan
       })
     }
 
-    db[id].usage += 1
+    const nextUsage = data.usage + 1
+
+    await supabase
+      .from('ovwi_usage')
+      .update({
+        usage: nextUsage,
+        updated_at: new Date().toISOString()
+      })
+      .eq('email', email)
 
     return NextResponse.json({
       ok: true,
       verified: true,
-      usage: db[id].usage,
+      usage: nextUsage,
       limit,
-      remaining: Math.max(limit - db[id].usage, 0),
-      plan: currentPlan
+      remaining: Math.max(limit - nextUsage, 0),
+      plan: data.plan
     })
 
   } catch (e: any) {
     return NextResponse.json({
       ok: false,
-      error: e.message || 'server_error'
+      error: e.message
     }, { status: 500 })
   }
 }
