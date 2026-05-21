@@ -2,21 +2,18 @@ import { NextResponse } from 'next/server';
 
 export async function POST() {
   try {
-    const usageRes = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://ovwi.cyzora.com'}/api/usage`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://ovwi.cyzora.com'}/api/usage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store'
     });
 
-    if (!usageRes.ok) throw new Error('Usage update failed');
-
-    const usageData = await usageRes.json();
+    const data = await res.json();
 
     return NextResponse.json({
       ok: true,
       message: "Verification successful",
       timestamp: new Date().toISOString(),
-      ...usageData
+      ...data
     });
   } catch (error) {
     console.error(error);
