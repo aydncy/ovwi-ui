@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
 
-* { margin:0; padding:0; box-sizing:border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
@@ -9,19 +13,18 @@ body {
   min-height: 100vh;
   background-image: 
     radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.25) 0%, transparent 60%),
-    radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.20) 0%, transparent 60%);
+    radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.22) 0%, transparent 60%);
 }
 
-/* Glassmorphism */
+/* Glass Effect */
 .glass {
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(148, 163, 184, 0.15);
-  backdrop-filter: blur(24px);
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Buttons */
+/* Primary Button */
 .primary-btn {
   background: linear-gradient(90deg, #22d3ee, #6366f1);
   font-weight: 700;
@@ -29,20 +32,6 @@ body {
 }
 
 .primary-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(34, 211, 238, 0.4);
-}
-
-/* Typography */
-h1 {
-  font-size: 3.8rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-}
-
-.text-gradient {
-  background: linear-gradient(90deg, #67e8f9, #a5b4fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(34, 211, 238, 0.5);
 }
