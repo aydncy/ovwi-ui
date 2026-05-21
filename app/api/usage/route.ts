@@ -16,21 +16,11 @@ export async function GET() {
 
     if (error) console.error("GET Error:", error);
 
-    if (!data) {
-      await supabase.from('usage').upsert([{
-        user_id: 'global',
-        used: 0,
-        remaining: 50,
-        limit: 50
-      }], { onConflict: 'user_id' });
-
-      return NextResponse.json({ usage: 0, remaining: 50, limit: 50 });
-    }
-
+    // Her zaman en güncel veriyi döndür
     return NextResponse.json({
-      usage: data.used || 0,
-      remaining: data.remaining || 50,
-      limit: data.limit || 50
+      usage: data?.used || 0,
+      remaining: data?.remaining || 50,
+      limit: data?.limit || 50
     });
   } catch (err) {
     console.error(err);
@@ -42,7 +32,6 @@ export async function POST() {
   try {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Mevcut kaydı al
     const { data: current } = await supabase
       .from('usage')
       .select('used')
@@ -52,15 +41,14 @@ export async function POST() {
     const newUsed = (current?.used || 0) + 1;
     const newRemaining = Math.max(0, 50 - newUsed);
 
-    // Güncelle
     await supabase
       .from('usage')
-      .upsert([{
+      .upsert({
         user_id: 'global',
         used: newUsed,
         remaining: newRemaining,
         limit: 50
-      }], { onConflict: 'user_id' });
+      }, { onConflict: 'user_id' });
 
     return NextResponse.json({
       ok: true,
