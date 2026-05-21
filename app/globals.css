@@ -1,20 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  background: black;
+  color: white;
+  height: 100%;
+}
+
+/* Premium SaaS background system */
 body {
-  background: #0a0c1a;
-  color: #fff;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(34,211,238,0.08), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(217,70,239,0.08), transparent 40%);
 }
 
+/* Glass effect base */
 .glass {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  backdrop-filter: blur(24px);
-}
-
-.primary-btn {
-  @apply bg-gradient-to-r from-cyan-400 to-indigo-600 font-bold transition-all hover:scale-105 active:scale-95 shadow-xl shadow-cyan-500/30;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
 }
