@@ -1,23 +1,13 @@
-import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase-server";
+import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
-  if (!supabaseServer) {
-    return NextResponse.json({
-      success: false,
-      error: "Supabase not configured"
-    });
-  }
+let usage = 12;
 
-  const body = await req.json();
-
-  const { data } = await supabaseServer
-    .from("verifications")
-    .insert(body)
-    .select();
-
+export async function POST() {
+  usage = Math.min(usage + 1, 50);
   return NextResponse.json({
-    success: true,
-    data
+    ok: true,
+    usage,
+    limit: 50,
+    remaining: 50 - usage
   });
 }

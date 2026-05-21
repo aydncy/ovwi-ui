@@ -1,140 +1,94 @@
-'use client'
+'use client';
+import Navbar from '@/app/components/Navbar';
+import { supabase } from '@/lib/supabase-browser';
+import { CHECKOUTS } from '@/lib/checkout';
+import { useEffect, useState } from 'react';
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase-browser'
+export default function Dashboard() {
+  const [user, setUser] = useState<any>(null);
+  const [usage, setUsage] = useState(12);
+  const [limit, setLimit] = useState(50);
 
-export default function DashboardPage() {
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) {
+        window.location.href = '/auth/login';
+        return;
+      }
+      setUser(data.user);
+    });
+  }, []);
 
-  const [loading,setLoading] = useState(false)
+  const runVerify = async () => {
+    const res = await fetch('/api/verify', { method: 'POST' });
+    const data = await res.json();
+    setUsage(data.usage || usage + 1);
+  };
 
-  const [stats,setStats] = useState({
-    remaining:0,
-    usage:0,
-    total:50
-  })
-
-  async function loadUsage() {
-
-    const {
-      data:{ user }
-    } = await supabase.auth.getUser()
-
-    if(!user?.email) return
-
-    const res = await fetch('/api/usage?email=' + user.email)
-    const data = await res.json()
-
-    if(data?.ok){
-      setStats({
-        remaining:data.remaining,
-        usage:data.usage,
-        total:data.total
-      })
-    }
-  }
-
-  useEffect(()=>{
-    loadUsage()
-  },[])
-
-  async function runVerification(){
-
-    setLoading(true)
-
-    const {
-      data:{ user }
-    } = await supabase.auth.getUser()
-
-    if(!user?.email){
-      alert('Login required')
-      setLoading(false)
-      return
-    }
-
-    const res = await fetch('/api/verify',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json'
-      },
-      body:JSON.stringify({
-        email:user.email
-      })
-    })
-
-    const data = await res.json()
-
-    if(data?.ok){
-      await loadUsage()
-    }else{
-      alert(data?.error || 'Verification failed')
-    }
-
-    setLoading(false)
-  }
+  const percent = Math.min((usage / limit) * 100, 100);
 
   return (
-    <main className="page-wrap">
-      <div className="hero-glow"></div>
-
-      <div className="glass dashboard-card mb-8">
-        <h1 className="text-5xl font-black gradient-text">
-          OVWI Dashboard
-        </h1>
-
-        <p className="text-slate-400 mt-4 text-lg">
-          Premium Verification Intelligence Platform
-        </p>
-      </div>
-
-      <div className="dashboard-grid">
-
-        <div className="glass dashboard-card">
-          <div className="text-slate-400">
-            Remaining Credits
+    <>
+      <Navbar />
+      <div className="pt-28 px-8 max-w-7xl mx-auto">
+        <div className="flex justify-between items-end mb-10">
+          <div>
+            <h1 className="text-6xl font-bold tracking-tighter">Dashboard</h1>
+            <p className="text-zinc-400 mt-2">{user?.email}</p>
           </div>
+          <button onClick={runVerify} className="primary-btn px-10 py-4 rounded-2xl text-lg">
+            Run Verification
+          </button>
+        </div>
 
-          <div className="stat-number gradient-text">
-            {stats.remaining}
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="glass rounded-3xl p-8">
+            <p className="text-zinc-400">Used</p>
+            <p className="text-6xl font-bold mt-2">{usage}</p>
+          </div>
+          <div className="glass rounded-3xl p-8">
+            <p className="text-zinc-400">Remaining</p>
+            <p className="text-6xl font-bold mt-2 text-emerald-400">{limit - usage}</p>
+          </div>
+          <div className="glass rounded-3xl p-8">
+            <p className="text-zinc-400">Plan</p>
+            <p className="text-5xl font-bold mt-2">Free</p>
           </div>
         </div>
 
-        <div className="glass dashboard-card">
-          <div className="text-slate-400">
-            Used Credits
+        {/* Usage Bar */}
+        <div className="glass rounded-3xl p-10 mb-12">
+          <h3 className="mb-6 text-xl">Monthly Usage</h3>
+          <div className="h-4 bg-zinc-900 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all" style={{ width: `${percent}%` }} />
           </div>
-
-          <div className="stat-number">
-            {stats.usage}
-          </div>
+          <p className="text-right mt-3 text-sm text-zinc-400">{usage} / {limit} requests</p>
         </div>
 
-        <div className="glass dashboard-card">
-          <div className="text-slate-400">
-            Total Credits
-          </div>
-
-          <div className="stat-number">
-            {stats.total}
+        {/* Upgrade Section */}
+        <div className="glass rounded-3xl p-10">
+          <h3 className="text-3xl font-bold mb-8">Upgrade Plan</h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "Pro", price: "€6", checkout: CHECKOUTS.pro },
+              { name: "Enterprise", price: "€18", checkout: CHECKOUTS.enterprise },
+              { name: "Scale", price: "€49", checkout: CHECKOUTS.scale }
+            ].map(plan => (
+              <div key={plan.name} className="glass p-8 rounded-3xl text-center hover:border-purple-500/50 transition border border-white/10">
+                <h4 className="text-2xl font-semibold">{plan.name}</h4>
+                <p className="text-5xl font-bold my-6">{plan.price}<span className="text-base font-normal">/mo</span></p>
+                <button 
+                  onClick={() => window.location.href = plan.checkout}
+                  className="primary-btn w-full py-4 rounded-2xl"
+                >
+                  Upgrade
+                </button>
+              </div>
+            ))}
           </div>
         </div>
-
       </div>
-
-      <div className="glass dashboard-card mt-8">
-
-        <h2 className="text-2xl font-bold mb-6">
-          Run Verification
-        </h2>
-
-        <button
-          onClick={runVerification}
-          disabled={loading}
-          className="primary-btn"
-        >
-          {loading ? 'Running...' : 'Run Verification'}
-        </button>
-
-      </div>
-    </main>
-  )
+    </>
+  );
 }
