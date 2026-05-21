@@ -6,10 +6,11 @@ import { useEffect, useState } from 'react';
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [usageData, setUsageData] = useState({ usage: 0, remaining: 50, limit: 50 });
+  const [loading, setLoading] = useState(false);
   const supabase = createSupabaseClient();
 
   const fetchUsage = async () => {
-    const res = await fetch('/api/usage');
+    const res = await fetch('/api/usage', { cache: 'no-store' });
     const data = await res.json();
     setUsageData(data);
   };
@@ -26,10 +27,24 @@ export default function Dashboard() {
   }, [supabase]);
 
   const runVerify = async () => {
-    const res = await fetch('/api/verify', { method: 'POST' });
-    await res.json();
-    fetchUsage(); // Refresh usage
+    setLoading(true);
+    try {
+      const res = await fetch('/api/verify', { 
+        method: 'POST',
+        cache: 'no-store'
+      });
+      const data = await res.json();
+      if (data.ok) {
+        await fetchUsage(); // Gerçek zamanlı güncelle
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const percent = (usageData.usage / usageData.limit) * 100;
 
   return (
     <>
@@ -40,8 +55,12 @@ export default function Dashboard() {
             <h1 className="text-6xl font-bold tracking-tighter">Dashboard</h1>
             <p className="text-zinc-400 mt-2">{user?.email}</p>
           </div>
-          <button onClick={runVerify} className="primary-btn px-10 py-4 rounded-2xl text-lg">
-            Run Verification
+          <button 
+            onClick={runVerify}
+            disabled={loading}
+            className="primary-btn px-10 py-4 rounded-2xl text-lg disabled:opacity-70"
+          >
+            {loading ? 'Verifying...' : 'Run Verification'}
           </button>
         </div>
 
@@ -61,11 +80,14 @@ export default function Dashboard() {
         </div>
 
         <div className="glass p-10 rounded-3xl">
-          <h3 className="mb-6">Usage Progress</h3>
-          <div className="h-3 bg-zinc-800 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all" 
-                 style={{ width: `${(usageData.usage / usageData.limit) * 100}%` }} />
+          <h3 className="mb-6 text-xl">Monthly Usage</h3>
+          <div className="h-4 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all duration-500" 
+                 style={{ width: `${percent}%` }} />
           </div>
+          <p className="text-right mt-3 text-sm text-zinc-400">
+            {usageData.usage} / {usageData.limit} requests used
+          </p>
         </div>
       </div>
     </>
