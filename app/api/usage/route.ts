@@ -12,9 +12,11 @@ export async function GET() {
       .from('usage')
       .select('used, remaining, limit')
       .eq('user_id', 'global')
-      .single();
+      .maybeSingle();
 
-    if (error || !data) {
+    if (error) console.error("GET Error:", error);
+
+    if (!data) {
       await supabase.from('usage').upsert([{
         user_id: 'global',
         used: 0,
@@ -40,22 +42,25 @@ export async function POST() {
   try {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Mevcut kaydı al
     const { data: current } = await supabase
       .from('usage')
       .select('used')
       .eq('user_id', 'global')
-      .single();
+      .maybeSingle();
 
     const newUsed = (current?.used || 0) + 1;
     const newRemaining = Math.max(0, 50 - newUsed);
 
+    // Güncelle
     await supabase
       .from('usage')
-      .update({ 
-        used: newUsed, 
-        remaining: newRemaining 
-      })
-      .eq('user_id', 'global');
+      .upsert([{
+        user_id: 'global',
+        used: newUsed,
+        remaining: newRemaining,
+        limit: 50
+      }], { onConflict: 'user_id' });
 
     return NextResponse.json({
       ok: true,
@@ -64,7 +69,7 @@ export async function POST() {
       limit: 50
     });
   } catch (err) {
-    console.error(err);
+    console.error("POST Error:", err);
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
