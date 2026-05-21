@@ -1,6 +1,6 @@
 'use client';
-import Navbar from '@/app/components/Navbar';
-import { supabase } from '@/lib/supabase-browser';
+import Navbar from '../../components/Navbar';
+import { createSupabaseClient } from '@/lib/supabase-browser';
 import { CHECKOUTS } from '@/lib/checkout';
 import { useEffect, useState } from 'react';
 
@@ -8,6 +8,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [usage, setUsage] = useState(12);
   const [limit, setLimit] = useState(50);
+  const supabase = createSupabaseClient();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -17,7 +18,7 @@ export default function Dashboard() {
       }
       setUser(data.user);
     });
-  }, []);
+  }, [supabase]);
 
   const runVerify = async () => {
     const res = await fetch('/api/verify', { method: 'POST' });
@@ -41,7 +42,6 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="glass rounded-3xl p-8">
             <p className="text-zinc-400">Used</p>
@@ -57,7 +57,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Usage Bar */}
         <div className="glass rounded-3xl p-10 mb-12">
           <h3 className="mb-6 text-xl">Monthly Usage</h3>
           <div className="h-4 bg-zinc-900 rounded-full overflow-hidden">
@@ -66,7 +65,6 @@ export default function Dashboard() {
           <p className="text-right mt-3 text-sm text-zinc-400">{usage} / {limit} requests</p>
         </div>
 
-        {/* Upgrade Section */}
         <div className="glass rounded-3xl p-10">
           <h3 className="text-3xl font-bold mb-8">Upgrade Plan</h3>
           <div className="grid md:grid-cols-3 gap-6">

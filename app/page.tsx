@@ -1,18 +1,14 @@
 'use client';
-import Navbar from './components/Navbar';
+import Navbar from '../components/Navbar';
 import { CHECKOUTS } from '@/lib/checkout';
-import { supabase } from '@/lib/supabase-browser';
+import { createSupabaseClient } from '@/lib/supabase-browser';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
-  const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setLoggedIn(!!data.session));
-  }, []);
+  const supabase = createSupabaseClient();
 
   const verify = async () => {
     setLoading(true);
@@ -45,7 +41,6 @@ export default function Home() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Left Side */}
           <div className="space-y-10">
             <div className="glass rounded-3xl p-10">
               <h3 className="text-xl mb-6">Try Live Verification</h3>
@@ -72,7 +67,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Side - Stats */}
           <div className="space-y-6">
             {[
               { num: "99.97%", label: "Accuracy" },
