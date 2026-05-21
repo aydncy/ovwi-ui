@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -14,28 +15,41 @@ export async function POST(req: Request) {
       process.env.STRIPE_WEBHOOK_SECRET || ""
     );
   } catch (err: any) {
-    return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: err.message }, { status: 400 });
+  }
+
+  if (!db) {
+    return NextResponse.json({ ok: true, mode: "mock" });
   }
 
   switch (event.type) {
-    case "checkout.session.completed":
-      console.log("PAYMENT SUCCESS:", event.data.object);
-      break;
+    case "checkout.session.completed": {
+      const session: any = event.data.object;
 
-    case "customer.subscription.created":
-      console.log("SUB CREATED:", event.data.object);
-      break;
+      await db.from("user_billing").upsert({
+        user_id: session.client_reference_id,
+        stripe_customer_id: session.customer,
+        stripe_subscription_id: session.subscription,
+        plan: "pro",
+        status: "active",
+      });
 
-    case "customer.subscription.updated":
-      console.log("SUB UPDATED:", event.data.object);
       break;
+    }
 
-    case "customer.subscription.deleted":
-      console.log("SUB CANCELLED:", event.data.object);
+    case "customer.subscription.deleted": {
+      const sub: any = event.data.object;
+
+      await db
+        .from("user_billing")
+        .update({
+          plan: "free",
+          status: "canceled",
+        })
+        .eq("stripe_subscription_id", sub.id);
+
       break;
+    }
   }
 
   return NextResponse.json({ received: true });
