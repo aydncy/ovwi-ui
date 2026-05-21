@@ -1,11 +1,9 @@
-'use client'
-
-import PremiumHero from './components/PremiumHero'
+import Hero from "@/components/landing/hero";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <PremiumHero />
+    <main className="bg-black">
+      <Hero />
     </main>
-  )
+  );
 }
