@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
 
-let usage = 12;
-
 export async function POST() {
-  usage = Math.min(usage + 1, 50);
+  // Usage API'yi çağır (gerçek decrement için)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/usage`, {
+    method: 'POST',
+  });
+  
+  const data = await res.json();
+  
   return NextResponse.json({
     ok: true,
-    usage,
-    limit: 50,
-    remaining: 50 - usage
+    ...data,
+    message: "Verification successful"
   });
 }
