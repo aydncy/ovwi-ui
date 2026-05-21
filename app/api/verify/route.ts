@@ -1,22 +1,24 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import { supabaseServer } from "@/lib/supabase-server";
 
-export async function POST() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://ovwi.cyzora.com'}/api/usage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
+export async function POST(req: Request) {
+  const body = await req.json();
 
-    const data = await res.json();
-
+  if (!supabaseServer) {
     return NextResponse.json({
-      ok: true,
-      message: "Verification successful",
-      timestamp: new Date().toISOString(),
-      ...data
+      success: true,
+      mode: "mock",
+      data: body
     });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ ok: false, error: "Verification failed" }, { status: 500 });
   }
+
+  const { data } = await supabaseServer
+    .from("verifications")
+    .insert(body)
+    .select();
+
+  return NextResponse.json({
+    success: true,
+    data
+  });
 }
