@@ -1,6 +1,5 @@
 'use client';
 import Navbar from '../components/Navbar';
-import { CHECKOUTS } from '@/lib/checkout';
 import { createSupabaseClient } from '@/lib/supabase-browser';
 import { useState, useEffect } from 'react';
 
@@ -8,7 +7,20 @@ export default function Home() {
   const [email, setEmail] = useState('');
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [usageData, setUsageData] = useState({ usage: 0, remaining: 50 });
+
   const supabase = createSupabaseClient();
+
+  // Her yüklenişte gerçek usage'ı çek
+  useEffect(() => {
+    fetchUsage();
+  }, []);
+
+  const fetchUsage = async () => {
+    const res = await fetch('/api/usage');
+    const data = await res.json();
+    setUsageData(data);
+  };
 
   const verify = async () => {
     setLoading(true);
@@ -20,6 +32,7 @@ export default function Home() {
       });
       const data = await res.json();
       setResult(data);
+      fetchUsage(); // Kullanımı güncelle
     } finally {
       setLoading(false);
     }
@@ -28,59 +41,43 @@ export default function Home() {
   return (
     <>
       <Navbar />
-
       <section className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <h1 className="text-7xl md:text-8xl font-black tracking-tighter mb-6 leading-none">
             Trust at<br />
-            <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent">Enterprise Speed</span>
+            <span className="text-gradient">Enterprise Speed</span>
           </h1>
-          <p className="text-2xl text-zinc-400 max-w-3xl mx-auto">
-            AI-powered identity verification infrastructure for serious companies.
-          </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-10">
-            <div className="glass rounded-3xl p-10">
-              <h3 className="text-xl mb-6">Try Live Verification</h3>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 mb-4 focus:outline-none focus:border-purple-500"
-              />
-              <button 
-                onClick={verify}
-                disabled={loading}
-                className="primary-btn w-full py-4 rounded-2xl text-lg"
-              >
-                {loading ? 'Verifying...' : 'Verify Identity'}
-              </button>
+          <div className="glass p-10 rounded-3xl">
+            <h3 className="text-xl mb-6">Try Live Verification</h3>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@company.com"
+              className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 mb-6"
+            />
+            <button 
+              onClick={verify}
+              disabled={loading}
+              className="primary-btn w-full py-4 rounded-2xl text-lg"
+            >
+              {loading ? 'Verifying...' : 'Verify Identity'}
+            </button>
 
-              {result && (
-                <pre className="mt-6 p-6 bg-black/60 rounded-2xl overflow-auto text-sm">
-                  {JSON.stringify(result, null, 2)}
-                </pre>
-              )}
-            </div>
+            {result && (
+              <pre className="mt-6 p-6 bg-black/60 rounded-2xl overflow-auto text-sm">
+                {JSON.stringify(result, null, 2)}
+              </pre>
+            )}
           </div>
 
-          <div className="space-y-6">
-            {[
-              { num: "99.97%", label: "Accuracy" },
-              { num: "180ms", label: "Avg Response" },
-              { num: "∞", label: "Scale" }
-            ].map((s, i) => (
-              <div key={i} className="glass rounded-3xl p-8 flex justify-between items-center">
-                <div className="text-6xl font-bold text-white/90">{s.num}</div>
-                <div className="text-right">
-                  <div className="text-purple-400 text-sm tracking-widest">METRIC</div>
-                  <div className="text-2xl">{s.label}</div>
-                </div>
-              </div>
-            ))}
+          <div className="glass p-10 rounded-3xl">
+            <h3 className="text-xl mb-4">Current Usage</h3>
+            <p className="text-6xl font-bold">{usageData.remaining} <span className="text-2xl text-zinc-400">remaining</span></p>
+            <p className="text-sm text-zinc-400 mt-2">{usageData.usage} / 50 used</p>
           </div>
         </div>
       </section>

@@ -1,14 +1,18 @@
 'use client';
 import Navbar from '../../components/Navbar';
 import { createSupabaseClient } from '@/lib/supabase-browser';
-import { CHECKOUTS } from '@/lib/checkout';
 import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
-  const [usage, setUsage] = useState(12);
-  const [limit, setLimit] = useState(50);
+  const [usageData, setUsageData] = useState({ usage: 0, remaining: 50, limit: 50 });
   const supabase = createSupabaseClient();
+
+  const fetchUsage = async () => {
+    const res = await fetch('/api/usage');
+    const data = await res.json();
+    setUsageData(data);
+  };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -17,16 +21,15 @@ export default function Dashboard() {
         return;
       }
       setUser(data.user);
+      fetchUsage();
     });
   }, [supabase]);
 
   const runVerify = async () => {
     const res = await fetch('/api/verify', { method: 'POST' });
-    const data = await res.json();
-    setUsage(data.usage || usage + 1);
+    await res.json();
+    fetchUsage(); // Refresh usage
   };
-
-  const percent = Math.min((usage / limit) * 100, 100);
 
   return (
     <>
@@ -43,47 +46,25 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="glass rounded-3xl p-8">
+          <div className="glass p-8 rounded-3xl">
             <p className="text-zinc-400">Used</p>
-            <p className="text-6xl font-bold mt-2">{usage}</p>
+            <p className="text-6xl font-bold mt-2">{usageData.usage}</p>
           </div>
-          <div className="glass rounded-3xl p-8">
+          <div className="glass p-8 rounded-3xl">
             <p className="text-zinc-400">Remaining</p>
-            <p className="text-6xl font-bold mt-2 text-emerald-400">{limit - usage}</p>
+            <p className="text-6xl font-bold mt-2 text-emerald-400">{usageData.remaining}</p>
           </div>
-          <div className="glass rounded-3xl p-8">
-            <p className="text-zinc-400">Plan</p>
-            <p className="text-5xl font-bold mt-2">Free</p>
+          <div className="glass p-8 rounded-3xl">
+            <p className="text-zinc-400">Limit</p>
+            <p className="text-5xl font-bold mt-2">{usageData.limit}</p>
           </div>
         </div>
 
-        <div className="glass rounded-3xl p-10 mb-12">
-          <h3 className="mb-6 text-xl">Monthly Usage</h3>
-          <div className="h-4 bg-zinc-900 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all" style={{ width: `${percent}%` }} />
-          </div>
-          <p className="text-right mt-3 text-sm text-zinc-400">{usage} / {limit} requests</p>
-        </div>
-
-        <div className="glass rounded-3xl p-10">
-          <h3 className="text-3xl font-bold mb-8">Upgrade Plan</h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { name: "Pro", price: "€6", checkout: CHECKOUTS.pro },
-              { name: "Enterprise", price: "€18", checkout: CHECKOUTS.enterprise },
-              { name: "Scale", price: "€49", checkout: CHECKOUTS.scale }
-            ].map(plan => (
-              <div key={plan.name} className="glass p-8 rounded-3xl text-center hover:border-purple-500/50 transition border border-white/10">
-                <h4 className="text-2xl font-semibold">{plan.name}</h4>
-                <p className="text-5xl font-bold my-6">{plan.price}<span className="text-base font-normal">/mo</span></p>
-                <button 
-                  onClick={() => window.location.href = plan.checkout}
-                  className="primary-btn w-full py-4 rounded-2xl"
-                >
-                  Upgrade
-                </button>
-              </div>
-            ))}
+        <div className="glass p-10 rounded-3xl">
+          <h3 className="mb-6">Usage Progress</h3>
+          <div className="h-3 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all" 
+                 style={{ width: `${(usageData.usage / usageData.limit) * 100}%` }} />
           </div>
         </div>
       </div>
