@@ -1,10 +1,8 @@
 import Hero from "@/components/landing/hero";
-import Navbar from "@/components/landing/navbar";
 
-export default function Page() {
+export default function HomePage() {
   return (
-    <main className="bg-black">
-      <Navbar />
+    <main className="min-h-screen overflow-hidden bg-black text-white">
       <Hero />
     </main>
   );
