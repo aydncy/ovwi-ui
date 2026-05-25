@@ -1,19 +1,15 @@
-import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase-server";
+let usageMap: Record<string, number> = {};
 
-export async function GET() {
-  if (!supabaseServer) {
-    return NextResponse.json({
-      remaining: 0,
-      used: 0,
-      status: "mock-mode"
-    });
-  }
+export async function POST(req: Request) {
+  const { email } = await req.json();
 
-  const { data } = await supabaseServer
-    .from("usage")
-    .select("*")
-    .single();
+  if (!usageMap[email]) usageMap[email] = 0;
 
-  return NextResponse.json(data || { remaining: 0 });
+  usageMap[email]++;
+
+  return Response.json({
+    usage: usageMap[email],
+    limit: 50,
+    remaining: 50 - usageMap[email]
+  });
 }
