@@ -1,19 +1,13 @@
 'use client';
 
 import { createClient } from '@supabase/supabase-js';
-import { env } from './env';
 
-const supabaseUrl = env.SUPABASE_URL;
-const supabaseAnonKey = env.SUPABASE_ANON;
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 export const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(
-        supabaseUrl,
-        supabaseAnonKey
-      )
-    : null as any;
+  url && key ? createClient(url, key) : null;
 
-export function createSupabaseClient() {
-  return supabase;
-}
+export const createSupabaseClient = () => supabase;
+
+export const getSupabase = () => supabase;
