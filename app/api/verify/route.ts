@@ -1,24 +1,12 @@
-import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase-server";
+import { billingResponse } from "@/lib/billing/engine";
 
-export async function POST(req: Request) {
-  const body = await req.json();
+let usage = 12;
 
-  if (!supabaseServer) {
-    return NextResponse.json({
-      success: true,
-      mode: "mock",
-      data: body
-    });
-  }
+export async function POST() {
+  usage++;
 
-  const { data } = await supabaseServer
-    .from("verifications")
-    .insert(body)
-    .select();
+  // simulated plan (sonradan DB bağlanacak)
+  const plan = "free";
 
-  return NextResponse.json({
-    success: true,
-    data
-  });
+  return billingResponse(usage, plan);
 }
