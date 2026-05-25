@@ -1,35 +1,38 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSupabase } from '@/lib/supabase-browser';
+import { supabase } from '@/lib/supabase-browser';
 
 export default function Navbar() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
-    const supabase = getSupabase();
-    if (!supabase) return;
-
     supabase.auth.getSession().then(({ data }) => {
-      setLoggedIn(!!data.session);
+      setSession(data.session);
     });
-
-    const { data: sub } = supabase.auth.onAuthStateChange(
-      (_e, session) => setLoggedIn(!!session)
-    );
-
-    return () => sub.subscription.unsubscribe();
   }, []);
 
   return (
-    <div className="navbar">
-      <div className="nav-inner">
-        <a href="/">OVWI</a>
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      width: '100%',
+      padding: 18,
+      borderBottom: '1px solid rgba(255,255,255,0.08)',
+      backdropFilter: 'blur(12px)',
+      display: 'flex',
+      justifyContent: 'space-between'
+    }}>
+      <b>OVWI</b>
 
-        <div className="nav-links">
-          <a href="/docs">Docs</a>
+      <div style={{ display: 'flex', gap: 12 }}>
+        <a href="/docs">Docs</a>
+
+        {session ? (
           <a href="/dashboard">Dashboard</a>
-        </div>
+        ) : (
+          <a href="/auth/login">Login</a>
+        )}
       </div>
     </div>
   );

@@ -1,34 +1,39 @@
 import { UpgradeButton } from "@/components/ui/upgrade-button";
+import { Card } from "@/components/ui/card";
 
 export default function PricingPage() {
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-24">
-      <div className="mx-auto max-w-5xl text-center">
-        <h1 className="text-5xl font-bold">Simple pricing</h1>
-        <p className="mt-4 text-zinc-400">
-          Start free, scale with usage
-        </p>
+    <div className="max-w-5xl mx-auto pt-32 px-4">
+      <h1 className="text-4xl font-bold mb-8">Pricing</h1>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-3">
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-8">
-            <h2>Free</h2>
-            <p className="text-3xl">$0</p>
-          </div>
+      <div className="grid grid-cols-3 gap-6">
+        <Card>
+          <h2>Pro</h2>
+          <p>$6 / month</p>
 
-          <div className="rounded-3xl border border-cyan-400/30 bg-cyan-500/10 p-8">
-            <h2>Pro</h2>
-            <p className="text-3xl">$49/mo</p>
-            <div className="mt-4">
-              <UpgradeButton />
-            </div>
-          </div>
+          <UpgradeButton href="/api/checkout/pro">
+            Upgrade
+          </UpgradeButton>
+        </Card>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-8">
-            <h2>Enterprise</h2>
-            <p className="text-3xl">Custom</p>
-          </div>
-        </div>
+        <Card>
+          <h2>Enterprise</h2>
+          <p>$18 / month</p>
+
+          <UpgradeButton href="/api/checkout/enterprise">
+            Upgrade
+          </UpgradeButton>
+        </Card>
+
+        <Card>
+          <h2>Scale</h2>
+          <p>$49 / month</p>
+
+          <UpgradeButton href="/api/checkout/scale">
+            Upgrade
+          </UpgradeButton>
+        </Card>
       </div>
-    </main>
+    </div>
   );
 }

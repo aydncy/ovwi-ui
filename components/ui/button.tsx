@@ -1,24 +1,13 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/ui/cn";
 
-export function Button({
-  children,
-  className,
-  variant = "primary",
-}: any) {
-  const base =
-    "px-6 py-3 rounded-2xl font-medium transition-all duration-200";
-
-  const styles = {
-    primary:
-      "bg-white text-black hover:scale-[1.02] shadow-glow",
-    secondary:
-      "bg-white/5 border border-white/10 text-white hover:bg-white/10 backdrop-blur-xl",
-    ghost: "text-white hover:bg-white/5",
-  };
-
+export function Button({ className, ...props }: any) {
   return (
-    <button className={cn(base, styles[variant], className)}>
-      {children}
-    </button>
+    <button
+      {...props}
+      className={cn(
+        "px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-medium transition",
+        className
+      )}
+    />
   );
 }

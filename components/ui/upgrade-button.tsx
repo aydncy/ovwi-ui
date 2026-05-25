@@ -1,21 +1,22 @@
-"use client";
+'use client';
 
-export function UpgradeButton() {
-  const handleCheckout = async () => {
-    const res = await fetch("/api/stripe/checkout", {
-      method: "POST",
-    });
+import { Button } from "./button";
 
-    const data = await res.json();
-    window.location.href = data.url;
+export function UpgradeButton({
+  href,
+  children
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+
+  const go = () => {
+    window.location.href = href;
   };
 
   return (
-    <button
-      onClick={handleCheckout}
-      className="rounded-xl bg-white px-4 py-2 text-black"
-    >
-      Upgrade to Pro
-    </button>
+    <Button onClick={go} className="bg-gradient-to-r from-blue-500 to-cyan-400">
+      {children}
+    </Button>
   );
 }

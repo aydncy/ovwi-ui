@@ -1,14 +1,13 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/ui/cn";
 
-export function Card({ children, className }: any) {
+export function Card({ className, ...props }: any) {
   return (
     <div
+      {...props}
       className={cn(
-        "rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-premium",
+        "rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-5",
         className
       )}
-    >
-      {children}
-    </div>
+    />
   );
 }
