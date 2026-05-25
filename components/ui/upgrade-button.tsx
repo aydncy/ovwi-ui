@@ -1,22 +1,7 @@
-'use client';
-
-import { Button } from "./button";
-
-export function UpgradeButton({
-  href,
-  children
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
-
-  const go = () => {
-    window.location.href = href;
-  };
-
+export function UpgradeButton({ children }: any) {
   return (
-    <Button onClick={go} className="bg-gradient-to-r from-blue-500 to-cyan-400">
+    <button className="px-6 py-3 rounded-xl bg-blue-500 text-white font-bold">
       {children}
-    </Button>
+    </button>
   );
 }

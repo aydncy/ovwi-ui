@@ -4,10 +4,9 @@ import Navbar from '@/components/Navbar';
 import { getSupabase } from '@/lib/supabase-browser';
 
 export default function Login() {
-  const login = async () => {
-    const supabase = getSupabase();
-    if (!supabase) return;
+  const supabase = getSupabase();
 
+  const login = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -19,9 +18,15 @@ export default function Login() {
   return (
     <>
       <Navbar />
-      <div style={{ padding: 100 }}>
-        <h1>Login</h1>
-        <button onClick={login}>Google Login</button>
+
+      <div className="auth-page">
+        <div className="auth-box">
+          <h1>Login</h1>
+
+          <button onClick={login} className="verify-btn">
+            Continue with Google
+          </button>
+        </div>
       </div>
     </>
   );

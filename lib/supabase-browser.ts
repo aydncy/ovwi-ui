@@ -1,13 +1,10 @@
-'use client';
-
 import { createClient } from '@supabase/supabase-js';
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+export const getSupabase = () => {
+  if (typeof window === 'undefined') return null;
 
-export const supabase =
-  url && key ? createClient(url, key) : null;
-
-export const createSupabaseClient = () => supabase;
-
-export const getSupabase = () => supabase;
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  );
+};

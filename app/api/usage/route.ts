@@ -1,22 +1,24 @@
-let store: Record<string, number> = {};
+import { NextResponse } from "next/server";
+
+const store = new Map<string, number>();
 
 export async function POST(req: Request) {
   const { email } = await req.json();
 
-  if (!store[email]) store[email] = 0;
+  const current = store.get(email) || 0;
+  const updated = current + 1;
 
-  store[email]++;
+  store.set(email, updated);
 
-  const usage = store[email];
+  const limit = updated > 100 ? 1000 : 50;
+  const blocked = updated > limit;
 
-  const limit = usage > 100 ? 1000 : 50;
-
-  const blocked = usage > limit;
-
-  return Response.json({
-    usage,
+  return NextResponse.json({
+    email,
+    usage: updated,
     limit,
+    remaining: Math.max(limit - updated, 0),
     blocked,
-    upgradeRequired: blocked
+    upgrade: blocked
   });
 }

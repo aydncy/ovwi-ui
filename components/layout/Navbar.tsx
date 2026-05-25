@@ -1,29 +1,56 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase-browser";
+import { getSupabase } from "@/lib/supabase-browser";
 
 export default function Navbar() {
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) return;
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
     });
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
-  return (
-    <div className="fixed top-0 w-full border-b border-white/10 bg-black/40 backdrop-blur-xl z-50">
-      <div className="max-w-6xl mx-auto flex justify-between p-4">
-        <b>OVWI</b>
+  const logout = async () => {
+    const supabase = getSupabase();
+    await supabase?.auth.signOut();
+    window.location.href = "/";
+  };
 
-        <div className="flex gap-4 text-sm text-gray-300">
-          <a href="/docs">Docs</a>
-          <a href="/pricing">Pricing</a>
+  return (
+    <div className="navbar">
+      <div className="nav-inner">
+        <a href="/" className="brand">OVWI</a>
+
+        <div className="nav-links">
+          <a href="/dashboard">
+            <button className="nav-btn">Dashboard</button>
+          </a>
+
           {session ? (
-            <a href="/dashboard">Dashboard</a>
+            <button onClick={logout} className="nav-btn primary-btn">
+              Logout
+            </button>
           ) : (
-            <a href="/auth/login">Login</a>
+            <a href="/auth/login">
+              <button className="nav-btn primary-btn">
+                Login
+              </button>
+            </a>
           )}
         </div>
       </div>

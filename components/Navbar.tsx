@@ -1,38 +1,58 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase-browser';
+import { getSupabase } from '@/lib/supabase-browser';
 
 export default function Navbar() {
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    const supabase = getSupabase();
+    if (!supabase) return;
+
+    supabase.auth.getSession().then(({ data }: any) => {
       setSession(data.session);
     });
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_: any, session: any) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
+  const logout = async () => {
+    const supabase = getSupabase();
+    await supabase?.auth.signOut();
+    window.location.href = '/';
+  };
+
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      width: '100%',
-      padding: 18,
-      borderBottom: '1px solid rgba(255,255,255,0.08)',
-      backdropFilter: 'blur(12px)',
-      display: 'flex',
-      justifyContent: 'space-between'
-    }}>
-      <b>OVWI</b>
+    <div className="navbar">
+      <div className="nav-inner">
+        <a href="/" className="brand">OVWI</a>
 
-      <div style={{ display: 'flex', gap: 12 }}>
-        <a href="/docs">Docs</a>
+        <div className="nav-links">
+          <a href="/dashboard">
+            <button className="nav-btn">Dashboard</button>
+          </a>
 
-        {session ? (
-          <a href="/dashboard">Dashboard</a>
-        ) : (
-          <a href="/auth/login">Login</a>
-        )}
+          {session ? (
+            <button onClick={logout} className="nav-btn primary-btn">
+              Logout
+            </button>
+          ) : (
+            <a href="/auth/login">
+              <button className="nav-btn primary-btn">
+                Login
+              </button>
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
