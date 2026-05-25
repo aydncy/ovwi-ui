@@ -3,10 +3,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { env } from './env';
 
+const supabaseUrl = env.SUPABASE_URL;
+const supabaseAnonKey = env.SUPABASE_ANON;
+
 export const supabase =
-  env.SUPABASE_URL && env.SUPABASE_ANON
+  supabaseUrl && supabaseAnonKey
     ? createClient(
-        env.SUPABASE_URL,
-        env.SUPABASE_ANON
+        supabaseUrl,
+        supabaseAnonKey
       )
     : null as any;
+
+export function createSupabaseClient() {
+  return supabase;
+}
