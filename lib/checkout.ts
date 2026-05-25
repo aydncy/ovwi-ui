@@ -1,5 +1,7 @@
+import { env } from './env';
+
 export const CHECKOUTS = {
-  pro: process.env.NEXT_PUBLIC_LEMON_CHECKOUT_PRO || '',
-  enterprise: process.env.NEXT_PUBLIC_LEMON_CHECKOUT_ENTERPRISE || '',
-  scale: process.env.NEXT_PUBLIC_LEMON_CHECKOUT_SCALE || ''
+  pro: env.LEMON_PRO,
+  enterprise: env.LEMON_ENTERPRISE,
+  scale: env.LEMON_SCALE
 };
