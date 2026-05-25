@@ -7,6 +7,8 @@ export default function Login() {
   const supabase = getSupabase();
 
   const login = async () => {
+    if (!supabase) return;
+
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -18,10 +20,9 @@ export default function Login() {
   return (
     <>
       <Navbar />
-
       <div className="auth-page">
         <div className="auth-box">
-          <h1>Login</h1>
+          <h1>OVWI Login</h1>
 
           <button onClick={login} className="verify-btn">
             Continue with Google

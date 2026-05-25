@@ -1,35 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getSupabase } from '@/lib/supabase-browser';
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase-browser";
 
 export default function Navbar() {
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
-    const supabase = getSupabase();
-    if (!supabase) return;
-
-    supabase.auth.getSession().then(({ data }: any) => {
+    supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_: any, session: any) => {
-        setSession(session);
-      }
-    );
+    const { data } = supabase.auth.onAuthStateChange((_e, session) => {
+      setSession(session);
+    });
 
     return () => {
-      listener.subscription.unsubscribe();
+      data.subscription.unsubscribe();
     };
   }, []);
-
-  const logout = async () => {
-    const supabase = getSupabase();
-    await supabase?.auth.signOut();
-    window.location.href = '/';
-  };
 
   return (
     <div className="navbar">
@@ -37,19 +26,15 @@ export default function Navbar() {
         <a href="/" className="brand">OVWI</a>
 
         <div className="nav-links">
-          <a href="/dashboard">
-            <button className="nav-btn">Dashboard</button>
-          </a>
+          <a href="/docs"><button className="nav-btn">Docs</button></a>
 
           {session ? (
-            <button onClick={logout} className="nav-btn primary-btn">
-              Logout
-            </button>
+            <a href="/dashboard">
+              <button className="nav-btn primary-btn">Dashboard</button>
+            </a>
           ) : (
             <a href="/auth/login">
-              <button className="nav-btn primary-btn">
-                Login
-              </button>
+              <button className="nav-btn primary-btn">Login</button>
             </a>
           )}
         </div>

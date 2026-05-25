@@ -1,21 +1,14 @@
-import './globals.css';
-import type { Metadata } from 'next';
+import "./globals.css";
 
-export const metadata: Metadata = {
-  title: 'OVWI',
-  description: 'SaaS Platform'
+export const metadata = {
+  title: "OVWI Money Engine v3",
+  description: "Production SaaS Billing + API Monetization System"
 };
 
-export default function RootLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#060816] text-white">
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

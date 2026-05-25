@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
@@ -9,6 +9,8 @@ export default function Dashboard() {
   const [email, setEmail] = useState('');
 
   useEffect(() => {
+    if (!supabase) return;
+
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) {
         window.location.href = '/auth/login';
@@ -22,8 +24,10 @@ export default function Dashboard() {
     <>
       <Navbar />
       <div className="dashboard">
-        <h1>Dashboard</h1>
-        <p>{email}</p>
+        <div className="dashboard-top">
+          <h1>OVWI Engine</h1>
+          <p style={{color:'#8da6cf'}}>{email}</p>
+        </div>
       </div>
     </>
   );
