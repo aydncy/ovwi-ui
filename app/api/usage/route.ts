@@ -1,15 +1,22 @@
-let usageMap: Record<string, number> = {};
+let store: Record<string, number> = {};
 
 export async function POST(req: Request) {
   const { email } = await req.json();
 
-  if (!usageMap[email]) usageMap[email] = 0;
+  if (!store[email]) store[email] = 0;
 
-  usageMap[email]++;
+  store[email]++;
+
+  const usage = store[email];
+
+  const limit = usage > 100 ? 1000 : 50;
+
+  const blocked = usage > limit;
 
   return Response.json({
-    usage: usageMap[email],
-    limit: 50,
-    remaining: 50 - usageMap[email]
+    usage,
+    limit,
+    blocked,
+    upgradeRequired: blocked
   });
 }
