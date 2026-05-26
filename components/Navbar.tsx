@@ -1,42 +1,55 @@
-'use client';
+"use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase-browser";
 
 export default function Navbar() {
-  const [session, setSession] = useState<any>(null);
+
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
+
+    if (!supabase) return;
+
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+      setLoggedIn(!!data.session);
     });
 
-    const { data } = supabase.auth.onAuthStateChange((_e, session) => {
-      setSession(session);
-    });
-
-    return () => {
-      data.subscription.unsubscribe();
-    };
   }, []);
 
   return (
-    <div className="navbar">
-      <div className="nav-inner">
-        <a href="/" className="brand">OVWI</a>
+    <div className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 backdrop-blur-xl bg-black/30">
+      <div className="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between">
 
-        <div className="nav-links">
-          <a href="/docs"><button className="nav-btn">Docs</button></a>
+        <Link href="/">
+          <div className="text-3xl font-black tracking-tight bg-gradient-to-r from-cyan-400 to-blue-500 text-transparent bg-clip-text">
+            OVWI
+          </div>
+        </Link>
 
-          {session ? (
-            <a href="/dashboard">
-              <button className="nav-btn primary-btn">Dashboard</button>
-            </a>
+        <div className="flex items-center gap-4">
+
+          <Link href="/pricing">
+            <button className="px-5 h-11 rounded-xl bg-white/10 hover:bg-white/20 transition text-white">
+              Pricing
+            </button>
+          </Link>
+
+          {loggedIn ? (
+            <Link href="/dashboard">
+              <button className="px-5 h-11 rounded-xl bg-cyan-500 hover:bg-cyan-400 transition text-black font-bold">
+                Dashboard
+              </button>
+            </Link>
           ) : (
-            <a href="/auth/login">
-              <button className="nav-btn primary-btn">Login</button>
-            </a>
+            <Link href="/auth/login">
+              <button className="px-5 h-11 rounded-xl bg-cyan-500 hover:bg-cyan-400 transition text-black font-bold">
+                Login
+              </button>
+            </Link>
           )}
+
         </div>
       </div>
     </div>

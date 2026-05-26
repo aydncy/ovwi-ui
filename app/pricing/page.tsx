@@ -1,39 +1,44 @@
-import { UpgradeButton } from "@/components/ui/upgrade-button";
-import { Card } from "@/components/ui/card";
+import Navbar from "@/components/Navbar";
 
 export default function PricingPage() {
+
   return (
-    <div className="max-w-5xl mx-auto pt-32 px-4">
-      <h1 className="text-4xl font-bold mb-8">Pricing</h1>
+    <>
+      <Navbar />
 
-      <div className="grid grid-cols-3 gap-6">
-        <Card>
-          <h2>Pro</h2>
-          <p>$6 / month</p>
+      <div className="min-h-screen pt-40 px-6">
 
-          <UpgradeButton href="/api/checkout/pro">
-            Upgrade
-          </UpgradeButton>
-        </Card>
+        <div className="max-w-6xl mx-auto">
 
-        <Card>
-          <h2>Enterprise</h2>
-          <p>$18 / month</p>
+          <h1 className="text-6xl font-black text-center mb-20">
+            Pricing
+          </h1>
 
-          <UpgradeButton href="/api/checkout/enterprise">
-            Upgrade
-          </UpgradeButton>
-        </Card>
+          <div className="grid md:grid-cols-3 gap-8">
 
-        <Card>
-          <h2>Scale</h2>
-          <p>$49 / month</p>
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-10">
+              <h2 className="text-3xl font-black mb-4">Pro</h2>
+              <div className="text-5xl font-black mb-6">€6</div>
+              <p className="text-slate-300">1K API requests</p>
+            </div>
 
-          <UpgradeButton href="/api/checkout/scale">
-            Upgrade
-          </UpgradeButton>
-        </Card>
+            <div className="rounded-3xl border-2 border-cyan-400 bg-cyan-400/10 p-10 scale-105">
+              <h2 className="text-3xl font-black mb-4">Enterprise</h2>
+              <div className="text-5xl font-black mb-6">€18</div>
+              <p className="text-slate-300">10K API requests</p>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-10">
+              <h2 className="text-3xl font-black mb-4">Scale</h2>
+              <div className="text-5xl font-black mb-6">€49</div>
+              <p className="text-slate-300">100K API requests</p>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
-    </div>
+    </>
   );
 }
