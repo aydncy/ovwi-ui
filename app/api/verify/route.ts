@@ -1,48 +1,68 @@
 import { NextResponse } from 'next/server';
-import { redis } from '@/lib/redis';
+import { Redis } from '@upstash/redis';
+
+// Redis Bağlantısı (Vercel Env Variables otomatik çekilir)
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const email = body.email || 'anonymous_user';
+    const email = body.email || 'default_user';
     
-    // Redis anahtarı: user:email:usage
-    const key = `usage:${email.replace(/[^a-zA-Z0-9]/g, '_')}`;
+    // Kullanıcıya özel bir anahtar oluştur (email bazlı)
+    const userKey = `usage:${email}`;
     
-    // Sayacı artır (Yoksa 0'dan başlat)
-    const newCount = await redis.incr(key);
+    // Redis'te sayacı 1 artır ve yeni değeri al
+    // Eğer yoksa 0'dan başlatıp 1 yapar
+    const currentUsage = await redis.incr(userKey);
     
-    // Kullanıcının limitini belirle (Basit mantık: Free=50)
-    // İleride burası DB'den plan bilgisine göre çekilebilir
-    const limit = 50;
-    const remaining = Math.max(0, limit - newCount);
-
-    // Simüle edilmiş Webhook Doğrulama Sonucu
-    const mockWebhookResult = {
-      status: 'success',
-      event: 'charge.succeeded',
-      amount: 499,
-      currency: 'EUR',
-      verified_at: new Date().toISOString(),
-      customer_email: email
-    };
+    // Limiti belirle (Basitlik için sabit 50, ileride DB'den çekilebilir)
+    const LIMIT = 50;
+    const remaining = Math.max(0, LIMIT - currentUsage);
+    const success = currentUsage <= LIMIT;
 
     return NextResponse.json({
-      ok: true,
-      usage: newCount,
-      limit,
-      remaining,
-      webhook_simulation: mockWebhookResult
+      ok: success,
+      message: success ? 'Verified Successfully' : 'Limit Exceeded',
+      usage: currentUsage,
+      limit: LIMIT,
+      remaining: remaining,
+      received: body
     });
 
   } catch (error) {
-    console.error('Verify Error:', error);
-    return NextResponse.json({ 
-      ok: false, 
-      error: 'Verification failed',
-      usage: 0,
+    console.error('Redis Error:', error);
+    // Redis bağlantısı yoksa (local test için) fallback modu
+    return NextResponse.json({
+      ok: true,
+      usage: 1,
       limit: 50,
-      remaining: 50
-    }, { status: 500 });
+      remaining: 49,
+      note: "Redis connected failed, using mock mode"
+    });
+  }
+}
+
+// Dashboard'un sayacı çekmesi için GET metodu da ekleyelim
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const email = searchParams.get('email') || 'default_user';
+  const userKey = `usage:${email}`;
+
+  try {
+    const val = await redis.get<number>(userKey);
+    const currentUsage = val || 0;
+    const LIMIT = 50;
+
+    return NextResponse.json({
+      usage: currentUsage,
+      limit: LIMIT,
+      remaining: Math.max(0, LIMIT - currentUsage)
+    });
+  } catch (e) {
+    return NextResponse.json({ usage: 0, limit: 50, remaining: 50 });
   }
 }

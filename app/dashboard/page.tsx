@@ -8,29 +8,42 @@ export default function Dashboard() {
   const [email, setEmail] = useState('');
   const [usage, setUsage] = useState(0);
   const [limit, setLimit] = useState(50);
-  const [lastResult, setLastResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
+  // Veriyi Redis'ten çeken fonksiyon
+  const fetchData = async () => {
+    if (!email) return;
+    try {
+      const res = await fetch(`/api/verify?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      setUsage(data.usage);
+      setLimit(data.limit);
+    } catch (e) {
+      console.error("Fetch error", e);
+    }
+  };
+
   useEffect(() => {
-    const init = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) {
-        window.location.href = '/auth/login';
-        return;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) { 
+        window.location.href = '/auth/login'; 
+        return; 
       }
       const userEmail = data.user.email || '';
       setEmail(userEmail);
       
-      // İlk yüklemede mevcut durumu çek (Opsiyonel, şimdilik 0'dan başlıyor)
-      // Gerçek senaryoda burada API'den mevcut kullanım çekilebilir.
-    };
-    init();
+      // Email belli olduktan sonra veriyi çek
+      if(userEmail) {
+        // Küçük bir gecikme ile fetch et (state oturması için)
+        setTimeout(() => fetchData(), 100);
+      }
+    });
   }, []);
 
   const runVerify = async () => {
-    if (!email) return;
     setLoading(true);
     try {
+      // Backend'e POST atarak sayacı artır
       const res = await fetch('/api/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,10 +54,12 @@ export default function Dashboard() {
       if (data.ok) {
         setUsage(data.usage);
         setLimit(data.limit);
-        setLastResult(data.webhook_simulation);
+        alert(`✓ Verified Successfully!\nRemaining: ${data.remaining}`);
+      } else {
+        alert(`⚠️ ${data.message}`);
       }
     } catch (e) {
-      console.error(e);
+      alert("Connection error");
     } finally {
       setLoading(false);
     }
@@ -59,15 +74,15 @@ export default function Dashboard() {
         <div className="dashboard-top">
           <div>
             <h1>Dashboard</h1>
-            <p style={{color:'#8da6cf', marginTop:12}}>{email}</p>
+            <p style={{color:'#8da6cf',marginTop:12}}>{email || 'Loading...'}</p>
           </div>
           <button 
             onClick={runVerify} 
             className="verify-btn" 
-            style={{width:220}}
+            style={{width:220, opacity: loading ? 0.7 : 1}}
             disabled={loading}
           >
-            {loading ? 'Verifying...' : 'Simulate Webhook'}
+            {loading ? 'Processing...' : 'Run Verification'}
           </button>
         </div>
 
@@ -78,38 +93,23 @@ export default function Dashboard() {
           </div>
           <div className="stat">
             <span>Remaining</span>
-            <strong>{limit - usage}</strong>
+            <strong style={{color: limit - usage < 10 ? '#ff4d4d' : '#fff'}}>{limit - usage}</strong>
           </div>
           <div className="stat">
-            <span>Plan</span>
-            <strong>Free (50/mo)</strong>
+            <span>Plan Limit</span>
+            <strong>{limit}</strong>
           </div>
         </div>
 
         <div className="panel">
-          <h2 style={{marginBottom:20}}>Usage Limit</h2>
+          <h2 style={{marginBottom:20}}>Usage Progress</h2>
           <div className="progress">
-            <div style={{ width: `${percent}%` }} />
+            <div style={{width: `${percent}%`, background: percent > 90 ? '#ff4d4d' : 'linear-gradient(90deg,#327bff,#18d6ff)'}} />
           </div>
-          <p style={{marginTop:18, color:'#8da6cf'}}>
+          <p style={{marginTop:18,color:'#8da6cf'}}>
             {usage} / {limit} requests used
           </p>
         </div>
-
-        {lastResult && (
-          <div className="panel">
-            <h2 style={{marginBottom:20}}>Last Verification Result</h2>
-            <div className="result">
-              <pre style={{fontSize:13, lineHeight:1.6}}>
-{`Event: ${lastResult.event}
-Amount: €${lastResult.amount / 100}
-Status: ${lastResult.status}
-Customer: ${lastResult.customer_email}
-Time: ${new Date(lastResult.verified_at).toLocaleTimeString()}`}
-              </pre>
-            </div>
-          </div>
-        )}
 
         <div className="panel">
           <h2 style={{marginBottom:24}}>Upgrade Plan</h2>

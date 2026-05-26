@@ -11,28 +11,27 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setLoggedIn(!!data.session);
-      if (data.session?.user?.email) setEmail(data.session.user.email);
-    });
+    supabase.auth.getSession().then(({ data }) => setLoggedIn(!!data.session));
   }, []);
 
   const verify = async () => {
-    if (!email) {
-      alert("Please login first to track usage.");
-      window.location.href = '/auth/login';
+    if(!email) {
+      alert("Please enter an email address");
       return;
     }
 
     setLoading(true);
+    setResult(null);
     try {
       const res = await fetch('/api/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, event: 'charge.succeeded', amount: 499 })
       });
       const data = await res.json();
       setResult(data);
+    } catch (err) {
+      setResult({ ok: false, error: 'Network error' });
     } finally {
       setLoading(false);
     }
@@ -56,32 +55,32 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-card">
-          <label className="label">Logged in as</label>
-          <input className="input" value={email} readOnly placeholder="Not logged in" style={{opacity:0.7}} />
+          <label className="label">Email (User ID)</label>
+          <input className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" />
           
-          <label className="label" style={{marginTop:15}}>Simulated Webhook Payload</label>
+          <label className="label">Webhook Payload Simulation</label>
           <textarea className="textarea" readOnly defaultValue={`{
   "event": "charge.succeeded",
   "amount": 499,
-  "currency": "EUR"
+  "user": "${email || '...'}"
 }`} />
-
+          
           <button onClick={verify} className="verify-btn">
-            {loading ? 'Processing...' : 'Run Verification & Increment'}
+            {loading ? 'Verifying...' : 'Verify Webhook & Increment Usage'}
           </button>
-
+          
           {result && (
-            <div className="result">
-              <div style={{marginBottom:10, color:'#4ade80', fontWeight:'bold'}}>
-                ✓ Verified Successfully
+            <div className="result" style={{borderColor: result.ok ? '#2ee4ff' : '#ff4d4d'}}>
+              <div style={{marginBottom:10, fontWeight:'bold', color: result.ok ? '#2ee4ff' : '#ff4d4d'}}>
+                {result.ok ? '✓ Success' : '✗ Failed'}
               </div>
-              <pre style={{fontSize:12}}>{JSON.stringify(result, null, 2)}</pre>
+              <pre>{JSON.stringify(result, null, 2)}</pre>
             </div>
           )}
         </div>
       </section>
       
-      {/* Pricing Section (Aynı kaldı) */}
+      {/* Pricing Section (Kısaltılmış hali) */}
       <section className="section">
         <h2 className="section-title">Pricing</h2>
         <div className="pricing">
