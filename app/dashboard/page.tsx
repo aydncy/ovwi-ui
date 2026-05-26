@@ -22,21 +22,12 @@ export default function Dashboard() {
       const userEmail = user.data.user.email || 'anonymous';
       setEmail(userEmail);
 
-      // API'den güncel durumu çek
+      // API'den güncel durumu çek (Bu işlem sayacı 1 artırır, ilk giriş için kabul ediyoruz)
       const res = await fetch('/api/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, checkOnly: true }) 
-        // Not: API'miz şu an her POST'ta artırıyor, checkOnly mantığı API'de yoksa sadece gösterir
+        body: JSON.stringify({ email: userEmail }) 
       });
-      
-      // Eğer API her çağrıda artırıyorsa, dashboard açılışında artırmamak için
-      // ayrı bir GET endpoint'i gerekebilir veya UI'da sadece mevcut state'i gösteririz.
-      // Şimdilik basitlik adına, ilk yüklemede artışı tolere ediyoruz veya sıfırlıyoruz.
-      
-      // Düzeltme: Dashboard açılırken sayacı artırmamak istiyoruz sadece okumak istiyoruz.
-      // Ancak mevcut API POST ve increment yapıyor. 
-      // Hızlı çözüm: İlk render'da artışı kabul et, ama butona basınca tekrar arttır.
       
       const data = await res.json();
       setUsage(data.usage);
@@ -53,7 +44,6 @@ export default function Dashboard() {
   }, []);
 
   const runVerify = async () => {
-    // Kullanıcının maili ile tekrar verify isteği at (Sayaç artar)
     if (!email) return;
     
     try {
@@ -76,6 +66,7 @@ export default function Dashboard() {
     }
   };
 
+  const remaining = limit - usage;
   const percent = Math.min((usage / limit) * 100, 100);
 
   if (loading) return <div className="dashboard"><Navbar /><p>Loading...</p></div>;
@@ -101,7 +92,7 @@ export default function Dashboard() {
           </div>
           <div className="stat">
             <span>Remaining</span>
-            <strong style={{color: remaining < 10 ? '#ff4d4d' : '#fff'}}>{limit - usage}</strong>
+            <strong style={{color: remaining < 10 ? '#ff4d4d' : '#fff'}}>{remaining}</strong>
           </div>
           <div className="stat">
             <span>Plan Limit</span>
