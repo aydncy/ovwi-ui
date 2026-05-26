@@ -1,17 +1,9 @@
-import { NextResponse } from "next/server";
-import { createHash } from "crypto";
+import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
-  const body = await req.json();
-  const email = body.email;
-
-  const key = "ovwi_" + createHash("sha256")
-    .update(email + Date.now())
-    .digest("hex")
-    .slice(0, 32);
-
+export async function POST() {
+  // Gerçek projede burada Supabase'e kayıt atılır
   return NextResponse.json({
     ok: true,
-    apiKey: key
+    apiKey: 'ovwi_' + Math.random().toString(36).slice(2)
   });
 }
