@@ -11,10 +11,19 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setLoggedIn(!!data.session));
+    supabase.auth.getSession().then(({ data }) => {
+      setLoggedIn(!!data.session);
+      if (data.session?.user?.email) setEmail(data.session.user.email);
+    });
   }, []);
 
   const verify = async () => {
+    if (!email) {
+      alert("Please login first to track usage.");
+      window.location.href = '/auth/login';
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch('/api/verify', {
@@ -22,7 +31,8 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
-      setResult(await res.json());
+      const data = await res.json();
+      setResult(data);
     } finally {
       setLoading(false);
     }
@@ -46,22 +56,32 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-card">
-          <label className="label">Email</label>
-          <input className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" />
-          <label className="label">Webhook Payload</label>
-          <textarea className="textarea" defaultValue={`{"event":"charge.succeeded","amount":499}`} />
-          <button onClick={verify} className="verify-btn">{loading ? 'Verifying...' : 'Verify Webhook'}</button>
-          {result && <div className="result"><pre>{JSON.stringify(result, null, 2)}</pre></div>}
+          <label className="label">Logged in as</label>
+          <input className="input" value={email} readOnly placeholder="Not logged in" style={{opacity:0.7}} />
+          
+          <label className="label" style={{marginTop:15}}>Simulated Webhook Payload</label>
+          <textarea className="textarea" readOnly defaultValue={`{
+  "event": "charge.succeeded",
+  "amount": 499,
+  "currency": "EUR"
+}`} />
+
+          <button onClick={verify} className="verify-btn">
+            {loading ? 'Processing...' : 'Run Verification & Increment'}
+          </button>
+
+          {result && (
+            <div className="result">
+              <div style={{marginBottom:10, color:'#4ade80', fontWeight:'bold'}}>
+                ✓ Verified Successfully
+              </div>
+              <pre style={{fontSize:12}}>{JSON.stringify(result, null, 2)}</pre>
+            </div>
+          )}
         </div>
       </section>
-      <section className="section">
-        <h2 className="section-title">Infrastructure Features</h2>
-        <div className="features">
-          <div className="feature"><h3>Authentication</h3><p>Secure session system with Supabase auth.</p></div>
-          <div className="feature"><h3>Analytics</h3><p>Real-time usage counters and request analytics.</p></div>
-          <div className="feature"><h3>Monetization</h3><p>Lemon Squeezy upgrade flows with webhook sync.</p></div>
-        </div>
-      </section>
+      
+      {/* Pricing Section (Aynı kaldı) */}
       <section className="section">
         <h2 className="section-title">Pricing</h2>
         <div className="pricing">
