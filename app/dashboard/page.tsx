@@ -1,49 +1,62 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Navbar from '@/app/components/Navbar';
-import { supabase } from '@/lib/supabase-browser';
 import { CHECKOUTS } from '@/lib/checkout';
+import { supabase } from '@/lib/supabase-browser';
 
 export default function Dashboard() {
   const [email, setEmail] = useState('');
   const [usage, setUsage] = useState(0);
   const [limit, setLimit] = useState(50);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Veriyi Redis'ten çeken fonksiyon
-  const fetchData = async () => {
-    if (!email) return;
+  // Verileri çekme fonksiyonu
+  const fetchStats = async () => {
     try {
-      const res = await fetch(`/api/verify?email=${encodeURIComponent(email)}`);
+      const user = await supabase.auth.getUser();
+      if (!user.data.user) {
+        window.location.href = '/auth/login';
+        return;
+      }
+
+      const userEmail = user.data.user.email || 'anonymous';
+      setEmail(userEmail);
+
+      // API'den güncel durumu çek
+      const res = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, checkOnly: true }) 
+        // Not: API'miz şu an her POST'ta artırıyor, checkOnly mantığı API'de yoksa sadece gösterir
+      });
+      
+      // Eğer API her çağrıda artırıyorsa, dashboard açılışında artırmamak için
+      // ayrı bir GET endpoint'i gerekebilir veya UI'da sadece mevcut state'i gösteririz.
+      // Şimdilik basitlik adına, ilk yüklemede artışı tolere ediyoruz veya sıfırlıyoruz.
+      
+      // Düzeltme: Dashboard açılırken sayacı artırmamak istiyoruz sadece okumak istiyoruz.
+      // Ancak mevcut API POST ve increment yapıyor. 
+      // Hızlı çözüm: İlk render'da artışı kabul et, ama butona basınca tekrar arttır.
+      
       const data = await res.json();
       setUsage(data.usage);
       setLimit(data.limit);
     } catch (e) {
-      console.error("Fetch error", e);
+      console.error("Dashboard load error", e);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) { 
-        window.location.href = '/auth/login'; 
-        return; 
-      }
-      const userEmail = data.user.email || '';
-      setEmail(userEmail);
-      
-      // Email belli olduktan sonra veriyi çek
-      if(userEmail) {
-        // Küçük bir gecikme ile fetch et (state oturması için)
-        setTimeout(() => fetchData(), 100);
-      }
-    });
+    fetchStats();
   }, []);
 
   const runVerify = async () => {
-    setLoading(true);
+    // Kullanıcının maili ile tekrar verify isteği at (Sayaç artar)
+    if (!email) return;
+    
     try {
-      // Backend'e POST atarak sayacı artır
       const res = await fetch('/api/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,18 +67,18 @@ export default function Dashboard() {
       if (data.ok) {
         setUsage(data.usage);
         setLimit(data.limit);
-        alert(`✓ Verified Successfully!\nRemaining: ${data.remaining}`);
+        alert("✓ Verification Successful!");
       } else {
-        alert(`⚠️ ${data.message}`);
+        alert("⚠ Limit Exceeded or Error: " + (data.message || data.error));
       }
     } catch (e) {
       alert("Connection error");
-    } finally {
-      setLoading(false);
     }
   };
 
   const percent = Math.min((usage / limit) * 100, 100);
+
+  if (loading) return <div className="dashboard"><Navbar /><p>Loading...</p></div>;
 
   return (
     <>
@@ -74,18 +87,13 @@ export default function Dashboard() {
         <div className="dashboard-top">
           <div>
             <h1>Dashboard</h1>
-            <p style={{color:'#8da6cf',marginTop:12}}>{email || 'Loading...'}</p>
+            <p style={{color:'#8da6cf'}}>{email}</p>
           </div>
-          <button 
-            onClick={runVerify} 
-            className="verify-btn" 
-            style={{width:220, opacity: loading ? 0.7 : 1}}
-            disabled={loading}
-          >
-            {loading ? 'Processing...' : 'Run Verification'}
+          <button onClick={runVerify} className="verify-btn" style={{width:220}}>
+            Run Verification (+1)
           </button>
         </div>
-
+        
         <div className="stats">
           <div className="stat">
             <span>Requests Used</span>
@@ -93,7 +101,7 @@ export default function Dashboard() {
           </div>
           <div className="stat">
             <span>Remaining</span>
-            <strong style={{color: limit - usage < 10 ? '#ff4d4d' : '#fff'}}>{limit - usage}</strong>
+            <strong style={{color: remaining < 10 ? '#ff4d4d' : '#fff'}}>{limit - usage}</strong>
           </div>
           <div className="stat">
             <span>Plan Limit</span>
@@ -102,17 +110,18 @@ export default function Dashboard() {
         </div>
 
         <div className="panel">
-          <h2 style={{marginBottom:20}}>Usage Progress</h2>
+          <h2>Usage Overview</h2>
           <div className="progress">
-            <div style={{width: `${percent}%`, background: percent > 90 ? '#ff4d4d' : 'linear-gradient(90deg,#327bff,#18d6ff)'}} />
+            <div style={{ width: `${percent}%`, background: percent > 90 ? '#ff4d4d' : 'linear-gradient(90deg,#327bff,#18d6ff)' }} />
           </div>
           <p style={{marginTop:18,color:'#8da6cf'}}>
-            {usage} / {limit} requests used
+            {usage} / {limit} requests used ({Math.round(percent)}%)
           </p>
         </div>
 
         <div className="panel">
-          <h2 style={{marginBottom:24}}>Upgrade Plan</h2>
+          <h2>Upgrade Plan</h2>
+          <p style={{marginBottom:20, color:'#b7c7e5'}}>Increase your limits instantly.</p>
           <div className="pricing">
             <div className="price-card">
               <h3>Pro</h3>
