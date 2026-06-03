@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase-browser';
+import { safeSupabase as supabase } from '@/lib/supabase-safe';
 
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -8,13 +8,13 @@ export default function Navbar() {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const { data } = await supabase.auth.getSession();
+        const { data } = await supabase!.auth.getSession();
         setLoggedIn(!!data.session);
         
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+        const { data: { subscription } } = supabase!.auth.onAuthStateChange((_e: string, session: any) => {
           setLoggedIn(!!session);
         });
-        return () => subscription.unsubscribe();
+        return () => subscription?.unsubscribe();
       } catch (e) {
         console.error("Auth init error", e);
       }
@@ -23,7 +23,7 @@ export default function Navbar() {
   }, []);
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    await supabase!.auth.signOut();
     window.location.href = '/';
   };
 

@@ -1,25 +1,27 @@
 'use client';
-import Navbar from '@/app/components/Navbar';
-import { supabase } from '@/lib/supabase-browser';
+
+import { safeSupabase as supabase } from '@/lib/supabase-safe';
 
 export default function LoginPage() {
   const login = async () => {
-    await supabase.auth.signInWithOAuth({
+    if (!supabase) {
+      console.error('Supabase not configured');
+      return;
+    }
+
+    await supabase!.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/dashboard` }
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
     });
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="auth-page">
-        <div className="auth-box">
-          <h1>Welcome Back</h1>
-          <p>Continue with Google to access your dashboard.</p>
-          <button onClick={login} className="verify-btn">Continue with Google</button>
-        </div>
-      </div>
-    </>
+    <div>
+      <button onClick={login}>
+        Login with Google
+      </button>
+    </div>
   );
 }

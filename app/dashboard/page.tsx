@@ -13,7 +13,7 @@ export default function Dashboard() {
   // Verileri çekme fonksiyonu
   const fetchStats = async () => {
     try {
-      const user = await supabase.auth.getUser();
+      const user = await supabase!.auth.getUser();
       if (!user.data.user) {
         window.location.href = '/auth/login';
         return;

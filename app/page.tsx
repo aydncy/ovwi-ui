@@ -11,7 +11,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setLoggedIn(!!data.session));
+    supabase!.auth.getSession().then(({ data }) => setLoggedIn(!!data.session));
   }, []);
 
   const verify = async () => {
