@@ -1,47 +1,47 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { safeSupabase as supabase } from '@/lib/supabase-safe';
+import { supabase } from '@/lib/supabase-browser';
 
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const { data } = await supabase!.auth.getSession();
-        setLoggedIn(!!data.session);
-        
-        const { data: { subscription } } = supabase!.auth.onAuthStateChange((_e: string, session: any) => {
-          setLoggedIn(!!session);
-        });
-        return () => subscription?.unsubscribe();
-      } catch (e) {
-        console.error("Auth init error", e);
-      }
-    };
-    initAuth();
+    supabase.auth.getSession().then(({ data }) => {
+      setLoggedIn(!!data.session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e: any, session: any) => {
+      setLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const logout = async () => {
-    await supabase!.auth.signOut();
+    await supabase.auth.signOut();
     window.location.href = '/';
   };
 
   return (
     <div className="navbar">
       <div className="nav-inner">
-        <a href="/" className="brand">OVWI</a>
+
+        <div className="brand">OVWI</div>
+
         <div className="nav-links">
-          <a href="/docs"><button className="nav-btn">Docs</button></a>
+          <a href="/docs" className="nav-btn">Docs</a>
+
           {loggedIn ? (
             <>
-              <a href="/dashboard"><button className="nav-btn">Dashboard</button></a>
-              <button onClick={logout} className="nav-btn primary-btn">Logout</button>
+              <a href="/dashboard" className="nav-btn primary-btn">Dashboard</a>
+              <button onClick={logout} className="nav-btn">Logout</button>
             </>
           ) : (
-            <a href="/auth/login"><button className="nav-btn primary-btn">Login</button></a>
+            <a href="/auth/login" className="nav-btn primary-btn">Login</a>
           )}
         </div>
+
       </div>
     </div>
   );

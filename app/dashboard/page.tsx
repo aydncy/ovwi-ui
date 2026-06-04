@@ -4,12 +4,18 @@ import { useEffect, useState } from 'react';
 import { safeSupabase as supabase } from '@/lib/supabase-safe';
 
 export default function Dashboard() {
-  const [remaining, setRemaining] = useState(0);
-  const [apiKey, setApiKey] = useState('');
+  const [remaining, setRemaining] = useState(0</div>
+);
+
+  const [apiKey, setApiKey] = useState(''</div>
+);
+
 
   useEffect(() => {
     const init = async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession(</div>
+);
+
 
       if (!data.session) {
         window.location.href = '/auth/login';
@@ -17,26 +23,44 @@ export default function Dashboard() {
       }
 
       // api key çek
-      const res = await fetch('/api/create-key', { method: 'POST' });
-      const k = await res.json();
+      const res = await fetch('/api/create-key', { method: 'POST' }</div>
+);
 
-      setApiKey(k.key);
+      const k = await res.json(</div>
+);
 
-      runVerify(k.key);
+
+      setApiKey(k.key</div>
+);
+
+
+      runVerify(k.key</div>
+);
+
     };
 
-    init();
-  }, []);
+    init(</div>
+);
+
+  }, []</div>
+);
+
 
   const runVerify = async (key: string) => {
     const res = await fetch('/api/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ apiKey: key })
-    });
+    }</div>
+);
 
-    const data = await res.json();
-    setRemaining(Number(data.remaining) || 0);
+
+    const data = await res.json(</div>
+);
+
+    setRemaining(Number(data.remaining) || 0</div>
+);
+
   };
 
   return (
@@ -91,5 +115,7 @@ export default function Dashboard() {
       </div>
 
     </div>
-  );
+  </div>
+);
+
 }
