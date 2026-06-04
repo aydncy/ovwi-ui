@@ -1,20 +1,27 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // önemli
-);
-
 export async function POST(req: Request) {
   try {
-    const { apiKey } = await req.json();
+    const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-    if (!apiKey) {
-      return NextResponse.json({ error: 'No API key' }, { status: 400 });
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      console.error("ENV ERROR:", {
+        SUPABASE_URL,
+        SUPABASE_KEY
+      });
+
+      return NextResponse.json(
+        { error: 'Supabase env missing' },
+        { status: 500 }
+      );
     }
 
-    // key check
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { apiKey } = await req.json();
+
     const { data: keyData } = await supabase
       .from('api_keys')
       .select('*')
@@ -22,10 +29,9 @@ export async function POST(req: Request) {
       .single();
 
     if (!keyData) {
-      return NextResponse.json({ error: 'Invalid key' }, { status: 401 });
+      return NextResponse.json({ error: 'invalid key' }, { status: 401 });
     }
 
-    // usage artır
     const { data: usageData } = await supabase
       .from('usage')
       .select('*')
@@ -33,7 +39,7 @@ export async function POST(req: Request) {
       .single();
 
     const used = (usageData?.used || 0) + 1;
-    const limit = usageData?.limit || 1000;
+    const limit = usageData?.limit || 50;
 
     await supabase.from('usage').upsert({
       user_id: keyData.user_id,
@@ -47,6 +53,7 @@ export async function POST(req: Request) {
     });
 
   } catch (e) {
+    console.error("VERIFY ERROR:", e);
     return NextResponse.json({ error: 'server error' }, { status: 500 });
   }
 }
