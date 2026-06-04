@@ -5,45 +5,76 @@ import { safeSupabase as supabase } from '@/lib/supabase-safe';
 
 export default function Dashboard() {
   const [remaining, setRemaining] = useState(0);
+  const [apiKey, setApiKey] = useState("ovwi_live_xxxxxxxxxxxxxx");
 
   useEffect(() => {
     const init = async () => {
-      const { data } = await supabase!.auth.getSession();
-
+      const { data } = await supabase.auth.getSession();
       if (!data.session) {
         window.location.href = '/auth/login';
-        return;
       }
     };
-
     init();
   }, []);
 
   const verify = async () => {
-    try {
-      const res = await fetch('/api/verify', { method: 'POST' });
-      const data = await res.json();
-
-      console.log('verify result:', data);
-
-      setRemaining(Number(data.remaining) || 0);
-    } catch (e) {
-      console.error('verify error', e);
-    }
+    const res = await fetch('/api/verify', { method: 'POST' });
+    const data = await res.json();
+    setRemaining(Number(data.remaining) || 0);
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl mb-4">Dashboard</h1>
+    <div className="max-w-6xl mx-auto p-8">
 
-      <p className="mb-4">Remaining: {remaining ?? 0}</p>
+      <h1 className="text-5xl font-bold mb-2">Dashboard</h1>
 
-      <button
-        onClick={verify}
-        className="px-4 py-2 bg-black text-white rounded-xl"
-      >
-        Run Verify
-      </button>
+      <div className="grid md:grid-cols-3 gap-4 mt-6">
+        <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
+          <p>Usage</p>
+          <h2 className="text-3xl mt-2">0</h2>
+        </div>
+
+        <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
+          <p>Limit</p>
+          <h2 className="text-3xl text-green-400 mt-2">1000</h2>
+        </div>
+
+        <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
+          <p>Plan</p>
+          <h2 className="text-3xl text-yellow-400 mt-2">pro</h2>
+        </div>
+      </div>
+
+      <div className="mt-6 p-6 bg-white/5 rounded-2xl border border-white/10">
+        <p className="mb-2">API Key</p>
+
+        <div className="flex gap-2">
+          <input
+            value={apiKey}
+            readOnly
+            className="flex-1 p-3 rounded-xl bg-black/40"
+          />
+          <button
+            onClick={() => navigator.clipboard.writeText(apiKey)}
+            className="px-4 bg-cyan-500 rounded-xl"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-6 p-6 bg-white/5 rounded-2xl border border-white/10">
+        <p className="mb-2">Remaining</p>
+        <h2 className="text-4xl">{remaining}</h2>
+
+        <button
+          onClick={verify}
+          className="mt-4 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl"
+        >
+          Run Verify
+        </button>
+      </div>
+
     </div>
   );
 }
