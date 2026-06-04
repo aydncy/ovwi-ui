@@ -1,6 +1,7 @@
 import './globals.css';
+import type { ReactNode } from 'react';
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="bg-[#020617] text-white">
@@ -9,10 +10,10 @@ export default function RootLayout({ children }) {
           <nav className="flex justify-between items-center px-8 py-4 border-b border-white/10">
             <div className="text-xl font-bold text-cyan-400">OVWI</div>
 
-            <div className="flex gap-4">
-              <a href="/" className="px-4 py-2 bg-white/5 rounded-xl">Home</a>
-              <a href="/docs" className="px-4 py-2 bg-white/5 rounded-xl">Docs</a>
-              <a href="/dashboard" className="px-4 py-2 bg-white/5 rounded-xl">Dashboard</a>
+            <div className="flex gap-4 text-sm">
+              <a href="/" className="hover:text-cyan-400">Home</a>
+              <a href="/docs" className="hover:text-cyan-400">Docs</a>
+              <a href="/dashboard" className="hover:text-cyan-400">Dashboard</a>
             </div>
           </nav>
 
