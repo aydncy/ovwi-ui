@@ -1,4 +1,5 @@
 import './globals.css';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -10,10 +11,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <nav className="flex justify-between items-center px-8 py-4 border-b border-white/10">
             <div className="text-xl font-bold text-cyan-400">OVWI</div>
 
-            <div className="flex gap-4 text-sm">
-              <a href="/" className="hover:text-cyan-400">Home</a>
-              <a href="/docs" className="hover:text-cyan-400">Docs</a>
-              <a href="/dashboard" className="hover:text-cyan-400">Dashboard</a>
+            <div className="flex gap-6 text-sm">
+              <Link href="/">Home</Link>
+              <Link href="/docs">Docs</Link>
+              <Link href="/dashboard">Dashboard</Link>
             </div>
           </nav>
 
