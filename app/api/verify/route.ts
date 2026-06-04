@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
-  try {
-    console.log("VERIFY HIT");
+let usage = 0;
+const LIMIT = 1000;
 
-    return NextResponse.json({
-      ok: true,
-      remaining: 999
-    });
+export async function POST() {
+  usage++;
 
-  } catch (e) {
-    return NextResponse.json({ error: "fail" }, { status: 500 });
-  }
+  const remaining = LIMIT - usage;
+
+  return NextResponse.json({
+    ok: true,
+    remaining
+  });
 }

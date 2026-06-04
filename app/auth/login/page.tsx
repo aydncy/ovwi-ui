@@ -8,17 +8,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex min-h-screen items-center justify-center px-6">
 
-      <div className="bg-white/5 p-8 rounded-2xl border border-white/10 w-full max-w-md">
-        <h1 className="text-3xl mb-4">Login</h1>
+      <div className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-xl p-8 rounded-2xl shadow-2xl">
+
+        <h1 className="text-3xl font-bold mb-2">Login</h1>
+        <p className="text-white/60 mb-6">Continue to your dashboard</p>
 
         <button
           onClick={login}
-          className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl"
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:opacity-90"
         >
           Continue with Google
         </button>
+
       </div>
 
     </div>
