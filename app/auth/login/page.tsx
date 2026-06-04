@@ -4,24 +4,23 @@ import { safeSupabase as supabase } from '@/lib/supabase-safe';
 
 export default function LoginPage() {
   const login = async () => {
-    if (!supabase) {
-      console.error('Supabase not configured');
-      return;
-    }
-
-    await supabase!.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
+    await supabase.auth.signInWithOAuth({
+      provider: 'google'
     });
   };
 
   return (
-    <div>
-      <button onClick={login}>
-        Login with Google
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <div className="w-full max-w-md p-6 rounded-2xl shadow-lg border">
+        <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
+
+        <button
+          onClick={login}
+          className="w-full px-4 py-2 bg-black text-white rounded-xl"
+        >
+          Continue with Google
+        </button>
+      </div>
     </div>
   );
 }

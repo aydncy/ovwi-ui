@@ -7,6 +7,11 @@ export const safeSupabase = {
       return supabase.auth.getSession();
     },
 
+    getUser: async () => {
+      if (!supabase) return { data: { user: null } };
+      return supabase.auth.getUser();
+    },
+
     onAuthStateChange: (cb: any) => {
       if (!supabase) {
         return { data: { subscription: null } };
