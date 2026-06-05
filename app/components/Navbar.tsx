@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase-browser';
 
 export default function Navbar() {
@@ -11,9 +12,10 @@ export default function Navbar() {
       setLoggedIn(!!data.session);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e: any, session: any) => {
-      setLoggedIn(!!session);
-    });
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange((_e: any, session: any) => {
+        setLoggedIn(!!session);
+      });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -27,18 +29,18 @@ export default function Navbar() {
     <div className="navbar">
       <div className="nav-inner">
 
-        <div className="brand">OVWI</div>
+        <Link href="/" className="brand">OVWI</Link>
 
         <div className="nav-links">
-          <a href="/docs" className="nav-btn">Docs</a>
+          <Link href="/docs" className="nav-btn">Docs</Link>
 
           {loggedIn ? (
             <>
-              <a href="/dashboard" className="nav-btn primary-btn">Dashboard</a>
+              <Link href="/dashboard" className="nav-btn">Dashboard</Link>
               <button onClick={logout} className="nav-btn">Logout</button>
             </>
           ) : (
-            <a href="/auth/login" className="nav-btn primary-btn">Login</a>
+            <Link href="/auth/login" className="nav-btn">Login</Link>
           )}
         </div>
 
