@@ -23,7 +23,7 @@ export default function Home() {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch('/api/verify', {
+      const res = await fetch('/api/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, event: 'charge.succeeded', amount: 499 })
