@@ -6,7 +6,13 @@ export async function POST(req: Request) {
     const token = req.headers.get('Authorization');
 
     if (!token) {
-      return NextResponse.json({ error: 'no auth' }, { status: 401 });
+      
+await supabase.from('usage_logs').insert({
+  user_id: userId,
+  action: 'verify'
+});
+
+return NextResponse.json({ error: 'no auth' }, { status: 401 });
     }
 
     const supabase = createClient(
