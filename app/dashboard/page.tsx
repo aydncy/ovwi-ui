@@ -1,13 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Navbar from '@/app/components/Navbar';
 import { supabase } from '@/lib/supabase-browser';
-import { CHECKOUTS } from '@/lib/checkout';
 
 export default function Dashboard() {
   const [email, setEmail] = useState('');
-  const [usage, setUsage] = useState(12);
+  const [usage, setUsage] = useState(0);
   const [limit, setLimit] = useState(50);
 
   useEffect(() => {
@@ -22,22 +20,34 @@ export default function Dashboard() {
 
   const runVerify = async () => {
     try {
+      const session = await supabase!.auth.getSession();
 
-    const res = await fetch('/api/verify', { method: 'POST' });
-    const data = await res.json();
+      const res = await fetch('/api/verify', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + session.data.session.access_token
+        }
+      });
 
-    setUsage(Number(data.usage) || 0);
-    setLimit(Number(data.limit) || 50);
-  } catch(e) {
-    console.error("verify failed", e);
-  }
-};
+      const data = await res.json();
 
-  const percent = Math.min(limit ? (usage / limit) * 100 : 0, 100);
+      if (data.upgrade) {
+        window.location.href = '/upgrade';
+        return;
+      }
+
+      setUsage(Number(data.usage) || 0);
+      setLimit(Number(data.limit) || 50);
+
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const percent = limit ? (usage / limit) * 100 : 0;
 
   return (
-    <div className="dashboard hero">
-
+    <div className="dashboard">
 
       <div className="dashboard-top">
         <h1>Dashboard</h1>
@@ -78,14 +88,8 @@ export default function Dashboard() {
 
       <div className="panel">
         <h3>Upgrade</h3>
-
-        <button onClick={() => window.location.href = CHECKOUTS.pro} className="verify-btn">
-          Buy Pro
-        </button>
-
-        <button onClick={() => window.location.href = CHECKOUTS.enterprise} className="verify-btn">
-          Buy Enterprise
-        </button>
+        <button className="verify-btn">Buy Pro</button>
+        <button className="verify-btn">Buy Enterprise</button>
       </div>
 
     </div>

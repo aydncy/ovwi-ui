@@ -3,57 +3,67 @@ import { createClient } from '@supabase/supabase-js';
 
 export async function POST(req: Request) {
   try {
-    const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-    const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+    const token = req.headers.get('Authorization');
 
-    if (!SUPABASE_URL || !SUPABASE_KEY) {
-      console.error("ENV ERROR:", {
-        SUPABASE_URL,
-        SUPABASE_KEY
-      });
+    if (!token) {
+      return NextResponse.json({ error: 'no auth' }, { status: 401 });
+    }
 
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data: userData } = await supabase.auth.getUser(
+      token.replace('Bearer ', '')
+    );
+
+    if (!userData.user) {
+      return NextResponse.json({ error: 'no user' }, { status: 401 });
+    }
+
+    const userId = userData.user.id;
+
+    let { data: usage } = await supabase
+      .from('users_usage')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (!usage) {
+      const insert = await supabase.from('users_usage')
+        .insert({
+          user_id: userId,
+          usage: 0,
+          monthly_limit: 50
+        })
+        .select()
+        .single();
+
+      usage = insert.data;
+    }
+
+    if (usage.usage >= usage.monthly_limit) {
       return NextResponse.json(
-        { error: 'Supabase env missing' },
-        { status: 500 }
+        { error: 'limit reached', upgrade: true },
+        { status: 403 }
       );
     }
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const newUsage = usage.usage + 1;
 
-    const { apiKey } = await req.json();
-
-    const { data: keyData } = await supabase
-      .from('api_keys')
-      .select('*')
-      .eq('key', apiKey)
-      .single();
-
-    if (!keyData) {
-      return NextResponse.json({ error: 'invalid key' }, { status: 401 });
-    }
-
-    const { data: usageData } = await supabase
-      .from('usage')
-      .select('*')
-      .eq('user_id', keyData.user_id)
-      .single();
-
-    const used = (usageData?.used || 0) + 1;
-    const limit = usageData?.limit || 50;
-
-    await supabase.from('usage').upsert({
-      user_id: keyData.user_id,
-      used,
-      limit
-    });
+    await supabase.from('users_usage')
+      .update({ usage: newUsage })
+      .eq('user_id', userId);
 
     return NextResponse.json({
       ok: true,
-      remaining: limit - used
+      usage: newUsage,
+      limit: usage.monthly_limit,
+      remaining: usage.monthly_limit - newUsage
     });
 
   } catch (e) {
-    console.error("VERIFY ERROR:", e);
     return NextResponse.json({ error: 'server error' }, { status: 500 });
   }
 }
