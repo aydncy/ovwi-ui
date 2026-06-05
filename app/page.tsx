@@ -29,7 +29,11 @@ export default function Home() {
         body: JSON.stringify({ email, event: 'charge.succeeded', amount: 499 })
       });
       const data = await res.json();
-      setResult(data);
+      if (!res.ok) {
+  setResult({ error: "API error", data });
+  return;
+}
+setResult(data);
     } catch (err) {
       setResult({ ok: false, error: 'Network error' });
     } finally {
