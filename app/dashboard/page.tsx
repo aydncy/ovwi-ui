@@ -11,7 +11,7 @@ export default function Dashboard() {
   const [limit, setLimit] = useState(50);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    supabase!.auth.getUser().then(({ data }) => {
       if (!data.user) {
         window.location.href = '/auth/login';
         return;
