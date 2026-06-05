@@ -1,121 +1,89 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { safeSupabase as supabase } from '@/lib/supabase-safe';
+import Navbar from '@/app/components/Navbar';
+import { supabase } from '@/lib/supabase-browser';
+import { CHECKOUTS } from '@/lib/checkout';
 
 export default function Dashboard() {
-  const [remaining, setRemaining] = useState(0</div>
-);
-
-  const [apiKey, setApiKey] = useState(''</div>
-);
-
+  const [email, setEmail] = useState('');
+  const [usage, setUsage] = useState(12);
+  const [limit, setLimit] = useState(50);
 
   useEffect(() => {
-    const init = async () => {
-      const { data } = await supabase.auth.getSession(</div>
-);
-
-
-      if (!data.session) {
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) {
         window.location.href = '/auth/login';
         return;
       }
+      setEmail(data.user.email || '');
+    });
+  }, []);
 
-      // api key çek
-      const res = await fetch('/api/create-key', { method: 'POST' }</div>
-);
+  const runVerify = async () => {
+    const res = await fetch('/api/verify', { method: 'POST' });
+    const data = await res.json();
 
-      const k = await res.json(</div>
-);
-
-
-      setApiKey(k.key</div>
-);
-
-
-      runVerify(k.key</div>
-);
-
-    };
-
-    init(</div>
-);
-
-  }, []</div>
-);
-
-
-  const runVerify = async (key: string) => {
-    const res = await fetch('/api/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ apiKey: key })
-    }</div>
-);
-
-
-    const data = await res.json(</div>
-);
-
-    setRemaining(Number(data.remaining) || 0</div>
-);
-
+    setUsage(data.usage);
+    setLimit(data.limit);
   };
 
+  const percent = Math.min((usage / limit) * 100, 100);
+
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
+    <div className="dashboard">
 
-      <h1 className="text-5xl font-bold mb-6">Dashboard</h1>
+      <Navbar />
 
-      <div className="grid md:grid-cols-3 gap-4">
-
-        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur">
-          <p>Usage</p>
-          <h2 className="text-3xl">-</h2>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur">
-          <p>Limit</p>
-          <h2 className="text-3xl text-green-400">1000</h2>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur">
-          <p>Plan</p>
-          <h2 className="text-3xl text-yellow-400">Pro</h2>
-        </div>
-
+      <div className="dashboard-top">
+        <h1>Dashboard</h1>
+        <span>{email}</span>
       </div>
 
-      <div className="mt-6 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur">
-
-        <p className="text-white/60 mb-2">API Key</p>
-
-        <div className="flex gap-2">
-          <input value={apiKey} readOnly className="flex-1 p-3 bg-black/40 rounded-xl" />
-          <button onClick={() => navigator.clipboard.writeText(apiKey)} className="px-4 bg-cyan-500 rounded-xl">
-            Copy
-          </button>
+      <div className="stats">
+        <div className="stat">
+          <span>Requests</span>
+          <strong>{usage}</strong>
         </div>
 
+        <div className="stat">
+          <span>Remaining</span>
+          <strong>{limit - usage}</strong>
+        </div>
+
+        <div className="stat">
+          <span>Plan</span>
+          <strong>Free</strong>
+        </div>
       </div>
 
-      <div className="mt-6 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur">
-
-        <p className="text-white/60 mb-2">Remaining</p>
-        <h2 className="text-4xl">{remaining}</h2>
-
-        <button
-          onClick={() => runVerify(apiKey)}
-          className="mt-4 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500"
-        >
-          Run Verify
+      <div className="panel">
+        <button onClick={runVerify} className="verify-btn">
+          Run Verification
         </button>
 
+        <div className="progress">
+          <div style={{ width: percent + '%' }} />
+        </div>
+      </div>
+
+      <div className="panel">
+        <h3>Usage</h3>
+        <p>{usage} / {limit} requests used</p>
+      </div>
+
+      <div className="panel">
+        <h3>Upgrade</h3>
+
+        <button onClick={() => window.location.href = CHECKOUTS.pro} className="verify-btn">
+          Buy Pro
+        </button>
+
+        <button onClick={() => window.location.href = CHECKOUTS.enterprise} className="verify-btn">
+          Buy Enterprise
+        </button>
       </div>
 
     </div>
-  </div>
-);
-
+  );
 }
