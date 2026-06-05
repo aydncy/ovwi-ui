@@ -8,12 +8,12 @@ export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    supabase!.auth.getSession().then(({ data }) => {
       setLoggedIn(!!data.session);
     });
 
     const { data: { subscription } } =
-      supabase.auth.onAuthStateChange((_e: any, session: any) => {
+      supabase!.auth.onAuthStateChange((_e: any, session: any) => {
         setLoggedIn(!!session);
       });
 
@@ -21,7 +21,7 @@ export default function Navbar() {
   }, []);
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    await supabase!.auth.signOut();
     window.location.href = '/';
   };
 
