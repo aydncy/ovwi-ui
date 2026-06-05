@@ -41,6 +41,27 @@ export default function Home() {
         )}
       </div>
 
+<section style={{marginTop:'80px'}}>
+  <h2>What you get</h2>
+
+  <div style={{display:'flex',gap:'20px',marginTop:'20px'}}>
+    <div>
+      <h3>API Infrastructure</h3>
+      <p>Production-ready API with authentication and usage tracking.</p>
+    </div>
+
+    <div>
+      <h3>Usage Control</h3>
+      <p>Built-in limits, tracking, and scalable plans.</p>
+    </div>
+
+    <div>
+      <h3>Developer Ready</h3>
+      <p>Simple API, fast integration, real-world usage.</p>
+    </div>
+  </div>
+</section>
+
       <div className="hero-card">
         <span className="label">API Example</span>
 
@@ -51,7 +72,7 @@ export default function Home() {
         </pre>
 
         <p style={{ marginTop: 10 }}>
-          Powered by OVWI • ClinicFlowAC
+          
         </p>
 
       </div>
@@ -59,3 +80,9 @@ export default function Home() {
     </div>
   );
 }
+
+<section style="margin-top:80px;text-align:center">
+  <p style="color:#888">
+    Trusted by developers building real applications
+  </p>
+</section>
