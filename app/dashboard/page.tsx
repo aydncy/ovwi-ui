@@ -19,30 +19,37 @@ export default function Dashboard() {
   }, []);
 
   const runVerify = async () => {
-    try {
-      const session = await supabase!.auth.getSession();
+  try {
+    const session = await supabase!.auth.getSession();
 
-      const res = await fetch('/api/verify', {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + session.data.session!.access_token
-        }
-      });
+    const token = session.data.session?.access_token;
 
-      const data = await res.json();
-
-      if (data.upgrade) {
-        window.location.href = '/upgrade';
-        return;
-      }
-
-      setUsage(Number(data.usage) || 0);
-      setLimit(Number(data.limit) || 50);
-
-    } catch (e) {
-      console.error(e);
+    if (!token) {
+      window.location.href = '/auth/login';
+      return;
     }
-  };
+
+    const res = await fetch('/api/verify', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    });
+
+    const data = await res.json();
+
+    if (data.upgrade) {
+      window.location.href = '/upgrade';
+      return;
+    }
+
+    setUsage(Number(data.usage) || 0);
+    setLimit(Number(data.limit) || 50);
+
+  } catch (e) {
+    console.error('verify error', e);
+  }
+};
 
   const percent = limit ? (usage / limit) * 100 : 0;
 
