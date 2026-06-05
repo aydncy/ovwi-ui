@@ -6,13 +6,7 @@ export async function POST(req: Request) {
     const token = req.headers.get('Authorization');
 
     if (!token) {
-      
-await supabase.from('usage_logs').insert({
-  user_id: userId,
-  action: 'verify'
-});
-
-return NextResponse.json({ error: 'no auth' }, { status: 401 });
+      return NextResponse.json({ error: 'no auth' }, { status: 401 });
     }
 
     const supabase = createClient(
@@ -20,15 +14,15 @@ return NextResponse.json({ error: 'no auth' }, { status: 401 });
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const { data: userData } = await supabase.auth.getUser(
+    const { data } = await supabase.auth.getUser(
       token.replace('Bearer ', '')
     );
 
-    if (!userData.user) {
+    const userId = data.user?.id;
+
+    if (!userId) {
       return NextResponse.json({ error: 'no user' }, { status: 401 });
     }
-
-    const userId = userData.user.id;
 
     let { data: usage } = await supabase
       .from('users_usage')
@@ -49,11 +43,8 @@ return NextResponse.json({ error: 'no auth' }, { status: 401 });
       usage = insert.data;
     }
 
-    if (usage.usage >= usage.monthly_limit) { return Response.json({ upgrade: true }); } {
-      return NextResponse.json(
-        { error: 'limit reached', upgrade: true },
-        { status: 403 }
-      );
+    if (usage.usage >= usage.monthly_limit) {
+      return NextResponse.json({ upgrade: true }, { status: 403 });
     }
 
     const newUsage = usage.usage + 1;
@@ -61,6 +52,12 @@ return NextResponse.json({ error: 'no auth' }, { status: 401 });
     await supabase.from('users_usage')
       .update({ usage: newUsage })
       .eq('user_id', userId);
+
+    // ✅ LOG BURADA OLMALI (supabase tanımlandıktan sonra)
+    await supabase.from('usage_logs').insert({
+      user_id: userId,
+      action: 'verify'
+    });
 
     return NextResponse.json({
       ok: true,
@@ -70,6 +67,6 @@ return NextResponse.json({ error: 'no auth' }, { status: 401 });
     });
 
   } catch (e) {
-    return NextResponse.json({ error: 'server error' }, { status: 500 });
+    return NextResponse.json({ error: 'server error' });
   }
 }
