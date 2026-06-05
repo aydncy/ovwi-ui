@@ -81,8 +81,8 @@ export default function Home() {
   );
 }
 
-<section style="margin-top:80px;text-align:center">
-  <p style="color:#888">
+<section style={{ marginTop: "80px", textAlign: "center" }}>
+  <p style={{ color: "#888" }}>
     Trusted by developers building real applications
   </p>
 </section>
