@@ -21,17 +21,22 @@ export default function Dashboard() {
   }, []);
 
   const runVerify = async () => {
+    try {
+
     const res = await fetch('/api/verify', { method: 'POST' });
     const data = await res.json();
 
-    setUsage(data.usage);
-    setLimit(data.limit);
-  };
+    setUsage(Number(data.usage) || 0);
+    setLimit(Number(data.limit) || 50);
+  } catch(e) {
+    console.error("verify failed", e);
+  }
+};
 
-  const percent = Math.min((usage / limit) * 100, 100);
+  const percent = Math.min(limit ? (usage / limit) * 100 : 0, 100);
 
   return (
-    <div className="dashboard">
+    <div className="dashboard hero">
 
 
       <div className="dashboard-top">
