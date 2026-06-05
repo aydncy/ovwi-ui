@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       usage = insert.data;
     }
 
-    if (usage.usage >= usage.monthly_limit) {
+    if (usage.usage >= usage.monthly_limit) { return Response.json({ upgrade: true }); } {
       return NextResponse.json(
         { error: 'limit reached', upgrade: true },
         { status: 403 }

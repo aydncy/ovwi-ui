@@ -14,7 +14,16 @@ export default function Upgrade() {
 
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="verify-btn">
-            Buy Pro – €6
+            Buy Pro – €6</button>
+
+<button onClick={async () => {
+  const res = await fetch('/api/checkout', {
+    method: 'POST',
+    body: JSON.stringify({ email: 'test@gmail.com' })
+  });
+  const data = await res.json();
+  window.location.href = data.url;
+}} className="verify-btn">
           </button>
 
           <button className="verify-btn">
