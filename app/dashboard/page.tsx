@@ -7,6 +7,7 @@ export default function Dashboard() {
   const [email, setEmail] = useState('');
   const [usage, setUsage] = useState(0);
   const [limit, setLimit] = useState(50);
+  const [apiKey, setApiKey] = useState('');
 
   useEffect(() => {
     supabase!.auth.getUser().then(({ data }) => {
@@ -18,16 +19,25 @@ export default function Dashboard() {
     });
   }, []);
 
-  const runVerify = async () => {
-  try {
+  const generateKey = async () => {
     const session = await supabase!.auth.getSession();
 
+    const res = await fetch('/api/create-key', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + session.data.session!.access_token
+      }
+    });
+
+    const data = await res.json();
+    setApiKey(data.key);
+  };
+
+  const runVerify = async () => {
+    const session = await supabase!.auth.getSession();
     const token = session.data.session?.access_token;
 
-    if (!token) {
-      window.location.href = '/auth/login';
-      return;
-    }
+    if (!token) return;
 
     const res = await fetch('/api/verify', {
       method: 'POST',
@@ -43,13 +53,9 @@ export default function Dashboard() {
       return;
     }
 
-    setUsage(Number(data.usage) || 0);
-    setLimit(Number(data.limit) || 50);
-
-  } catch (e) {
-    console.error('verify error', e);
-  }
-};
+    setUsage(data.usage);
+    setLimit(data.limit);
+  };
 
   const percent = limit ? (usage / limit) * 100 : 0;
 
@@ -79,23 +85,6 @@ export default function Dashboard() {
       </div>
 
       <div className="panel">
-        <h3>API Key</h3>
-        <button onClick={async () => {
-          const session = await supabase!.auth.getSession();
-          const res = await fetch('/api/create-key', {
-            method: 'POST',
-            headers: {
-              Authorization: 'Bearer ' + session.data.session!.access_token
-            }
-          });
-          const data = await res.json();
-          alert("API KEY: " + data.key);
-        }} className="verify-btn">
-          Generate API Key
-        </button>
-      </div>
-
-      <div className="panel">
         <button onClick={runVerify} className="verify-btn">
           Run Verification
         </button>
@@ -106,14 +95,17 @@ export default function Dashboard() {
       </div>
 
       <div className="panel">
-        <h3>Usage</h3>
-        <p>{usage} / {limit} requests used</p>
-      </div>
+        <h3>API Key</h3>
 
-      <div className="panel">
-        <h3>Upgrade</h3>
-        <button className="verify-btn">Buy Pro</button>
-        <button className="verify-btn">Buy Enterprise</button>
+        <button onClick={generateKey} className="verify-btn">
+          Generate Key
+        </button>
+
+        {apiKey && (
+          <div style={{ marginTop: 10 }}>
+            <code>{apiKey}</code>
+          </div>
+        )}
       </div>
 
     </div>
