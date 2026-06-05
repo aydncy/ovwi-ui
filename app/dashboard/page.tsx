@@ -25,7 +25,7 @@ export default function Dashboard() {
       const res = await fetch('/api/verify', {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer ' + session.data.session.access_token
+          Authorization: 'Bearer ' + session.data.session!.access_token
         }
       });
 
