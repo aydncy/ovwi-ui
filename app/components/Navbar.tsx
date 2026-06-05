@@ -29,19 +29,34 @@ export default function Navbar() {
     <div className="navbar">
       <div className="nav-inner">
 
-        <Link href="/" className="brand">OVWI</Link>
+        {/* LOGO */}
+        /
+          OVWI
+        </Link>
 
+        {/* LINKS */}
         <div className="nav-links">
-          <Link href="/docs" className="nav-btn">Docs</Link>
+
+          /docs
+            Docs
+          </Link>
 
           {loggedIn ? (
             <>
-              <Link href="/dashboard" className="nav-btn">Dashboard</Link>
-              <button onClick={logout} className="nav-btn">Logout</button>
+              /dashboard
+                Dashboard
+              </Link>
+
+              <button onClick={logout} className="nav-btn">
+                Logout
+              </button>
             </>
           ) : (
-            <Link href="/auth/login" className="nav-btn">Login</Link>
+            /auth/login
+              Login
+            </Link>
           )}
+
         </div>
 
       </div>
