@@ -68,7 +68,18 @@ export default function Dashboard() {
     <div className="dashboard">
 
       <div className="dashboard-top">
-        <h1>Dashboard</h1>
+        <h1>
+  Dashboard
+  <span style={{
+    marginLeft:'10px',
+    padding:'4px 10px',
+    background:'#222',
+    borderRadius:'6px',
+    fontSize:'12px'
+  }}>
+    {limit > 50 ? "PRO" : "FREE"}
+  </span>
+</h1>
         <span>{email}</span>
       </div>
 
@@ -77,6 +88,17 @@ export default function Dashboard() {
     Limit reached. Upgrade to continue.
   </div>
 )}
+{usage >= limit * 0.8 && usage < limit && (
+  <div style={{
+    background:'#ff9f1c',
+    padding:'12px',
+    borderRadius:'10px',
+    marginBottom:'20px'
+  }}>
+    ⚡ You are close to your limit. Upgrade soon.
+  </div>
+)}
+
 <div className="stats">
         <div className="stat">
           <span>Requests</span>
@@ -95,7 +117,15 @@ export default function Dashboard() {
       </div>
 
       <div className="panel">
-        <button onClick={runVerify} className="verify-btn">
+        <button
+  onClick={runVerify}
+  className="verify-btn"
+  disabled={usage >= limit}
+  style={{
+    opacity: usage >= limit ? 0.5 : 1,
+    cursor: usage >= limit ? 'not-allowed' : 'pointer'
+  }}
+>
           Run Verification
         </button>
 

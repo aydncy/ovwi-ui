@@ -5,10 +5,10 @@ export default function Upgrade() {
     <div className="auth-page">
       <div className="auth-box">
 
-        <h1>Upgrade Required</h1>
+        <h1>Upgrade to Pro and unlock full access</h1>
 
         <p>
-          You have reached your free usage limit.
+          You reached your free limit. Upgrade now to continue using OVWI without interruptions.
           Upgrade your plan to continue using OVWI APIs.
         </p>
 
