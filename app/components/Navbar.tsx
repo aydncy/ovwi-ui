@@ -30,20 +30,20 @@ export default function Navbar() {
       <div className="nav-inner">
 
         {/* LOGO */}
-        /
+        <Link href="/" className="brand">
           OVWI
         </Link>
 
         {/* LINKS */}
         <div className="nav-links">
 
-          /docs
+          <Link href="/docs" className="nav-btn">
             Docs
           </Link>
 
           {loggedIn ? (
             <>
-              /dashboard
+              <Link href="/dashboard" className="nav-btn">
                 Dashboard
               </Link>
 
@@ -52,7 +52,7 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            /auth/login
+            <Link href="/auth/login" className="nav-btn">
               Login
             </Link>
           )}

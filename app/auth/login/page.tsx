@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase-browser';
 
 export default function LoginPage() {
   const login = async () => {
-    await supabase.auth.signInWithOAuth({
+    await supabase!.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/dashboard`,
