@@ -10,15 +10,25 @@ export default function Home() {
       padding: '60px'
     }}>
 
-      {/* 🔥 Glow Effect */}
+      {/* 🔥 MULTI LAYER GLOW */}
       <div style={{
         position: 'absolute',
-        width: '500px',
-        height: '500px',
-        background: 'radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)',
+        width: '600px',
+        height: '600px',
+        background: 'radial-gradient(circle, rgba(59,130,246,0.25), transparent 70%)',
+        filter: 'blur(140px)',
+        top: '80px',
+        left: '180px'
+      }} />
+
+      <div style={{
+        position: 'absolute',
+        width: '400px',
+        height: '400px',
+        background: 'radial-gradient(circle, rgba(6,182,212,0.2), transparent 70%)',
         filter: 'blur(120px)',
-        top: '100px',
-        left: '200px'
+        top: '200px',
+        right: '200px'
       }} />
 
       {/* ✅ HERO */}
@@ -41,27 +51,55 @@ export default function Home() {
           usage tracking, and monetization built-in.
         </p>
 
-        {/* ✅ CTA */}
+        {/* 🔥 CTA */}
         <div style={{marginTop:'30px', display:'flex', gap:'12px'}}>
+
           <button
             onClick={() => window.location.href='/auth/login'}
-            className="verify-btn"
+            style={{
+              padding:'16px 32px',
+              borderRadius:'10px',
+              background:'linear-gradient(90deg,#3b82f6,#06b6d4)',
+              border:'none',
+              color:'white',
+              fontWeight:'700',
+              cursor:'pointer',
+              boxShadow:'0 20px 50px rgba(59,130,246,0.5)',
+              transition:'all 0.2s ease'
+            }}
+            onMouseOver={(e)=>{
+              e.currentTarget.style.transform='translateY(-3px)';
+              e.currentTarget.style.boxShadow='0 30px 60px rgba(59,130,246,0.7)';
+            }}
+            onMouseOut={(e)=>{
+              e.currentTarget.style.transform='translateY(0)';
+              e.currentTarget.style.boxShadow='0 20px 50px rgba(59,130,246,0.5)';
+            }}
           >
             Start Free →
           </button>
 
-          <button className="nav-btn">
+          <button style={{
+            padding:'14px 20px',
+            borderRadius:'8px',
+            background:'#111827',
+            border:'1px solid #1f2937',
+            color:'#ccc',
+            cursor:'pointer'
+          }}>
             Try Demo
           </button>
+
         </div>
 
-        {/* ✅ API EXAMPLE (YUKARI TAŞINDI) */}
+        {/* ✅ API */}
         <div style={{
           background:'#0f172a',
           padding:'20px',
           borderRadius:'12px',
           marginTop:'30px',
-          maxWidth:'500px'
+          maxWidth:'500px',
+          border:'1px solid #1f2937'
         }}>
           <p style={{ color:'#888' }}>API Example</p>
 
@@ -75,7 +113,7 @@ export default function Home() {
       </div>
 
       {/* ✅ FEATURES */}
-      <section style={{marginTop:'80px'}}>
+      <section style={{marginTop:'110px'}}>
 
         <h2 style={{fontSize:'28px'}}>What you get</h2>
 
@@ -86,61 +124,81 @@ export default function Home() {
           marginTop:'30px'
         }}>
 
-          <div style={{
-            padding:'20px',
-            background:'#111827',
-            borderRadius:'12px'
-          }}>
-            <h3>API Infrastructure</h3>
-            <p>Production-ready API with authentication and usage tracking.</p>
-          </div>
-
-          <div style={{
-            padding:'20px',
-            background:'#111827',
-            borderRadius:'12px'
-          }}>
-            <h3>Usage Control</h3>
-            <p>Built-in limits and scalable API plans.</p>
-          </div>
-
-          <div style={{
-            padding:'20px',
-            background:'#111827',
-            borderRadius:'12px'
-          }}>
-            <h3>Developer Ready</h3>
-            <p>Simple API, fast integration, real-world usage.</p>
-          </div>
+          {[{
+            title:"API Infrastructure",
+            desc:"Production-ready API with authentication and usage tracking."
+          },
+          {
+            title:"Usage Control",
+            desc:"Built-in limits and scalable API plans."
+          },
+          {
+            title:"Developer Ready",
+            desc:"Simple API, fast integration, real-world usage."
+          }].map((card, i)=>(
+            <div key={i}
+              style={{
+                padding:'24px',
+                background:'#0f172a',
+                borderRadius:'12px',
+                border:'1px solid #1f2937',
+                transition:'all 0.25s ease',
+                cursor:'pointer'
+              }}
+              onMouseOver={(e)=>{
+                e.currentTarget.style.transform='translateY(-8px) scale(1.02)';
+                e.currentTarget.style.boxShadow='0 20px 60px rgba(0,0,0,0.6)';
+              }}
+              onMouseOut={(e)=>{
+                e.currentTarget.style.transform='translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow='none';
+              }}
+            >
+              <h3>{card.title}</h3>
+              <p style={{color:'#9ca3af'}}>{card.desc}</p>
+            </div>
+          ))}
 
         </div>
 
       </section>
 
-      {/* ✅ SOCIAL PROOF */}
+      {/* 🔥 URGENCY BLOCK */}
       <section style={{
         marginTop:'80px',
         textAlign:'center'
       }}>
-        <p style={{ color:'#888' }}>
-          Trusted by developers building real applications
+        <p style={{color:'#f59e0b'}}>
+          Limited free quota — upgrade to scale your usage
         </p>
       </section>
 
       {/* ✅ FINAL CTA */}
       <section style={{
-        marginTop:'100px',
+        marginTop:'120px',
         textAlign:'center'
       }}>
-        <h2>Start building today</h2>
+
+        <h2 style={{fontSize:'32px'}}>Start building today</h2>
 
         <button
           onClick={() => window.location.href='/auth/login'}
-          className="verify-btn"
-          style={{marginTop:'20px'}}
+          style={{
+            marginTop:'20px',
+            padding:'18px 50px',
+            borderRadius:'12px',
+            background:'linear-gradient(90deg,#3b82f6,#06b6d4)',
+            border:'none',
+            color:'white',
+            fontSize:'18px',
+            fontWeight:'700',
+            cursor:'pointer',
+            boxShadow:'0 25px 80px rgba(59,130,246,0.6)'
+          }}
         >
           Get Started
         </button>
+
       </section>
 
     </div>
