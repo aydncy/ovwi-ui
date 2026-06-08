@@ -2,204 +2,93 @@
 
 export default function Home() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(120deg, #020617, #020617 60%, #0c1b33)',
-      color: 'white',
-      position: 'relative',
-      padding: '60px'
-    }}>
+    <div className="min-h-screen bg-bg text-white px-10 py-16">
 
-      {/* 🔥 MULTI LAYER GLOW */}
-      <div style={{
-        position: 'absolute',
-        width: '600px',
-        height: '600px',
-        background: 'radial-gradient(circle, rgba(59,130,246,0.25), transparent 70%)',
-        filter: 'blur(140px)',
-        top: '80px',
-        left: '180px'
-      }} />
-
-      <div style={{
-        position: 'absolute',
-        width: '400px',
-        height: '400px',
-        background: 'radial-gradient(circle, rgba(6,182,212,0.2), transparent 70%)',
-        filter: 'blur(120px)',
-        top: '200px',
-        right: '200px'
-      }} />
-
-      {/* ✅ HERO */}
-      <div style={{maxWidth:'900px'}}>
-
-        <h1 style={{
-          fontSize:'64px',
-          fontWeight:'800',
-          lineHeight:'1.1'
-        }}>
+      {/* HERO */}
+      <div className="max-w-4xl">
+        
+        <h1 className="text-6xl font-extrabold leading-tight">
           Build. Scale.<br/>Monetize APIs.
         </h1>
 
-        <p style={{
-          marginTop:'20px',
-          fontSize:'18px',
-          color:'#94a3b8'
-        }}>
+        <p className="mt-6 text-lg text-gray-400 max-w-2xl">
           Build and scale production-ready APIs with authentication,
-          usage tracking, and monetization built-in.
+          usage tracking and monetization built-in.
         </p>
 
-        {/* 🔥 CTA */}
-        <div style={{marginTop:'30px', display:'flex', gap:'12px'}}>
-
+        {/* CTA */}
+        <div className="mt-8 flex gap-4">
+          
           <button
             onClick={() => window.location.href='/auth/login'}
-            style={{
-              padding:'16px 32px',
-              borderRadius:'10px',
-              background:'linear-gradient(90deg,#3b82f6,#06b6d4)',
-              border:'none',
-              color:'white',
-              fontWeight:'700',
-              cursor:'pointer',
-              boxShadow:'0 20px 50px rgba(59,130,246,0.5)',
-              transition:'all 0.2s ease'
-            }}
-            onMouseOver={(e)=>{
-              e.currentTarget.style.transform='translateY(-3px)';
-              e.currentTarget.style.boxShadow='0 30px 60px rgba(59,130,246,0.7)';
-            }}
-            onMouseOut={(e)=>{
-              e.currentTarget.style.transform='translateY(0)';
-              e.currentTarget.style.boxShadow='0 20px 50px rgba(59,130,246,0.5)';
-            }}
+            className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-400 font-semibold shadow-lg hover:opacity-90"
           >
             Start Free →
           </button>
 
-          <button style={{
-            padding:'14px 20px',
-            borderRadius:'8px',
-            background:'#111827',
-            border:'1px solid #1f2937',
-            color:'#ccc',
-            cursor:'pointer'
-          }}>
+          <button className="px-5 py-3 rounded-lg bg-card border border-border text-gray-300">
             Try Demo
           </button>
 
         </div>
 
-        {/* ✅ API */}
-        <div style={{
-          background:'#0f172a',
-          padding:'20px',
-          borderRadius:'12px',
-          marginTop:'30px',
-          maxWidth:'500px',
-          border:'1px solid #1f2937'
-        }}>
-          <p style={{ color:'#888' }}>API Example</p>
-
-          <pre style={{fontSize:'13px'}}>
+        {/* API */}
+        <div className="mt-8 bg-card border border-border p-4 rounded-lg max-w-md">
+          <p className="text-gray-500 text-sm">API Example</p>
+<pre className="text-sm mt-2">
 {`curl -X POST https://ovwi.cyzora.com/api/external-verify
 -H "x-api-key: YOUR_KEY"
 -d '{"event":"test"}'`}
-          </pre>
+</pre>
         </div>
 
       </div>
 
-      {/* ✅ FEATURES */}
-      <section style={{marginTop:'110px'}}>
+      {/* FEATURES */}
+      <div className="mt-24">
+        <h2 className="text-2xl font-semibold">What you get</h2>
 
-        <h2 style={{fontSize:'28px'}}>What you get</h2>
+        <div className="grid grid-cols-3 gap-6 mt-8">
 
-        <div style={{
-          display:'grid',
-          gridTemplateColumns:'repeat(3,1fr)',
-          gap:'20px',
-          marginTop:'30px'
-        }}>
+          <div className="bg-card border border-border p-6 rounded-xl hover:scale-105 transition">
+            <h3 className="font-semibold">API Infrastructure</h3>
+            <p className="text-gray-400 mt-2">
+              Production-ready API with auth and tracking.
+            </p>
+          </div>
 
-          {[{
-            title:"API Infrastructure",
-            desc:"Production-ready API with authentication and usage tracking."
-          },
-          {
-            title:"Usage Control",
-            desc:"Built-in limits and scalable API plans."
-          },
-          {
-            title:"Developer Ready",
-            desc:"Simple API, fast integration, real-world usage."
-          }].map((card, i)=>(
-            <div key={i}
-              style={{
-                padding:'24px',
-                background:'#0f172a',
-                borderRadius:'12px',
-                border:'1px solid #1f2937',
-                transition:'all 0.25s ease',
-                cursor:'pointer'
-              }}
-              onMouseOver={(e)=>{
-                e.currentTarget.style.transform='translateY(-8px) scale(1.02)';
-                e.currentTarget.style.boxShadow='0 20px 60px rgba(0,0,0,0.6)';
-              }}
-              onMouseOut={(e)=>{
-                e.currentTarget.style.transform='translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow='none';
-              }}
-            >
-              <h3>{card.title}</h3>
-              <p style={{color:'#9ca3af'}}>{card.desc}</p>
-            </div>
-          ))}
+          <div className="bg-card border border-border p-6 rounded-xl hover:scale-105 transition">
+            <h3 className="font-semibold">Usage Control</h3>
+            <p className="text-gray-400 mt-2">
+              Built-in limits and scalable plans.
+            </p>
+          </div>
+
+          <div className="bg-card border border-border p-6 rounded-xl hover:scale-105 transition">
+            <h3 className="font-semibold">Developer Ready</h3>
+            <p className="text-gray-400 mt-2">
+              Simple API and fast integration.
+            </p>
+          </div>
 
         </div>
+      </div>
 
-      </section>
-
-      {/* 🔥 URGENCY BLOCK */}
-      <section style={{
-        marginTop:'80px',
-        textAlign:'center'
-      }}>
-        <p style={{color:'#f59e0b'}}>
-          Limited free quota — upgrade to scale your usage
-        </p>
-      </section>
-
-      {/* ✅ FINAL CTA */}
-      <section style={{
-        marginTop:'120px',
-        textAlign:'center'
-      }}>
-
-        <h2 style={{fontSize:'32px'}}>Start building today</h2>
+      {/* CTA */}
+      <div className="mt-28 text-center">
+        
+        <h2 className="text-3xl font-bold">
+          Start building today
+        </h2>
 
         <button
           onClick={() => window.location.href='/auth/login'}
-          style={{
-            marginTop:'20px',
-            padding:'18px 50px',
-            borderRadius:'12px',
-            background:'linear-gradient(90deg,#3b82f6,#06b6d4)',
-            border:'none',
-            color:'white',
-            fontSize:'18px',
-            fontWeight:'700',
-            cursor:'pointer',
-            boxShadow:'0 25px 80px rgba(59,130,246,0.6)'
-          }}
+          className="mt-6 px-10 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 font-semibold shadow-xl hover:opacity-90"
         >
           Get Started
         </button>
 
-      </section>
+      </div>
 
     </div>
   );

@@ -1,51 +1,8 @@
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{background:#060816;color:#fff;font-family:Inter,system-ui,sans-serif}
-body{background:radial-gradient(circle at top left,#143a78 0%,transparent 30%),radial-gradient(circle at bottom right,#0a5a77 0%,transparent 30%),#060816;min-height:100vh}
-a{text-decoration:none;color:inherit}
-button{cursor:pointer;border:none}
-.navbar{position:fixed;top:0;left:0;right:0;height:74px;backdrop-filter:blur(20px);background:rgba(5,10,20,.75);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;z-index:999}
-.nav-inner{width:100%;max-width:1400px;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
-.brand{font-size:28px;font-weight:900;background:linear-gradient(90deg,#69a8ff,#32d7ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-links{display:flex;align-items:center;gap:14px}
-.nav-btn{height:42px;padding:0 18px;border-radius:12px;background:rgba(255,255,255,.05);color:#fff;font-weight:600;transition:.2s}
-.nav-btn:hover{background:rgba(255,255,255,.1)}
-.primary-btn{background:linear-gradient(90deg,#2f7dff,#18d6ff);box-shadow:0 10px 30px rgba(44,123,255,.35)}
-.hero{padding-top:140px;padding-left:28px;padding-right:28px;padding-bottom:80px;max-width:1400px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.hero h1{font-size:78px;line-height:1;font-weight:900;margin-bottom:24px}
-.hero span{background:linear-gradient(90deg,#7db7ff,#2ee4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{font-size:19px;line-height:1.8;color:#b7c7e5;max-width:620px;margin-bottom:36px}
-.hero-actions{display:flex;gap:16px}
-.hero-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-.label{font-size:13px;color:#8da6cf;margin-bottom:10px;display:block}
-.input{width:100%;height:48px;border-radius:12px;background:#0b1223;border:1px solid rgba(255,255,255,.08);padding:0 14px;color:#fff;margin-bottom:18px}
-.textarea{width:100%;height:140px;border-radius:14px;background:#0b1223;border:1px solid rgba(255,255,255,.08);padding:14px;color:#fff;resize:none;margin-bottom:18px}
-.verify-btn{width:100%;height:54px;border-radius:14px;font-size:16px;font-weight:800;background:linear-gradient(90deg,#327bff,#18d6ff);color:#fff}
-.result{margin-top:20px;padding:20px;border-radius:18px;background:#08101f;border:1px solid rgba(53,157,255,.18);overflow:auto}
-.section{max-width:1400px;margin:auto;padding:80px 28px}
-.section-title{font-size:52px;font-weight:900;margin-bottom:50px;text-align:center}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.feature{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:28px}
-.feature h3{font-size:22px;margin-bottom:14px}
-.feature p{color:#b9c8e4;line-height:1.7}
-.pricing{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.price-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:34px;text-align:center;position:relative}
-.price-card.popular{border:2px solid #2f7dff;box-shadow:0 20px 60px rgba(47,125,255,.22)}
-.badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);padding:6px 14px;background:#2f7dff;border-radius:999px;font-size:12px;font-weight:800}
-.price{font-size:56px;font-weight:900;margin:20px 0}
-.price small{font-size:18px;color:#8da6cf}
-.footer{padding:60px 20px;text-align:center;color:#8da6cf}
-.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px}
-.auth-box{width:100%;max-width:520px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:30px;padding:34px}
-.auth-box h1{font-size:42px;margin-bottom:14px}
-.auth-box p{color:#adc2e5;line-height:1.8;margin-bottom:24px}
-.dashboard{padding-top:120px;padding-left:28px;padding-right:28px;padding-bottom:60px;max-width:1400px;margin:auto}
-.dashboard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
-.dashboard-top h1{font-size:62px;font-weight:900}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:24px}
-.stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:28px}
-.stat span{display:block;color:#8da6cf;margin-bottom:12px}
-.stat strong{font-size:44px}
-.panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:30px;margin-bottom:24px}
-.progress{height:12px;background:#111b33;border-radius:999px;overflow:hidden;margin-top:16px}
-.progress div{height:100%;background:linear-gradient(90deg,#327bff,#18d6ff)}
-@media(max-width:1100px){.hero{grid-template-columns:1fr}.features{grid-template-columns:1fr}.pricing{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.hero h1{font-size:54px}}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: #020617;
+  color: white;
+}
