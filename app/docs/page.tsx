@@ -23,8 +23,8 @@ POST /api/create-key
 
         <div className="bg-[#0f172a] border border-[#1f2937] p-4 rounded-lg">
 <pre>
-POST /api/verify
-{"email":"you@co.com"}
+{`POST /api/verify
+{"email":"you@co.com"}`}
 </pre>
         </div>
       </div>
