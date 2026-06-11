@@ -6,7 +6,6 @@ export default function Home() {
 
       {/* ✅ NAVBAR */}
       <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-        <h1 className="text-xl font-bold tracking-tight">OVWI</h1>
 
         <div className="flex gap-6 text-gray-400">
           <a href="/docs">Docs</a>
