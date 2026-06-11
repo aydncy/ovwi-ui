@@ -14,7 +14,8 @@ export default function Dashboard() {
   }, []);
 
   const loadData = async () => {
-    const { data } = await supabase!.auth.getUser();
+    if (!supabase) return;
+    const { data } = await supabase!!.auth.getUser();
 
     if (!data.user) {
       window.location.href = '/auth/login';
@@ -24,7 +25,7 @@ export default function Dashboard() {
     setEmail(data.user.email || '');
 
     // ✅ usage çek
-    const { data: usageData } = await supabase
+    const { data: usageData } = await supabase!
       .from('users_usage')
       .select('*')
       .eq('user_id', data.user.id)
@@ -36,7 +37,7 @@ export default function Dashboard() {
     }
 
     // ✅ API KEY çek
-    const { data: keyData } = await supabase
+    const { data: keyData } = await supabase!
       .from('api_keys')
       .select('key')
       .eq('user_id', data.user.id)
@@ -44,7 +45,7 @@ export default function Dashboard() {
 
     if (!keyData) {
         const newKey = Math.random().toString(36).substring(2);
-        await supabase.from('api_keys').insert({
+        await supabase!.from('api_keys').insert({
           user_id: data.user.id,
           key: 'ovwi_' + newKey
         });
@@ -59,7 +60,7 @@ export default function Dashboard() {
   };
 
   const runVerify = async () => {
-    const session = await supabase!.auth.getSession();
+    const session = await supabase!!.auth.getSession();
     const token = session.data.session?.access_token;
 
     const res = await fetch('/api/verify', {
