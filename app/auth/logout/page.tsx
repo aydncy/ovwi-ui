@@ -8,24 +8,24 @@ export default function Logout() {
   useEffect(() => {
     const run = async () => {
       try {
+
+        // ✅ NULL GUARD
+        if (!supabase) {
+          window.location.href = '/auth/login';
+          return;
+        }
+
         // ✅ Supabase logout
         await supabase.auth.signOut();
 
-        // ✅ local storage temizle
+        // ✅ local temizle
         localStorage.clear();
 
-        // ✅ cookie temizliği (fallback)
-        document.cookie.split(";").forEach((c) => {
-          document.cookie = c
-            .replace(/^ +/, "")
-            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
-
-        // ✅ HARD redirect (çok önemli)
+        // ✅ force redirect
         window.location.href = '/auth/login';
 
-      } catch (e) {
-        window.location.href = '/';
+      } catch {
+        window.location.href = '/auth/login';
       }
     };
 
