@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase-browser';
+import Console from './console';
 
 
 export default function Dashboard() {
@@ -159,9 +160,11 @@ export default function Dashboard() {
         >
           Upgrade
         </button>
-      </div>
+      
+<Console apiKey={apiKey} />
 
       {/* ✅ INFO */}
+
       <p className="mt-6 text-gray-500 text-sm">
         Test requests increase usage. Real API usage is tracked via your API key.
       </p>
