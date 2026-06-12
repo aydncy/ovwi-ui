@@ -33,10 +33,8 @@ export default function Navbar() {
 
         <a href="/docs">Docs</a>
 
-        {/* ✅ sadece login ise */}
         {user && <a href="/dashboard">Dashboard</a>}
 
-        {/* ✅ login / logout toggle */}
         {user ? (
           <a href="/auth/logout">Logout</a>
         ) : (
@@ -44,6 +42,7 @@ export default function Navbar() {
         )}
 
       </div>
+
     </div>
   );
 }
