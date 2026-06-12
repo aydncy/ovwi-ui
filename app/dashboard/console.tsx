@@ -6,59 +6,58 @@ export default function Console({ apiKey }: { apiKey: string }) {
   const [endpoint, setEndpoint] = useState("/api/external-verify");
   const [payload, setPayload] = useState('{"event":"test"}');
   const [response, setResponse] = useState("");
-  const [history, setHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [time, setTime] = useState<number | null>(null);
+  const [tab, setTab] = useState("response");
 
   const sendRequest = async () => {
-    setLoading(true);
+    try {
+      JSON.parse(payload);
+    } catch {
+      setResponse("Invalid JSON ❌");
+      return;
+    }
 
     const start = Date.now();
 
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "x-api-key": apiKey,
-          "Content-Type": "application/json"
-        },
-        body: payload
-      });
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "Content-Type": "application/json"
+      },
+      body: payload
+    });
 
-      const data = await res.json();
-      const duration = Date.now() - start;
+    const json = await res.json();
+    const duration = Date.now() - start;
 
-      setTime(duration);
+    setResponse(JSON.stringify({
+      ...json,
+      _meta: { status: res.status, time: duration + "ms" }
+    }, null, 2));
+  };
 
-      const formatted = JSON.stringify(data, null, 2);
-      setResponse(formatted);
+  const copy = () => {
+    navigator.clipboard.writeText(response);
+  };
 
-      setHistory(prev => [
-        { endpoint, payload, response: formatted },
-        ...prev
-      ]);
-
-    } catch (e) {
-      setResponse("Request failed");
-    }
-
-    setLoading(false);
+  const generateCode = () => {
+    return `curl -X POST https://ovwi.cyzora.com${endpoint} \\
+-H "x-api-key: ${apiKey}" \\
+-H "Content-Type: application/json" \\
+-d '${payload}'`;
   };
 
   return (
-    <div className="mt-10 bg-[#0f172a] p-6 rounded-xl border border-[#1f2937]">
+    <div className="mt-12 bg-[#0f172a] p-6 rounded-xl border border-[#1f2937]">
 
       <h2 className="text-lg font-semibold mb-4">API Console</h2>
 
       {/* ✅ endpoint */}
-      <select
+      <input
         value={endpoint}
         onChange={e => setEndpoint(e.target.value)}
-        className="w-full mb-3 p-2 bg-black border border-gray-700 rounded"
-      >
-        <option value="/api/external-verify">/external-verify</option>
-        <option value="/api/verify">/verify (internal)</option>
-      </select>
+        className="w-full p-2 mb-3 bg-black border border-gray-700 rounded"
+      />
 
       {/* ✅ payload */}
       <textarea
@@ -67,39 +66,38 @@ export default function Console({ apiKey }: { apiKey: string }) {
         className="w-full h-28 p-2 mb-3 bg-black border border-gray-700 rounded"
       />
 
-      {/* ✅ button */}
-      <button
-        onClick={sendRequest}
-        disabled={loading}
-        className="px-4 py-2 bg-blue-500 rounded"
-      >
-        {loading ? "Sending..." : "Send Request"}
-      </button>
+      {/* ✅ actions */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={sendRequest}
+          className="px-4 py-2 bg-blue-500 rounded"
+        >
+          Send
+        </button>
 
-      {/* ✅ response */}
-      <div className="mt-4">
-        <p className="text-sm text-gray-400">
-          Response {time && `(${time} ms)`}
-        </p>
-
-        <pre className="mt-2 p-3 bg-black rounded text-xs overflow-auto">
-          {response}
-        </pre>
+        <button
+          onClick={copy}
+          className="px-4 py-2 bg-gray-700 rounded"
+        >
+          Copy
+        </button>
       </div>
 
-      {/* ✅ history */}
-      {history.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-sm text-gray-400 mb-2">History</h3>
+      {/* ✅ tabs */}
+      <div className="flex gap-4 mb-3 text-sm text-gray-400">
+        <button onClick={()=>setTab("response")}>Response</button>
+        <button onClick={()=>setTab("code")}>cURL</button>
+      </div>
 
-          <div className="space-y-2">
-            {history.slice(0, 3).map((h, i) => (
-              <div key={i} className="p-2 bg-black rounded text-xs">
-                {h.endpoint}
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* ✅ output */}
+      {tab === "response" ? (
+        <pre className="p-3 bg-black rounded text-xs overflow-auto">
+          {response}
+        </pre>
+      ) : (
+        <pre className="p-3 bg-black rounded text-xs overflow-auto">
+          {generateCode()}
+        </pre>
       )}
 
     </div>
