@@ -4,12 +4,29 @@ import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase-browser';
 
 export default function Logout() {
+
   useEffect(() => {
     const run = async () => {
-      await supabase?.auth.signOut();
+      try {
+        // ✅ Supabase logout
+        await supabase.auth.signOut();
 
-      // ✅ tamamen state reset
-      window.location.replace('/');
+        // ✅ local storage temizle
+        localStorage.clear();
+
+        // ✅ cookie temizliği (fallback)
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+        // ✅ HARD redirect (çok önemli)
+        window.location.href = '/auth/login';
+
+      } catch (e) {
+        window.location.href = '/';
+      }
     };
 
     run();
