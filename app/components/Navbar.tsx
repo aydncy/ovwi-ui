@@ -1,63 +1,47 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { supabase } from '@/lib/supabase-browser';
 
 export default function Navbar() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    supabase!.auth.getSession().then(({ data }) => {
-      setLoggedIn(!!data.session);
+    if (!supabase) return;
+
+    // ✅ initial user
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
     });
 
-    const { data: { subscription } } =
-      supabase!.auth.onAuthStateChange((_e: any, session: any) => {
-        setLoggedIn(!!session);
-      });
+    // ✅ auth değişimini dinle
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null);
+    });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
-  const logout = async () => {
-    await supabase!.auth.signOut();
-    window.location.href = '/';
-  };
-
   return (
-    <div className="navbar">
-      <div className="nav-inner">
+    <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center border-b border-gray-800">
 
-        {/* LOGO */}
-        <Link href="/" className="brand">
-          OVWI
-        </Link>
+      <h1 className="font-bold">OVWI</h1>
 
-        {/* LINKS */}
-        <div className="nav-links">
+      <div className="flex gap-6 text-sm text-gray-400">
 
-          <Link href="/docs" className="nav-btn">
-            Docs
-          </Link>
+        <a href="/docs">Docs</a>
 
-          {loggedIn ? (
-            <>
-              <Link href="/dashboard" className="nav-btn">
-                Dashboard
-              </Link>
+        {/* ✅ sadece login ise */}
+        {user && <a href="/dashboard">Dashboard</a>}
 
-              <button onClick={logout} className="nav-btn">
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link href="/auth/login" className="nav-btn">
-              Login
-            </Link>
-          )}
-
-        </div>
+        {/* ✅ login / logout toggle */}
+        {user ? (
+          <a href="/auth/logout">Logout</a>
+        ) : (
+          <a href="/auth/login">Login</a>
+        )}
 
       </div>
     </div>
