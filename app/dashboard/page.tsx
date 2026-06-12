@@ -3,7 +3,37 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase-browser';
 
+
 export default function Dashboard() {
+
+  const sendRequest = async () => {
+    const endpoint = (document.getElementById("endpoint") as any).value;
+    const payload = (document.getElementById("payload") as any).value;
+    const responseBox = document.getElementById("responseBox");
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "x-api-key": apiKey,
+          "Content-Type": "application/json"
+        },
+        body: payload
+      });
+
+      const data = await res.json();
+
+      if (responseBox) {
+        responseBox.innerText = JSON.stringify(data, null, 2);
+      }
+
+    } catch (e) {
+      if (responseBox) {
+        responseBox.innerText = "Error";
+      }
+    }
+  };
+
   const [email, setEmail] = useState('');
   const [usage, setUsage] = useState(0);
   const [limit, setLimit] = useState(50);
