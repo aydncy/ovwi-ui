@@ -7,8 +7,11 @@ export default function Logout() {
   useEffect(() => {
     const run = async () => {
       await supabase?.auth.signOut();
-      window.location.href = '/';
+
+      // ✅ tamamen state reset
+      window.location.replace('/');
     };
+
     run();
   }, []);
 

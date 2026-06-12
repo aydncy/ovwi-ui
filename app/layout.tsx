@@ -3,7 +3,42 @@ import './globals.css'
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-[#020617] text-white">
+      import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase-browser';
+
+function Navbar() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    supabase?.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+  }, []);
+
+  return (
+    <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center border-b border-gray-800">
+
+      <h1 className="text-lg font-bold">OVWI</h1>
+
+      <div className="flex gap-6 text-sm text-gray-400">
+        /docsDocs</a>
+
+        {user && (
+          /dashboardDashboard</a>
+        )}
+
+        {user ? (
+          /auth/logoutLogout</a>
+        ) : (
+          /auth/loginLogin</a>
+        )}
+      </div>
+
+    </div>
+  );
+}
+
+<body className="bg-[#020617] text-white">
 
         {/* ✅ TOP BANNER */}
         <div className="text-center text-sm py-2 bg-black border-b border-gray-800">
@@ -26,7 +61,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         </div>
 
-        {children}
+        <Navbar />
+{children}
 
       </body>
     </html>
