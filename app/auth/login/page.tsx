@@ -1,42 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase-browser';
 
 export default function Login() {
-
-  useEffect(() => {
-    const check = async () => {
-
-      // ✅ GUARD EKLEDİK
-      if (!supabase) return;
-
-      const { data } = await supabase.auth.getUser();
-
-      if (data?.user) {
-        window.location.href = '/dashboard';
-      }
-    };
-
-    check();
-  }, []);
-
   const login = async () => {
-    if (!supabase) return;
-
     await supabase.auth.signInWithOAuth({
-      provider: 'google'
+      provider: 'google',
+      options: {
+        redirectTo: 'https://ovwi.cyzora.com/dashboard'
+      }
     });
   };
 
   return (
-    <div className="max-w-md mx-auto py-20 text-white">
-
+    <div className="flex flex-col items-center justify-center h-screen text-white">
       <h1 className="text-2xl mb-4">Welcome Back</h1>
-
-      <p className="text-gray-400 mb-6">
-        Continue with Google to access your dashboard, API keys, analytics and infrastructure tools.
-      </p>
 
       <button
         onClick={login}
@@ -44,7 +22,6 @@ export default function Login() {
       >
         Continue with Google
       </button>
-
     </div>
   );
 }
