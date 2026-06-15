@@ -37,6 +37,7 @@ export default function Navbar() {
           <Link href="/auth/login">Login</Link>
         )}
       </div>
+
     </div>
   );
 }
