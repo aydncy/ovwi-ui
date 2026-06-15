@@ -18,7 +18,9 @@ export default function Navbar() {
       setUser(session?.user || null);
     });
 
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   return (
