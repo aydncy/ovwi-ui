@@ -5,7 +5,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="bg-[#020617] text-white">
 
-        {/* ✅ NAVBAR */}
+        {/* Navbar */}
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between border-b border-gray-800">
           <h1 className="font-bold">OVWI</h1>
 
@@ -22,3 +22,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+// force rebuild Mon, Jun 15, 2026  5:01:18 PM
