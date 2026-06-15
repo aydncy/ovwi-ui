@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase-browser';
 
 export default function Navbar() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     if (!supabase) return;
@@ -37,7 +37,6 @@ export default function Navbar() {
           <Link href="/auth/login">Login</Link>
         )}
       </div>
-
     </div>
   );
 }
