@@ -26,12 +26,14 @@ export default function Navbar() {
       <h1 className="font-bold">OVWI</h1>
 
       <div className="flex gap-6 text-sm text-gray-400">
-        /docsDocs</Link>
-        {user && /dashboardDashboard</Link>}
+        <Link href="/docs">Docs</Link>
+
+        {user && <Link href="/dashboard">Dashboard</Link>}
+
         {user ? (
-          /auth/logoutLogout</Link>
+          <Link href="/auth/logout">Logout</Link>
         ) : (
-          /auth/loginLogin</Link>
+          <Link href="/auth/login">Login</Link>
         )}
       </div>
     </div>
