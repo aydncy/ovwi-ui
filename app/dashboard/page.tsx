@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase-browser';
 import Console from './console';
 
+import Growth from './growth';
+
 export default function Dashboard() {
   const [email, setEmail] = useState('');
   const [usage, setUsage] = useState(0);
@@ -139,7 +141,9 @@ export default function Dashboard() {
       {/* ✅ CONSOLE */}
       <Console apiKey={apiKey} />
 
-      {/* ✅ INFO */}
+      <Growth usage={usage} limit={limit} />
+
+{/* ✅ INFO */}
       <p className="mt-6 text-xs text-gray-500">
         Test requests increase usage. Real API usage is tracked via your API key.
       </p>

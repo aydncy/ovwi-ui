@@ -8,7 +8,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <Navbar />
 
-        {children}
+        <div className="max-w-6xl mx-auto px-6">
+          {children}
+        </div>
 
       </body>
     </html>
