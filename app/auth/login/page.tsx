@@ -3,7 +3,12 @@
 import { supabase } from '@/lib/supabase-browser';
 
 export default function Login() {
+
   const login = async () => {
+
+    // ✅ NULL GUARD
+    if (!supabase) return;
+
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
