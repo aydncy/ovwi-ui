@@ -1,3 +1,5 @@
+'use client';
+
 export default function Upgrade() {
   return (
     <div className="text-center space-y-8">
