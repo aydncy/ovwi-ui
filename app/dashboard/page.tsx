@@ -160,14 +160,14 @@ return (
 
         <button
           onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_pro'}
-          className="bg-green-600 px-4 py-2 rounded"
+          className="bg-green-600 px-4 py-2 rounded animate-pulse hover:scale-110 transition-transform duration-200 shadow-lg shadow-green-500/50"
         >
           Buy Pro (€9)
         </button>
 
         <button
           onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_scale'}
-          className="bg-purple-600 px-4 py-2 rounded"
+          className="bg-purple-600 px-4 py-2 rounded animate-pulse hover:scale-110 transition-transform duration-200 shadow-lg shadow-purple-500/50"
         >
           Buy Scale (€29)
         </button>
