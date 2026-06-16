@@ -8,7 +8,6 @@ export default function Dashboard() {
   const [usage, setUsage] = useState(0);
   const [apiKey, setApiKey] = useState('');
   const [limit, setLimit] = useState(50);
-const [countdown, setCountdown] = useState(5);
 
   async function fetchUsage(userEmail: string) {
     const res = await fetch('/api/verify', {
@@ -24,19 +23,6 @@ const [countdown, setCountdown] = useState(5);
   }
 
   useEffect(() => {
-
-  if (usage >= limit - 1 && usage < limit) {
-    const interval = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) return 0;
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }
-
-
     async function load() {
       if (!supabase) return;
 
@@ -48,188 +34,109 @@ const [countdown, setCountdown] = useState(5);
         fetchUsage(userEmail);
       }
     }
-
     load();
   }, []);
 
-  // PAYWALL ACTIVE
-if (usage >= limit) {
   return (
-    <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
-      <div className="bg-gray-900 p-8 rounded text-center max-w-md space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-10">
 
-        <h2 className="text-2xl font-bold text-white">
-          Limit Reached
-        </h2>
+      <div className="max-w-5xl mx-auto space-y-8">
 
-        <p className="text-gray-400">
-          You’ve used all your API requests.
-        </p>
+        {/* HEADER */}
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-gray-400">{email}</p>
+          <p className="text-sm mt-1 text-blue-400">
+            Plan: {limit < 100 ? 'Free' : limit < 5000 ? 'Pro' : 'Scale'}
+          </p>
+        </div>
 
-        <p className="text-sm text-gray-500">
-          Upgrade to continue using OVWI API
-        </p>
+        {/* API KEY */}
+        <div className="backdrop-blur bg-white/5 border border-white/10 rounded-xl p-5">
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-gray-400 text-sm">Your API Key</p>
 
-        <div className="space-y-3">
+            <button
+              onClick={() => navigator.clipboard.writeText(apiKey)}
+              className="text-xs text-blue-400 hover:underline"
+            >
+              Copy
+            </button>
+          </div>
+
+          <div className="bg-black/60 p-3 rounded font-mono text-sm">
+            {apiKey || 'Loading...'}
+          </div>
+        </div>
+
+        {/* PANIC COUNTDOWN */}
+        {usage >= limit - 1 && usage < limit && (
+          <div className="bg-red-700/80 border border-red-500 p-4 rounded-xl animate-pulse">
+            <p className="font-bold text-lg">⚠️ Last request remaining</p>
+          </div>
+        )}
+
+        {/* USAGE */}
+        <div className="backdrop-blur bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
+
+          <div className="flex justify-between text-sm text-gray-400">
+            <span>{usage} used</span>
+            <span>{limit} limit</span>
+          </div>
+
+          <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 transition-all duration-500"
+              style={{ width: `${(usage / limit) * 100}%` }}
+            />
+          </div>
+
+          <p className="text-xs text-gray-500">
+            {limit - usage} remaining
+          </p>
+        </div>
+
+        {/* ACTIONS */}
+        <div className="flex gap-4">
+
+          <button
+            onClick={async () => {
+              const res = await fetch('/api/external-verify', {
+                method: 'POST',
+                body: JSON.stringify({ email })
+              });
+
+              const data = await res.json();
+
+              if (data.error === 'LIMIT_REACHED') {
+                alert('Limit reached — upgrade required');
+                return;
+              }
+
+              setUsage(data.usage);
+            }}
+            className="bg-blue-600 px-5 py-2 rounded-lg hover:scale-105 transition"
+          >
+            Run Test
+          </button>
 
           <button
             onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_pro'}
-            className="bg-green-600 w-full py-3 rounded"
+            className="bg-green-600 px-5 py-2 rounded-lg animate-pulse hover:scale-110 transition shadow-lg shadow-green-500/40"
           >
-            Upgrade to Pro (€9)
+            Upgrade Pro (€9)
           </button>
 
           <button
             onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_scale'}
-            className="bg-purple-600 w-full py-3 rounded"
+            className="bg-purple-600 px-5 py-2 rounded-lg animate-pulse hover:scale-110 transition shadow-lg shadow-purple-500/40"
           >
-            Upgrade to Scale (€29)
+            Upgrade Scale (€29)
           </button>
 
         </div>
 
-        <p className="text-xs text-gray-600">
-          Free plan is for testing only
-        </p>
-
       </div>
-    </div>
-  );
-}
-
-return (
-    <div className="max-w-6xl mx-auto py-10 space-y-8">
-
-      <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-gray-400">{email}</p>
-        <p className="text-gray-400">
-          Plan: {limit === 50 ? 'Free' : limit === 2000 ? 'Pro' : 'Scale'}
-        </p>
-      </div>
-
-      {/* API KEY */}
-      <div className="border border-gray-800 rounded p-4">
-        <p className="text-sm text-gray-400 mb-2">Your API Key</p>
-        <div className="bg-black p-3 rounded text-sm">
-          {apiKey || 'Loading...'}
-        </div>
-      </div>
-
-      {/* PANIC MODE ACTIVE */}
-
-{usage >= limit - 1 && usage < limit && (
-  <div className="bg-red-700 text-white p-4 rounded mb-4 animate-pulse border-4 border-red-500">
-
-    <p className="text-lg font-bold">
-      ⚠️ LAST REQUEST REMAINING
-    </p>
-
-    <p className="text-sm mt-1">
-      Your API access is about to stop
-    </p>
-
-  </div>
-)}
-
-{usage >= limit * 0.9 && usage < limit - 1 && (
-  <div className="bg-yellow-500 text-black p-3 rounded mb-4">
-    ⚠️ You're about to hit your limit
-  </div>
-)}
-
-{/* COUNTDOWN MODE */}
-
-{usage >= limit - 1 && usage < limit && (
-  <div className="bg-red-800 text-white p-4 rounded mb-4 border-4 border-red-500">
-
-    <p className="text-lg font-bold">
-      ⚠️ LAST REQUEST REMAINING
-    </p>
-
-    <p className="text-sm mt-2">
-      API access stopping in:
-    </p>
-
-    <p className="text-3xl font-bold mt-2 animate-pulse">
-      {countdown}s
-    </p>
-
-  </div>
-)}
-
-{/* LIMIT WARNING */}
-      {usage >= limit && (
-        <div className="bg-red-600 text-white p-3 rounded">
-          Limit reached — upgrade required
-        </div>
-      )}
-
-      {usage > limit * 0.8 && usage < limit && (
-        <div className="bg-yellow-500 text-black p-3 rounded">
-          You're close to your limit
-        </div>
-      )}
-
-      {/* USAGE */}
-      <div className="border border-gray-800 rounded p-4">
-        <div className="flex justify-between text-sm text-gray-400 mb-2">
-          <span>{usage} used</span>
-          <span>{limit} limit</span>
-        </div>
-
-        <div className="w-full bg-gray-800 h-2 rounded">
-          <div
-            className="bg-blue-500 h-2 rounded"
-            style={{ width: `${(usage / limit) * 100}%` }}
-          />
-        </div>
-
-        <p className="text-xs text-gray-500 mt-2">
-          {limit - usage} remaining
-        </p>
-      </div>
-
-      {/* ACTIONS */}
-      <div className="flex gap-4">
-
-        <button
-          onClick={async () => {
-            const res = await fetch('/api/external-verify', {
-              method: 'POST',
-              body: JSON.stringify({ email })
-            });
-
-            const data = await res.json();
-
-            if (data.error === 'LIMIT_REACHED') {
-              alert('Limit reached — upgrade required');
-              return;
-            }
-
-            setUsage(data.usage);
-          }}
-          className="bg-blue-600 px-4 py-2 rounded"
-        >
-          Run Test Request
-        </button>
-
-        <button
-          onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_pro'}
-          className="bg-green-600 px-4 py-2 rounded animate-bounce hover:scale-110 transition-transform shadow-lg shadow-green-400/60 animate-pulse hover:scale-110 transition-transform duration-200 shadow-lg shadow-green-500/50"
-        >
-          Buy Pro (€9)
-        </button>
-
-        <button
-          onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_scale'}
-          className="bg-purple-600 px-4 py-2 rounded animate-bounce hover:scale-110 transition-transform shadow-lg shadow-purple-400/60 animate-pulse hover:scale-110 transition-transform duration-200 shadow-lg shadow-purple-500/50"
-        >
-          Buy Scale (€29)
-        </button>
-
-      </div>
-
     </div>
   );
 }
