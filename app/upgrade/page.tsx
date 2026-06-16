@@ -1,35 +1,36 @@
-'use client';
-
 export default function Upgrade() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-16 text-white">
+    <div className="text-center space-y-8">
 
-      <h1 className="text-3xl font-bold mb-4">
-        Upgrade to Pro
-      </h1>
+      <h1 className="text-3xl font-bold">Upgrade Your Plan</h1>
 
-      <p className="text-gray-400 mb-8">
-        Unlock more API usage and production access.
-      </p>
+      <div className="grid grid-cols-2 gap-6 max-w-3xl mx-auto">
 
-      <div className="bg-[#0f172a] border border-gray-800 p-6 rounded-xl">
+        {/* PRO */}
+        <div className="card space-y-4">
+          <h2 className="text-xl font-bold">Pro</h2>
+          <p className="text-gray-400">2000 requests</p>
 
-        <h2 className="text-xl font-semibold">Pro Plan</h2>
+          <button
+            onClick={() => window.location.href='https://aydncy.gumroad.com/l/ovwi_pro'}
+            className="btn btn-pro w-full"
+          >
+            Buy (€9)
+          </button>
+        </div>
 
-        <p className="text-gray-400 mt-2">
-          2000 API requests/month
-        </p>
+        {/* SCALE */}
+        <div className="card space-y-4">
+          <h2 className="text-xl font-bold">Scale</h2>
+          <p className="text-gray-400">10000 requests</p>
 
-        <p className="text-3xl font-bold mt-4">
-          €9
-        </p>
-
-        <button
-          onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi'}
-          className="mt-5 px-6 py-3 bg-blue-500 rounded"
-        >
-          Upgrade Now
-        </button>
+          <button
+            onClick={() => window.location.href='https://aydncy.gumroad.com/l/ovwi_scale'}
+            className="btn btn-scale w-full"
+          >
+            Buy (€29)
+          </button>
+        </div>
 
       </div>
 

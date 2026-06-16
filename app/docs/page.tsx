@@ -1,31 +1,16 @@
-'use client';
-
 export default function Docs() {
   return (
-    <div className="max-w-5xl mx-auto px-6 py-16">
+    <div className="space-y-6">
 
-      <h1 className="text-4xl font-bold mb-8">API Documentation</h1>
+      <h1 className="text-2xl font-bold">API Docs</h1>
 
-      {/* ✅ CREATE KEY */}
-      <div className="mb-10">
-        <h2 className="text-xl font-semibold mb-2">Create API Key</h2>
-
-        <div className="bg-[#0f172a] border border-[#1f2937] p-4 rounded-lg">
-<pre>
-POST /api/create-key
-</pre>
-        </div>
-      </div>
-
-      {/* ✅ VERIFY */}
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Verify Endpoint</h2>
-
-        <div className="bg-[#0f172a] border border-[#1f2937] p-4 rounded-lg">
-<pre>
-{`POST /api/verify
-{"email":"you@co.com"}`}
-</pre>
+      <div className="card">
+        <p className="text-gray-400 mb-2">POST /api/external-verify</p>
+        <div className="bg-black/50 p-3 rounded text-sm font-mono">
+          {`fetch('/api/external-verify', {
+  method: 'POST',
+  body: JSON.stringify({ email })
+})`}
         </div>
       </div>
 
