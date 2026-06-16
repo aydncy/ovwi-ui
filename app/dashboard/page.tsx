@@ -11,6 +11,10 @@ export default function Dashboard() {
   const [usage, setUsage] = useState(0);
   const limit = 50;
 
+
+    
+
+    
   async function fetchUsage() {
     const res = await fetch('/api/verify');
     const data = await res.json();
@@ -25,9 +29,7 @@ export default function Dashboard() {
   }, []);
 
   const [email, setEmail] = useState('');
-  const [usage, setUsage] = useState(0);
-  const [limit, setLimit] = useState(50);
-  const [apiKey, setApiKey] = useState('');
+      const [apiKey, setApiKey] = useState('');
 
   useEffect(() => {
     loadData();
@@ -59,8 +61,7 @@ export default function Dashboard() {
 
     if (usageData) {
       setUsage(usageData.usage);
-      setLimit(usageData.monthly_limit);
-    }
+          }
 
     // ✅ api key
     const { data: keyData } = await supabase
@@ -102,8 +103,7 @@ export default function Dashboard() {
     }
 
     setUsage(data.usage);
-    setLimit(data.limit);
-  };
+      };
 
   const percent = limit ? (usage / limit) * 100 : 0;
 
