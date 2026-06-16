@@ -43,7 +43,9 @@ export default function Dashboard() {
 
       <div>
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-gray-400">{email}</p>
+        <p className="text-gray-400">
+
+<span>Plan: {limit === 50 ? 'Free' : limit === 2000 ? 'Pro' : 'Scale'}</span><br/>{email}</p>
       </div>
 
       {/* API KEY */}
@@ -63,6 +65,19 @@ export default function Dashboard() {
 
 {usage > limit * 0.8 && usage < limit && (
   <div className="bg-yellow-500 text-black p-3 rounded">
+    You're close to your limit
+  </div>
+)}
+
+{/* LIMIT BLOCK */}
+{usage >= limit && (
+  <div className="bg-red-600 text-white p-3 rounded mb-4">
+    Limit reached — upgrade required
+  </div>
+)}
+
+{usage > limit * 0.8 && usage < limit && (
+  <div className="bg-yellow-500 text-black p-3 rounded mb-4">
     You're close to your limit
   </div>
 )}
@@ -97,8 +112,26 @@ export default function Dashboard() {
         <button className="border border-gray-600 px-4 py-2 rounded">
           Upgrade
         </button>
-      </div>
+      
+  <div className="flex gap-4 mt-6">
+
+    <button
+      onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_pro'}
+      className="bg-green-600 px-4 py-2 rounded"
+    >
+      Buy Pro (€9)
+    </button>
+
+    <button
+      onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_scale'}
+      className="bg-purple-600 px-4 py-2 rounded"
+    >
+      Buy Scale (€29)
+    </button>
+
+  </div>
 
     </div>
   );
+
 }
