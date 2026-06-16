@@ -7,6 +7,8 @@ export default function Navbar() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
+    if (!supabase) return; // ✅ FIX
+
     async function load() {
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
@@ -26,6 +28,7 @@ export default function Navbar() {
   }, []);
 
   async function handleLogout() {
+    if (!supabase) return; // ✅ FIX
     await supabase.auth.signOut();
     window.location.href = '/auth/login';
   }
