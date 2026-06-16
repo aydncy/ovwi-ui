@@ -7,8 +7,7 @@ export default function Dashboard() {
   const [email, setEmail] = useState('');
   const [usage, setUsage] = useState(0);
   const [apiKey, setApiKey] = useState('');
-
-  const limit = 50;
+  const [limit, setLimit] = useState(50);
 
   async function fetchUsage(userEmail: string) {
     const res = await fetch('/api/verify', {
@@ -20,6 +19,7 @@ export default function Dashboard() {
 
     setUsage(data.usage);
     setApiKey(data.apiKey);
+    setLimit(data.limit);
   }
 
   useEffect(() => {
@@ -43,9 +43,10 @@ export default function Dashboard() {
 
       <div>
         <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-gray-400">{email}</p>
         <p className="text-gray-400">
-
-<span>Plan: {limit === 50 ? 'Free' : limit === 2000 ? 'Pro' : 'Scale'}</span><br/>{email}</p>
+          Plan: {limit === 50 ? 'Free' : limit === 2000 ? 'Pro' : 'Scale'}
+        </p>
       </div>
 
       {/* API KEY */}
@@ -57,32 +58,19 @@ export default function Dashboard() {
       </div>
 
       {/* LIMIT WARNING */}
-{usage >= limit && (
-  <div className="bg-red-600 text-white p-3 rounded">
-    Limit reached — Upgrade required
-  </div>
-)}
+      {usage >= limit && (
+        <div className="bg-red-600 text-white p-3 rounded">
+          Limit reached — upgrade required
+        </div>
+      )}
 
-{usage > limit * 0.8 && usage < limit && (
-  <div className="bg-yellow-500 text-black p-3 rounded">
-    You're close to your limit
-  </div>
-)}
+      {usage > limit * 0.8 && usage < limit && (
+        <div className="bg-yellow-500 text-black p-3 rounded">
+          You're close to your limit
+        </div>
+      )}
 
-{/* LIMIT BLOCK */}
-{usage >= limit && (
-  <div className="bg-red-600 text-white p-3 rounded mb-4">
-    Limit reached — upgrade required
-  </div>
-)}
-
-{usage > limit * 0.8 && usage < limit && (
-  <div className="bg-yellow-500 text-black p-3 rounded mb-4">
-    You're close to your limit
-  </div>
-)}
-
-{/* USAGE */}
+      {/* USAGE */}
       <div className="border border-gray-800 rounded p-4">
         <div className="flex justify-between text-sm text-gray-400 mb-2">
           <span>{usage} used</span>
@@ -101,37 +89,46 @@ export default function Dashboard() {
         </p>
       </div>
 
+      {/* ACTIONS */}
       <div className="flex gap-4">
+
         <button
-          onClick={() => fetchUsage(email)}
+          onClick={async () => {
+            const res = await fetch('/api/external-verify', {
+              method: 'POST',
+              body: JSON.stringify({ email })
+            });
+
+            const data = await res.json();
+
+            if (data.error === 'LIMIT_REACHED') {
+              alert('Limit reached — upgrade required');
+              return;
+            }
+
+            setUsage(data.usage);
+          }}
           className="bg-blue-600 px-4 py-2 rounded"
         >
           Run Test Request
         </button>
 
-        <button className="border border-gray-600 px-4 py-2 rounded">
-          Upgrade
+        <button
+          onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_pro'}
+          className="bg-green-600 px-4 py-2 rounded"
+        >
+          Buy Pro (€9)
         </button>
-      
-  <div className="flex gap-4 mt-6">
 
-    <button
-      onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_pro'}
-      className="bg-green-600 px-4 py-2 rounded"
-    >
-      Buy Pro (€9)
-    </button>
+        <button
+          onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_scale'}
+          className="bg-purple-600 px-4 py-2 rounded"
+        >
+          Buy Scale (€29)
+        </button>
 
-    <button
-      onClick={() => window.location.href = 'https://aydncy.gumroad.com/l/ovwi_scale'}
-      className="bg-purple-600 px-4 py-2 rounded"
-    >
-      Buy Scale (€29)
-    </button>
-
-  </div>
+      </div>
 
     </div>
   );
-
 }
