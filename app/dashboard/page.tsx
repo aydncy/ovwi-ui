@@ -16,7 +16,14 @@ export default function Dashboard() {
 
     
   async function fetchUsage() {
-    const res = await fetch('/api/verify');
+    const res = await const res = await fetch('/api/verify', {
+  method: 'POST',
+  body: JSON.stringify({ email })
+});
+const data = await res.json();
+
+setUsage(data.usage);
+setApiKey(data.apiKey);
     const data = await res.json();
 
     if (data.usage) {
