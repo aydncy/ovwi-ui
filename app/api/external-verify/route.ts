@@ -13,22 +13,20 @@ export async function POST(req: Request) {
     .from('api_users')
     .select('*')
     .eq('email', email)
-    .single();
+    .maybeSingle();
 
   if (!user) {
     return NextResponse.json({ error: 'USER_NOT_FOUND' });
   }
 
-  // 🚨 LIMIT
-  if (user.usage >= user.limit) {
+  if (user.usage >= user.monthly_limit) {
     return NextResponse.json({
       error: 'LIMIT_REACHED',
       usage: user.usage,
-      limit: user.limit
+      limit: user.monthly_limit
     });
   }
 
-  // ✅ usage artır
   const newUsage = user.usage + 1;
 
   await supabase
@@ -39,6 +37,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     success: true,
     usage: newUsage,
-    limit: user.limit
+    limit: user.monthly_limit
   });
 }

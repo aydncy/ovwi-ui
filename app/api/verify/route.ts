@@ -13,18 +13,12 @@ function generateKey() {
 export async function POST(req: Request) {
   const { email } = await req.json();
 
-  if (!email) {
-    return NextResponse.json({ error: 'No email' });
-  }
-
-  // ✅ kullanıcı var mı?
   let { data: user } = await supabase
     .from('api_users')
     .select('*')
     .eq('email', email)
-    .single();
+    .maybeSingle();
 
-  // ✅ yoksa oluştur
   if (!user) {
     const apiKey = generateKey();
 
@@ -34,7 +28,7 @@ export async function POST(req: Request) {
         email,
         api_key: apiKey,
         usage: 0,
-        limit: 50
+        monthly_limit: 50
       })
       .select()
       .single();
@@ -45,6 +39,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     apiKey: user.api_key,
     usage: user.usage,
-    limit: user.limit
+    limit: user.monthly_limit
   });
 }
