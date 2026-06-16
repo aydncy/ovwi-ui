@@ -8,6 +8,7 @@ export default function Dashboard() {
   const [usage, setUsage] = useState(0);
   const [apiKey, setApiKey] = useState('');
   const [limit, setLimit] = useState(50);
+const [countdown, setCountdown] = useState(5);
 
   async function fetchUsage(userEmail: string) {
     const res = await fetch('/api/verify', {
@@ -23,6 +24,19 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
+
+  if (usage >= limit - 1 && usage < limit) {
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) return 0;
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }
+
+
     async function load() {
       if (!supabase) return;
 
@@ -121,6 +135,26 @@ return (
 {usage >= limit * 0.9 && usage < limit - 1 && (
   <div className="bg-yellow-500 text-black p-3 rounded mb-4">
     ⚠️ You're about to hit your limit
+  </div>
+)}
+
+{/* COUNTDOWN MODE */}
+
+{usage >= limit - 1 && usage < limit && (
+  <div className="bg-red-800 text-white p-4 rounded mb-4 border-4 border-red-500">
+
+    <p className="text-lg font-bold">
+      ⚠️ LAST REQUEST REMAINING
+    </p>
+
+    <p className="text-sm mt-2">
+      API access stopping in:
+    </p>
+
+    <p className="text-3xl font-bold mt-2 animate-pulse">
+      {countdown}s
+    </p>
+
   </div>
 )}
 
