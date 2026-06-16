@@ -10,19 +10,15 @@ export default function Navbar() {
   useEffect(() => {
     if (!supabase) return;
 
-    // mevcut user
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user);
     });
 
-    // auth değişimini dinle
     const { data: sub } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user || null);
     });
 
-    return () => {
-      sub.subscription.unsubscribe();
-    };
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   return (
@@ -32,16 +28,18 @@ export default function Navbar() {
         <h1 className="font-bold text-white">OVWI</h1>
 
         <div className="flex gap-6 text-sm text-gray-300">
-          /Home</Link>
-          /docsDocs</Link>
 
-          {user && /dashboardDashboard</Link>}
+          <Link href="/">Home</Link>
+          <Link href="/docs">Docs</Link>
+
+          {user && <Link href="/dashboard">Dashboard</Link>}
 
           {user ? (
-            /auth/logoutLogout</Link>
+            <Link href="/auth/logout">Logout</Link>
           ) : (
-            /auth/loginLogin</Link>
+            <Link href="/auth/login">Login</Link>
           )}
+
         </div>
 
       </div>
