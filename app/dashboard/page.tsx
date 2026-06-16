@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase-browser';
 
 export default function Dashboard() {
   const [email, setEmail] = useState('');
@@ -9,10 +10,10 @@ export default function Dashboard() {
 
   const limit = 50;
 
-  async function fetchUsage() {
+  async function fetchUsage(userEmail: string) {
     const res = await fetch('/api/verify', {
       method: 'POST',
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email: userEmail })
     });
 
     const data = await res.json();
@@ -22,8 +23,20 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    if (email) fetchUsage();
-  }, [email]);
+    async function load() {
+      if (!supabase) return;
+
+      const { data } = await supabase.auth.getUser();
+      const userEmail = data?.user?.email;
+
+      if (userEmail) {
+        setEmail(userEmail);
+        fetchUsage(userEmail);
+      }
+    }
+
+    load();
+  }, []);
 
   return (
     <div className="max-w-6xl mx-auto py-10 space-y-8">
@@ -60,10 +73,9 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* ACTIONS */}
       <div className="flex gap-4">
         <button
-          onClick={fetchUsage}
+          onClick={() => fetchUsage(email)}
           className="bg-blue-600 px-4 py-2 rounded"
         >
           Run Test Request
