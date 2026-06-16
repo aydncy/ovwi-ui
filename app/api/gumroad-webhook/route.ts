@@ -9,23 +9,47 @@ const supabase = createClient(
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const email = body.purchaser_email;
+  const email = (body.purchaser_email || '').trim().toLowerCase();
   const product = (body.product_name || '').toLowerCase();
 
-  let limit = 50;
+  console.log("EMAIL:", email);
+  console.log("PRODUCT:", product);
 
-  if (product.includes('pro')) {
-    limit = 2000;
-  }
-
-  if (product.includes('scale')) {
-    limit = 10000;
-  }
-
-  await supabase
+  // ✅ TÜM USERLARI ÇEK → NODE'DA BUL
+  const { data: users, error } = await supabase
     .from('api_users')
-    .update({ monthly_limit: limit })
-    .eq('email', email);
+    .select('*');
+
+  if (error) {
+    console.log("ERROR:", error);
+    return NextResponse.json({ error: 'DB_ERROR' });
+  }
+
+  // ✅ JS İÇİNDE MATCH ET (100% GUARANTEED)
+  const user = users.find(
+    (u) => u.email?.trim().toLowerCase() === email
+  );
+
+  if (!user) {
+    console.log("USER NOT FOUND AFTER MANUAL MATCH");
+    return NextResponse.json({ error: 'USER_NOT_FOUND' });
+  }
+
+  let addLimit = 0;
+
+  if (product.includes('pro')) addLimit = 2000;
+  if (product.includes('scale')) addLimit = 10000;
+
+  const remaining = user.monthly_limit - user.usage;
+  const newLimit = remaining + addLimit;
+
+  const { error: updateError } = await supabase
+    .from('api_users')
+    .update({ monthly_limit: newLimit })
+    .eq('id', user.id); // ✅ ID ile update (EN GÜVENLİ)
+
+  console.log("UPDATED TO:", newLimit);
+  console.log("UPDATE ERROR:", updateError);
 
   return NextResponse.json({ success: true });
 }
