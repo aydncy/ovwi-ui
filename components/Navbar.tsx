@@ -7,16 +7,16 @@ export default function Navbar() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    if (!supabase) return; // ✅ FIX
+    if (!supabase) return;
 
     async function load() {
-      const { data } = await supabase.auth.getUser();
+      const { data } = await supabase!.auth.getUser(); // ✅ FIX
       setUser(data.user);
     }
 
     load();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
+    const { data: listener } = supabase!.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user || null);
       }
@@ -28,14 +28,13 @@ export default function Navbar() {
   }, []);
 
   async function handleLogout() {
-    if (!supabase) return; // ✅ FIX
-    await supabase.auth.signOut();
+    if (!supabase) return;
+    await supabase!.auth.signOut(); // ✅ FIX
     window.location.href = '/auth/login';
   }
 
   return (
     <nav className="flex justify-between items-center px-8 py-4 border-b border-white/10 backdrop-blur bg-white/5">
-      
       <div className="font-bold text-lg">OVWI</div>
 
       <div className="flex gap-6 text-sm text-gray-300">
@@ -50,7 +49,6 @@ export default function Navbar() {
         ) : (
           <a href="/auth/login">Login</a>
         )}
-
       </div>
     </nav>
   );
