@@ -7,6 +7,23 @@ import Console from './console';
 import Growth from './growth';
 
 export default function Dashboard() {
+
+  const [usage, setUsage] = useState(0);
+  const limit = 50;
+
+  async function fetchUsage() {
+    const res = await fetch('/api/verify');
+    const data = await res.json();
+
+    if (data.usage) {
+      setUsage(data.usage);
+    }
+  }
+
+  useEffect(() => {
+    fetchUsage();
+  }, []);
+
   const [email, setEmail] = useState('');
   const [usage, setUsage] = useState(0);
   const [limit, setLimit] = useState(50);

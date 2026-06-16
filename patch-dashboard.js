@@ -1,30 +1,31 @@
 const fs = require('fs');
 
-let file = fs.readFileSync('app/dashboard/page.tsx','utf8');
+let file = fs.readFileSync('app/dashboard/page.tsx', 'utf8');
 
-file = file.replace(
-'const runVerify = async () => {',
-`const runVerify = async () => {
-    try {
-`
-);
+if (!file.includes('fetchUsage')) {
 
-file = file.replace(
-'setUsage(data.usage);',
-'setUsage(Number(data.usage) || 0);'
-);
+  file = file.replace(
+`export default function Dashboard() {`,
+`export default function Dashboard() {
 
-file = file.replace(
-'setLimit(data.limit);',
-'setLimit(Number(data.limit) || 50);'
-);
+  const [usage, setUsage] = useState(0);
+  const limit = 50;
 
-file = file.replace(
-'};',
-`} catch(e) {
-    console.error("verify failed", e);
+  async function fetchUsage() {
+    const res = await fetch('/api/verify');
+    const data = await res.json();
+
+    if (data.usage) {
+      setUsage(data.usage);
+    }
   }
-};`
-);
+
+  useEffect(() => {
+    fetchUsage();
+  }, []);
+`
+  );
+
+}
 
 fs.writeFileSync('app/dashboard/page.tsx', file);
