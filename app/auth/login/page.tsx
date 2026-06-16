@@ -1,15 +1,30 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase-browser';
+import { useAuth } from '@/components/useAuth';
 
 export default function Login() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, loading]);
 
   async function loginWithGoogle() {
     if (!supabase) return;
 
     await supabase.auth.signInWithOAuth({
-      provider: 'google'
+      provider: 'google',
     });
+  }
+
+  if (loading) {
+    return <div className="text-center mt-20">Loading...</div>;
   }
 
   return (
@@ -21,7 +36,7 @@ export default function Login() {
 
         <button
           onClick={loginWithGoogle}
-          className="bg-red-500 w-full py-2 rounded"
+          className="bg-red-500 w-full py-3 rounded"
         >
           Continue with Google
         </button>
