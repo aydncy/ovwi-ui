@@ -54,7 +54,20 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* USAGE */}
+      {/* LIMIT WARNING */}
+{usage >= limit && (
+  <div className="bg-red-600 text-white p-3 rounded">
+    Limit reached — Upgrade required
+  </div>
+)}
+
+{usage > limit * 0.8 && usage < limit && (
+  <div className="bg-yellow-500 text-black p-3 rounded">
+    You're close to your limit
+  </div>
+)}
+
+{/* USAGE */}
       <div className="border border-gray-800 rounded p-4">
         <div className="flex justify-between text-sm text-gray-400 mb-2">
           <span>{usage} used</span>

@@ -7,11 +7,16 @@ export async function POST(req: Request) {
   let user = getUser(email);
 
   if (!user) {
-    return NextResponse.json({ error: 'User not found' });
+    return NextResponse.json({ error: 'USER_NOT_FOUND' });
   }
 
+  // 🚨 LIMIT BLOCK
   if (user.usage >= user.limit) {
-    return NextResponse.json({ error: 'Limit reached' });
+    return NextResponse.json({
+      error: 'LIMIT_REACHED',
+      usage: user.usage,
+      limit: user.limit
+    });
   }
 
   user.usage += 1;
