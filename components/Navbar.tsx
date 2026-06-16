@@ -1,39 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { supabase as supabaseClient } from '@/lib/supabase-browser';
+import { supabase } from '@/lib/supabase-browser';
 
 export default function Navbar() {
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    if (!supabaseClient) return;
-
-    const sb = supabaseClient; // ✅ CRITICAL FIX
-
-    async function load() {
-      const { data } = await sb.auth.getUser();
-      setUser(data.user);
-    }
-
-    load();
-
-    const { data: listener } = sb.auth.onAuthStateChange(
-      () => {
-        window.location.reload(); // logout/login refresh
-      }
-    );
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
 
   async function handleLogout() {
-    if (!supabaseClient) return;
+    if (!supabase) return;
 
-    await supabaseClient.auth.signOut();
-    window.location.replace('/auth/login');
+    // ✅ logout
+    await supabase.auth.signOut();
+
+    // ✅ CRITICAL: tüm cache temizle
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // ✅ CRITICAL: hard reload
+    window.location.href = '/auth/login';
   }
 
   return (
@@ -46,11 +28,9 @@ export default function Navbar() {
         <a href="/docs">Docs</a>
         <a href="/dashboard">Dashboard</a>
 
-        {user ? (
-          <button onClick={handleLogout}>Logout</button>
-        ) : (
-          <a href="/auth/login">Login</a>
-        )}
+        <button onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     </nav>
   );
