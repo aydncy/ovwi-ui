@@ -1,18 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase as sb } from '@/lib/supabase-browser';
+import { supabase } from '@/lib/supabase-browser';
 
 export function useAuth() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!sb) return;
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
+    // ✅ GUARANTEED NON-NULL
+    const sb = supabase;
 
     async function init() {
-      const { data } = await sb.auth.getUser();
-      setUser(data.user ?? null);
+      const { data: { user } } = await sb.auth.getUser();
+      setUser(user ?? null);
       setLoading(false);
     }
 
@@ -24,7 +30,9 @@ export function useAuth() {
       }
     );
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   return { user, loading };
