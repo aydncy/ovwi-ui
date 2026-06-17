@@ -16,28 +16,31 @@ export default function Navbar() {
 
   return (
     <nav className="border-b border-white/10 bg-black">
-      <div className="max-w-6xl mx-auto flex justify-between items-center py-4 px-6">
 
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+
+        {/* LEFT */}
         <Link href="/" className="text-lg font-bold">
           OVWI
         </Link>
 
-        <div className="flex items-center gap-8 text-sm">
+        {/* RIGHT */}
+        <div className="flex items-center gap-6 text-sm text-gray-300">
 
           <Link href="/">Home</Link>
           <Link href="/docs">Docs</Link>
 
           {user && <Link href="/dashboard">Dashboard</Link>}
 
-          {user ? (
-            <button onClick={handleLogout}>Logout</button>
-          ) : (
-            <Link href="/auth/login">Login</Link>
-          )}
+          {user
+            ? <button onClick={handleLogout}>Logout</button>
+            : <Link href="/auth/login">Login</Link>
+          }
 
         </div>
 
       </div>
+
     </nav>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/useAuth';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -11,43 +11,38 @@ export default function Home() {
   const [limit, setLimit] = useState(50);
 
   useEffect(() => {
-
     async function load() {
-      // login yoksa → free göster
       if (!user) {
         setUsage(0);
         setLimit(50);
         return;
       }
 
-      // login varsa → gerçek data çek
       const res = await fetch('/api/verify', {
         method: 'POST',
         body: JSON.stringify({ email: user.email })
       });
 
       const data = await res.json();
-
       setUsage(data.usage);
       setLimit(data.limit);
     }
 
     load();
-
   }, [user]);
 
   const percent = (usage / limit) * 100;
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative">
 
-      {/* HERO */}
-      <section className="grid md:grid-cols-2 max-w-6xl mx-auto py-32 px-6 gap-12 items-center">
+      {/* MAIN HERO */}
+      <section className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 px-6 py-28 items-center">
 
         {/* LEFT */}
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-xl">
 
-          <h1 className="text-7xl font-bold leading-tight">
+          <h1 className="text-6xl font-bold leading-tight tracking-tight">
             Scale your API
             <span className="block text-blue-400">
               without limits
@@ -55,61 +50,81 @@ export default function Home() {
           </h1>
 
           <p className="text-gray-400 text-lg">
-            Track usage, enforce limits and monetize instantly.
+            Track usage, enforce limits and turn API traffic into revenue.
           </p>
 
-          <div className="flex gap-4">
+          {/* CTA */}
+          <div className="flex gap-4 mt-4">
 
             <Link
-              href={user ? "/dashboard" : "/auth/login"}
-              className="bg-blue-600 px-6 py-3 rounded-lg"
+              
+              className="bg-blue-600 px-6 py-3 rounded-lg text-sm font-medium hover:scale-105 transition"
             >
               🚀 Start Scaling API
             </Link>
 
             <Link
               href="/docs"
-              className="border border-white/20 px-6 py-3 rounded-lg"
+              className="border border-white/20 px-5 py-3 rounded-lg text-sm"
             >
               Docs
             </Link>
 
           </div>
 
+          {/* urgency */}
+          <p className="text-red-400 text-sm mt-2">
+            Free plan is limited — upgrade to scale
+          </p>
+
         </div>
 
-        {/* RIGHT (REAL DATA PANEL) */}
+        {/* RIGHT PANEL */}
         <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur">
 
           <p className="text-sm text-gray-400">Usage</p>
 
-          <div className="w-full h-3 bg-gray-800 rounded mt-2">
+          <div className="w-full h-3 bg-gray-800 rounded mt-2 overflow-hidden">
             <div
-              className="h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded"
+              className="bg-gradient-to-r from-blue-500 to-purple-500 h-3"
               style={{ width: `${percent}%` }}
             />
           </div>
 
           <p className="text-xs text-gray-500 mt-2">
-            {usage} / {limit} requests
+            {usage} / {limit}
           </p>
 
-          {!user && (
-            <p className="text-xs text-gray-400 mt-2">
-              Free plan preview
-            </p>
-          )}
-
-          {percent > 80 && (
+          {percent > 70 && (
             <p className="text-red-400 text-xs mt-2">
-              ⚠️ Limit almost reached
+              ⚠️ You're close to your limit
             </p>
           )}
 
           <button className="bg-green-600 px-4 py-2 rounded mt-4 animate-pulse">
-            Upgrade
+            Upgrade Plan
           </button>
 
+        </div>
+
+      </section>
+
+      {/* SECOND SECTION (CRUCIAL FOR PREMIUM) */}
+      <section className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 px-6 pb-28">
+
+        <div className="card">
+          <h3 className="font-bold">Track Usage</h3>
+          <p className="text-gray-400 mt-2">Monitor every API call</p>
+        </div>
+
+        <div className="card">
+          <h3 className="font-bold">Enforce Limits</h3>
+          <p className="text-gray-400 mt-2">Block users automatically</p>
+        </div>
+
+        <div className="card">
+          <h3 className="font-bold">Monetize</h3>
+          <p className="text-gray-400 mt-2">Built-in billing system</p>
         </div>
 
       </section>
