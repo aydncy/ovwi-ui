@@ -6,118 +6,124 @@ export default function Home() {
   const { user } = useAuth();
 
   return (
-    <div className="space-y-32">
+    <div className="relative overflow-hidden">
+
+      {/* BACKGROUND GLOW */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/30 blur-3xl" />
+      <div className="absolute top-40 right-0 w-96 h-96 bg-purple-600/30 blur-3xl" />
 
       {/* HERO */}
-      <section className="text-center mt-32 space-y-8">
+      <section className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto py-32 px-6">
 
-        <h1 className="text-6xl font-bold leading-tight">
-          Stop building APIs <br />
-          <span className="text-blue-500">start scaling them</span>
-        </h1>
+        {/* LEFT */}
+        <div className="space-y-6">
 
-        <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-          OVWI gives you instant API infrastructure with usage tracking, limits,
-          and monetization built-in.
-        </p>
+          <h1 className="text-6xl font-bold leading-tight">
+            Stop building APIs
+            <br />
+            <span className="text-blue-400">start scaling them</span>
+          </h1>
 
-        <div className="flex gap-6 justify-center mt-10">
+          <p className="text-gray-400 text-lg">
+            Production-ready API infra with usage tracking, limits,
+            and monetization built-in.
+          </p>
 
-          {user ? (
-            <a href="/dashboard" className="bg-blue-600 px-8 py-4 rounded-lg text-lg">
-              Go to Dashboard
+          <div className="flex gap-4 mt-6">
+
+            {user ? (
+              <a
+               
+                className="bg-blue-600 px-6 py-3 rounded-lg"
+              >
+                Go to Dashboard
+              </a>
+            ) : (
+              <a
+               
+                className="bg-blue-600 px-6 py-3 rounded-lg"
+              >
+                Get Started
+              </a>
+            )}
+
+            <a
+                
+              className="border border-white/20 px-6 py-3 rounded-lg"
+            >
+              Docs
             </a>
-          ) : (
-            <a href="/auth/login" className="bg-blue-600 px-8 py-4 rounded-lg text-lg">
-              Get Started Free
-            </a>
-          )}
 
-          <a href="/docs" className="border px-8 py-4 rounded-lg text-lg">
-            View Docs
-          </a>
+          </div>
 
-        </div>
-
-        <p className="text-xs text-gray-500">
-          Free plan is for testing only
-        </p>
-
-      </section>
-
-      {/* SOCIAL PROOF */}
-      <section className="text-center text-gray-500">
-        Used by 1,248+ developers building real applications
-      </section>
-
-      {/* FEATURES */}
-      <section className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-
-        <div className="card">
-          <h3 className="text-lg font-bold">Track Usage</h3>
-          <p className="text-gray-400 mt-2">
-            See every API call in real-time
+          <p className="text-xs text-gray-500">
+            Free plan is for testing only
           </p>
+
         </div>
 
-        <div className="card">
-          <h3 className="text-lg font-bold">Enforce Limits</h3>
-          <p className="text-gray-400 mt-2">
-            Automatically block users at limit
-          </p>
-        </div>
+        {/* RIGHT → FAKE DASHBOARD */}
+        <div className="relative">
 
-        <div className="card">
-          <h3 className="text-lg font-bold">Monetize Instantly</h3>
-          <p className="text-gray-400 mt-2">
-            Built-in billing & paywall system
-          </p>
-        </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur shadow-xl">
 
-      </section>
+            <div className="space-y-3">
 
-      {/* PRICING */}
-      {!user && (
-        <section className="space-y-12 text-center">
+              <p className="text-sm text-gray-400">Usage</p>
 
-          <h2 className="text-4xl font-bold">Simple Pricing</h2>
+              <div className="w-full h-3 bg-gray-800 rounded">
+                <div className="w-2/3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded" />
+              </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              <p className="text-sm text-gray-500">
+                1300 / 2000 requests
+              </p>
 
-            <div className="card opacity-70">
-              <h3 className="text-xl font-bold">Free</h3>
-              <p className="text-gray-400">50 requests</p>
-            </div>
+              <button className="bg-green-600 px-4 py-2 rounded mt-3 animate-pulse">
+                Upgrade
+              </button>
 
-            <div className="card border-2 border-green-500 scale-105">
-              <h3 className="text-xl font-bold">Pro</h3>
-              <p className="text-gray-400">2000 requests</p>
-              <p className="mt-4 text-green-400 font-bold">€9</p>
-            </div>
-
-            <div className="card border-2 border-purple-500 scale-105">
-              <h3 className="text-xl font-bold">Scale</h3>
-              <p className="text-gray-400">10000 requests</p>
-              <p className="mt-4 text-purple-400 font-bold">€29</p>
             </div>
 
           </div>
 
-        </section>
-      )}
+        </div>
 
-      {/* FINAL CTA */}
-      <section className="text-center space-y-6">
+      </section>
 
-        <h2 className="text-4xl font-bold">
-          Start building today
+      {/* FEATURES */}
+      <section className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto px-6">
+
+        <div className="card">
+          <h3 className="font-bold">Track Usage</h3>
+          <p className="text-gray-400 mt-2">Monitor every API call</p>
+        </div>
+
+        <div className="card">
+          <h3 className="font-bold">Enforce Limits</h3>
+          <p className="text-gray-400 mt-2">Block users at limit</p>
+        </div>
+
+        <div className="card">
+          <h3 className="font-bold">Monetize</h3>
+          <p className="text-gray-400 mt-2">Built-in payment logic</p>
+        </div>
+
+      </section>
+
+      {/* CTA */}
+      <section className="text-center py-24">
+
+        <h2 className="text-4xl font-bold mb-6">
+          Start building now
         </h2>
 
-        {!user && (
-          <a href="/auth/login" className="bg-blue-600 px-8 py-4 rounded-lg text-lg">
-            Create Free Account
-          </a>
-        )}
+        <a
+          
+          className="bg-blue-600 px-6 py-3 rounded-lg"
+        >
+          Create Free Account
+        </a>
 
       </section>
 
