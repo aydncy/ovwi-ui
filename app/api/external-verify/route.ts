@@ -1,30 +1,23 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createServerClient } from '@/lib/supabase-server';
 
 export async function POST(req: Request) {
+  const supabase = createServerClient();
+
   const { email } = await req.json();
 
-  let { data: user } = await supabase
+  const { data: user, error } = await supabase
     .from('api_users')
     .select('*')
-    .eq('email', email)
-    .maybeSingle();
+    .ilike('email', email)
+    .single();
 
   if (!user) {
-    return NextResponse.json({ error: 'USER_NOT_FOUND' });
+    return NextResponse.json({ error: 'NOT_FOUND' });
   }
 
   if (user.usage >= user.monthly_limit) {
-    return NextResponse.json({
-      error: 'LIMIT_REACHED',
-      usage: user.usage,
-      limit: user.monthly_limit
-    });
+    return NextResponse.json({ error: 'LIMIT_REACHED' });
   }
 
   const newUsage = user.usage + 1;
@@ -32,11 +25,10 @@ export async function POST(req: Request) {
   await supabase
     .from('api_users')
     .update({ usage: newUsage })
-    .eq('email', email);
+    .eq('id', user.id);
 
   return NextResponse.json({
-    success: true,
     usage: newUsage,
-    limit: user.monthly_limit
+    limit: user.monthly_limit,
   });
 }
