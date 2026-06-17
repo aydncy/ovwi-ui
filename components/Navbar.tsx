@@ -1,59 +1,43 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useAuth } from '@/components/useAuth';
 import { supabase } from '@/lib/supabase-browser';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const sb = supabase;
-
-    async function load() {
-      const { data: { user } } = await sb.auth.getUser();
-      setUser(user);
-    }
-
-    load();
-
-    const { data: listener } = sb.auth.onAuthStateChange(
-      (_event, session) => {
-        console.log("SESSION:", session);
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
+  const { user } = useAuth();
+  const router = useRouter();
 
   async function handleLogout() {
     await supabase.auth.signOut();
-
-    // ✅ HARD REFRESH (CRITICAL)
-    window.location.href = '/auth/login';
+    router.push('/auth/login');
   }
 
   return (
-    <nav className="flex justify-between px-8 py-4 border-b border-white/10 bg-black text-white">
+    <nav className="border-b border-white/10 bg-black">
+      <div className="max-w-6xl mx-auto flex justify-between items-center py-4 px-6">
 
-      <Link href="/">OVWI</Link>
+        <Link href="/" className="text-lg font-bold">
+          OVWI
+        </Link>
 
-      <div className="flex gap-6">
-        <Link href="/">Home</Link>
-        <Link href="/docs">Docs</Link>
+        <div className="flex items-center gap-8 text-sm">
 
-        {user && <Link href="/dashboard">Dashboard</Link>}
+          <Link href="/">Home</Link>
+          <Link href="/docs">Docs</Link>
 
-        {user ? (
-          <button onClick={handleLogout}>Logout</button>
-        ) : (
-          <Link href="/auth/login">Login</Link>
-        )}
+          {user && <Link href="/dashboard">Dashboard</Link>}
+
+          {user ? (
+            <button onClick={handleLogout}>Logout</button>
+          ) : (
+            <Link href="/auth/login">Login</Link>
+          )}
+
+        </div>
+
       </div>
-
     </nav>
   );
 }
