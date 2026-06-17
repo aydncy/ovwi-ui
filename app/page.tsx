@@ -49,7 +49,9 @@ export default function Home() {
           </h1>
 
           <p className="text-gray-400">
-            Track usage, enforce limits and turn traffic into revenue.
+            Track usage, enforce limits and monetize your API fast.
+
+⚡ Most users upgrade within first few minutes and turn traffic into revenue.
           </p>
 
           <div className="flex gap-4 mt-4">
@@ -58,7 +60,7 @@ export default function Home() {
               href={user ? "/dashboard" : "/auth/login"}
               className="bg-blue-600 px-6 py-3 rounded-lg"
             >
-              🚀 Start Scaling API
+              🚀 🚀 Start Scaling API (Free → 🚀 Upgrade Now Required)
             </Link>
 
             <Link

@@ -31,8 +31,62 @@ export default function Dashboard() {
 
   const percent = (usage / limit) * 100;
 
+  // FULL SALES MODE
+
+if (usage >= limit) {
   return (
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
+      <div className="bg-gray-900 p-8 rounded text-center space-y-4">
+
+        <h2 className="text-2xl font-bold">
+          API Limit Reached
+        </h2>
+
+        <p className="text-gray-400">
+          You cannot continue without upgrading
+        </p>
+
+        <button
+          onClick={() => window.location.href='https://aydncy.gumroad.com/l/ovwi_pro'}
+          className="bg-green-600 px-6 py-3 rounded animate-pulse"
+        >
+          🚀 Upgrade Now
+        </button>
+
+      </div>
+    </div>
+  );
+}
+
+return (
     <div className="max-w-4xl mx-auto py-16 space-y-10">
+
+{usage >= limit * 0.8 && (
+  <div className="bg-red-600 text-white p-3 rounded animate-pulse">
+    ⚠️ You're close to your limit
+  </div>
+)}
+
+{usage >= limit - 3 && (
+  <div className="bg-red-800 text-white p-3 rounded">
+    🚨 Only a few requests left
+  </div>
+)}
+
+
+{/* SALES MODE */}
+
+{usage >= limit * 0.8 && (
+  <div className="bg-red-600 text-white p-4 rounded animate-pulse">
+    ⚠️ You're about to hit your API limit
+  </div>
+)}
+
+{usage >= limit - 3 && (
+  <div className="bg-red-800 text-white p-4 rounded border border-red-500">
+    🚨 CRITICAL: Only a few requests left
+  </div>
+)}
 
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
