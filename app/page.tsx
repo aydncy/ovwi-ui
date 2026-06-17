@@ -36,55 +36,48 @@ export default function Home() {
   return (
     <div className="relative">
 
-      {/* MAIN HERO */}
       <section className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 px-6 py-28 items-center">
 
         {/* LEFT */}
         <div className="space-y-6 max-w-xl">
 
-          <h1 className="text-6xl font-bold leading-tight tracking-tight">
+          <h1 className="text-6xl font-bold">
             Scale your API
             <span className="block text-blue-400">
               without limits
             </span>
           </h1>
 
-          <p className="text-gray-400 text-lg">
-            Track usage, enforce limits and turn API traffic into revenue.
+          <p className="text-gray-400">
+            Track usage, enforce limits and turn traffic into revenue.
           </p>
 
-          {/* CTA */}
           <div className="flex gap-4 mt-4">
 
             <Link
-              
-              className="bg-blue-600 px-6 py-3 rounded-lg text-sm font-medium hover:scale-105 transition"
+              href={user ? "/dashboard" : "/auth/login"}
+              className="bg-blue-600 px-6 py-3 rounded-lg"
             >
               🚀 Start Scaling API
             </Link>
 
             <Link
               href="/docs"
-              className="border border-white/20 px-5 py-3 rounded-lg text-sm"
+              className="border border-white/20 px-6 py-3 rounded-lg"
             >
               Docs
             </Link>
 
           </div>
 
-          {/* urgency */}
-          <p className="text-red-400 text-sm mt-2">
-            Free plan is limited — upgrade to scale
-          </p>
-
         </div>
 
-        {/* RIGHT PANEL */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur">
+        {/* RIGHT */}
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
 
           <p className="text-sm text-gray-400">Usage</p>
 
-          <div className="w-full h-3 bg-gray-800 rounded mt-2 overflow-hidden">
+          <div className="w-full h-3 bg-gray-800 rounded mt-2">
             <div
               className="bg-gradient-to-r from-blue-500 to-purple-500 h-3"
               style={{ width: `${percent}%` }}
@@ -95,36 +88,10 @@ export default function Home() {
             {usage} / {limit}
           </p>
 
-          {percent > 70 && (
-            <p className="text-red-400 text-xs mt-2">
-              ⚠️ You're close to your limit
-            </p>
-          )}
-
-          <button className="bg-green-600 px-4 py-2 rounded mt-4 animate-pulse">
-            Upgrade Plan
+          <button className="bg-green-600 px-4 py-2 rounded mt-4">
+            Upgrade
           </button>
 
-        </div>
-
-      </section>
-
-      {/* SECOND SECTION (CRUCIAL FOR PREMIUM) */}
-      <section className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 px-6 pb-28">
-
-        <div className="card">
-          <h3 className="font-bold">Track Usage</h3>
-          <p className="text-gray-400 mt-2">Monitor every API call</p>
-        </div>
-
-        <div className="card">
-          <h3 className="font-bold">Enforce Limits</h3>
-          <p className="text-gray-400 mt-2">Block users automatically</p>
-        </div>
-
-        <div className="card">
-          <h3 className="font-bold">Monetize</h3>
-          <p className="text-gray-400 mt-2">Built-in billing system</p>
         </div>
 
       </section>
