@@ -51,6 +51,8 @@ export default function Home() {
           <p className="text-gray-400">
             Track usage, enforce limits and monetize your API fast.
 
+⚡ Most users upgrade within first few minutes and monetize your API fast.
+
 ⚡ Most users upgrade within first few minutes and turn traffic into revenue.
           </p>
 
@@ -60,7 +62,7 @@ export default function Home() {
               href={user ? "/dashboard" : "/auth/login"}
               className="bg-blue-600 px-6 py-3 rounded-lg"
             >
-              🚀 🚀 Start Scaling API (Free → 🚀 Upgrade Now Required)
+              🚀 🚀 🚀 Start Scaling API (Free → 🚀 Upgrade Now Required) (Free → 🚀 Upgrade Now Required)
             </Link>
 
             <Link
