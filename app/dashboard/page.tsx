@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/useAuth';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function Dashboard() {
@@ -14,10 +14,7 @@ export default function Dashboard() {
     }
   }, [user, loading]);
 
-  if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
-  }
-
+  if (loading) return null;
   if (!user) return null;
 
   return (

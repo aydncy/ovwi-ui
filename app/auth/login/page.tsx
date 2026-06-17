@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase-browser';
 import { useAuth } from '@/components/useAuth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { supabase } from '@/lib/supabase-browser';
 
 export default function Login() {
   const { user, loading } = useAuth();
@@ -19,19 +19,15 @@ export default function Login() {
     if (!supabase) return;
 
     await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: 'google'
     });
   }
 
-  if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
-  }
+  if (loading) return null;
 
   return (
     <div className="max-w-md mx-auto mt-20">
-
       <div className="card space-y-4">
-
         <h1 className="text-xl font-bold">Login</h1>
 
         <button
@@ -42,7 +38,6 @@ export default function Login() {
         </button>
 
       </div>
-
     </div>
   );
 }

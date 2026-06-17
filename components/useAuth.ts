@@ -1,38 +1,30 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase as supabaseClient } from '@/lib/supabase-browser';
+import { supabase as sb } from '@/lib/supabase-browser';
 
 export function useAuth() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabaseClient) {
-      setLoading(false);
-      return;
-    }
+    if (!sb) return;
 
-    const sb = supabaseClient; // ✅ CRITICAL FIX
-
-    async function getUser() {
+    async function init() {
       const { data } = await sb.auth.getUser();
-      setUser(data.user);
+      setUser(data.user ?? null);
       setLoading(false);
     }
 
-    getUser();
+    init();
 
     const { data: listener } = sb.auth.onAuthStateChange(
       (_event, session) => {
-        setUser(session?.user || null);
-        setLoading(false);
+        setUser(session?.user ?? null);
       }
     );
 
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    return () => listener.subscription.unsubscribe();
   }, []);
 
   return { user, loading };
