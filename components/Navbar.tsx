@@ -1,38 +1,59 @@
 'use client';
 
-import { useAuth } from '@/components/useAuth';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase-browser';
-import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const sb = supabase;
+
+    async function load() {
+      const { data: { user } } = await sb.auth.getUser();
+      setUser(user);
+    }
+
+    load();
+
+    const { data: listener } = sb.auth.onAuthStateChange(
+      (_event, session) => {
+        console.log("SESSION:", session);
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   async function handleLogout() {
-    if (!supabase) return;
-
     await supabase.auth.signOut();
-    router.refresh(); // ✅ CRITICAL
+
+    // ✅ HARD REFRESH (CRITICAL)
+    window.location.href = '/auth/login';
   }
 
   return (
-    <nav className="flex justify-between items-center px-8 py-4 border-b border-white/10">
-      <div className="font-bold text-lg">OVWI</div>
+    <nav className="flex justify-between px-8 py-4 border-b border-white/10 bg-black text-white">
 
-      {loading ? null : (
-        <div className="flex gap-6 text-sm text-gray-300">
-          <a href="/">Home</a>
-          <a href="/docs">Docs</a>
+      <Link href="/">OVWI</Link>
 
-          {user && <a href="/dashboard">Dashboard</a>}
+      <div className="flex gap-6">
+        <Link href="/">Home</Link>
+        <Link href="/docs">Docs</Link>
 
-          {user ? (
-            <button onClick={handleLogout}>Logout</button>
-          ) : (
-            <a href="/auth/login">Login</a>
-          )}
-        </div>
-      )}
+        {user && <Link href="/dashboard">Dashboard</Link>}
+
+        {user ? (
+          <button onClick={handleLogout}>Logout</button>
+        ) : (
+          <Link href="/auth/login">Login</Link>
+        )}
+      </div>
+
     </nav>
   );
 }

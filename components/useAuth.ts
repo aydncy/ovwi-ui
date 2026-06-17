@@ -8,12 +8,6 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-
-    // ✅ GUARANTEED NON-NULL
     const sb = supabase;
 
     async function init() {
@@ -30,9 +24,7 @@ export function useAuth() {
       }
     );
 
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    return () => listener.subscription.unsubscribe();
   }, []);
 
   return { user, loading };
