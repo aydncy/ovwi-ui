@@ -36,34 +36,41 @@ export default function Home() {
   return (
     <div className="relative">
 
+      {/* HERO */}
       <section className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 px-6 py-28 items-center">
 
         {/* LEFT */}
         <div className="space-y-6 max-w-xl">
 
-          <h1 className="text-6xl font-bold">
+          <h1 className="text-6xl font-bold leading-tight">
             Scale your API
             <span className="block text-blue-400">
               without limits
             </span>
           </h1>
 
-          <p className="text-gray-400">
-            Track usage, enforce limits and monetize your API fast.
-
-⚡ Most users upgrade within first few minutes and monetize your API fast.
-
-⚡ Most users upgrade within first few minutes and turn traffic into revenue.
+          <p className="text-gray-400 text-lg">
+            Track usage, enforce limits and monetize your API in minutes.
           </p>
 
+          {/* CTA */}
           <div className="flex gap-4 mt-4">
 
-            <Link
-              href={user ? "/dashboard" : "/auth/login"}
-              className="bg-blue-600 px-6 py-3 rounded-lg"
-            >
-              🚀 🚀 🚀 Start Scaling API (Free → 🚀 Upgrade Now Required) (Free → 🚀 Upgrade Now Required)
-            </Link>
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="bg-blue-600 px-6 py-3 rounded-lg text-sm font-medium hover:scale-105 transition"
+              >
+                Open Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="bg-blue-600 px-6 py-3 rounded-lg text-sm font-medium hover:scale-105 transition"
+              >
+                Get Started Free
+              </Link>
+            )}
 
             <Link
               href="/docs"
@@ -74,14 +81,18 @@ export default function Home() {
 
           </div>
 
+          <p className="text-xs text-gray-500">
+            Free plan includes 50 requests
+          </p>
+
         </div>
 
         {/* RIGHT */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur">
 
           <p className="text-sm text-gray-400">Usage</p>
 
-          <div className="w-full h-3 bg-gray-800 rounded mt-2">
+          <div className="w-full h-3 bg-gray-800 rounded mt-2 overflow-hidden">
             <div
               className="bg-gradient-to-r from-blue-500 to-purple-500 h-3"
               style={{ width: `${percent}%` }}
@@ -89,15 +100,24 @@ export default function Home() {
           </div>
 
           <p className="text-xs text-gray-500 mt-2">
-            {usage} / {limit}
+            {usage} / {limit} requests
           </p>
 
-          <button className="bg-green-600 px-4 py-2 rounded mt-4">
-            Upgrade
-          </button>
+          {!user && (
+            <p className="text-xs text-gray-400 mt-2">
+              Free plan preview
+            </p>
+          )}
 
         </div>
 
+      </section>
+
+      {/* TRUST SECTION */}
+      <section className="max-w-5xl mx-auto text-center pb-20">
+        <p className="text-gray-500 text-sm">
+          Used by developers building production-ready APIs
+        </p>
       </section>
 
     </div>
