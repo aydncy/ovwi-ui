@@ -1,14 +1,20 @@
-import Navbar from '@/components/Navbar';
 import './globals.css';
+import Navbar from '@/components/Navbar';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-gradient-to-br from-black via-gray-900 to-black text-white min-h-screen">
 
-        <Navbar /> {/* ✅ CLIENT COMPONENT */}
+        <Navbar />
 
-        {children}
+        <main className="min-h-screen">
+          {children}
+        </main>
 
       </body>
     </html>

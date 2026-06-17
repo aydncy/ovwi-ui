@@ -2,29 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Smooth font + base */
 body {
   font-family: system-ui, sans-serif;
 }
 
-/* Glass card */
+/* glass card */
 .card {
-  @apply backdrop-blur bg-white/5 border border-white/10 rounded-xl p-6;
-}
-
-/* Buttons */
-.btn {
-  @apply px-4 py-2 rounded-lg transition font-medium;
-}
-
-.btn-primary {
-  @apply bg-blue-600 hover:scale-105;
-}
-
-.btn-pro {
-  @apply bg-green-600 animate-pulse shadow-lg shadow-green-500/40;
-}
-
-.btn-scale {
-  @apply bg-purple-600 animate-pulse shadow-lg shadow-purple-500/40;
+  @apply bg-white/5 backdrop-blur border border-white/10 rounded-xl p-6;
 }
