@@ -1,182 +1,178 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export default function Home() {
 
-  const [email, setEmail] = useState('');
   const [usage, setUsage] = useState(0);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
-
   const limit = 50;
   const percent = Math.min((usage / limit) * 100, 100);
   const blocked = usage >= limit;
 
   function runRequest() {
-    if (!email) return alert("Enter email");
     if (blocked) return;
-    setUsage((u) => u + 10);
+    setUsage(u => u + 10);
   }
 
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => {
-      setMouse({
-        x: (e.clientX / window.innerWidth) - 0.5,
-        y: (e.clientY / window.innerHeight) - 0.5,
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouse);
-    return () => window.removeEventListener('mousemove', handleMouse);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#030712] text-white overflow-hidden relative">
+    <div className="bg-[#030303] text-white min-h-screen selection:bg-cyan-500/30">
 
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293710_1px,transparent_1px),linear-gradient(to_bottom,#1f293710_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+      <Navbar />
 
-      {/* HERO */}
-      <section className="relative text-center pt-24 space-y-6">
+      <main className="relative">
 
-        <h1 className="text-5xl font-bold leading-tight">
-          Make money from your API
-          <span className="block text-blue-400">
-            in minutes
-          </span>
-        </h1>
-
-        <p className="text-slate-400">
-          Track usage, enforce limits, and charge users automatically.
-        </p>
-
-        <div className="flex justify-center gap-4">
-          <Link href="/auth/login" className="bg-blue-600 px-4 py-2 rounded">
-            🚀 Start Free
-          </Link>
-
-          <Link href="/docs" className="border border-slate-700 px-4 py-2 rounded">
-            Docs
-          </Link>
+        {/* BACKGROUND */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-cyan-500/10 blur-[120px] rounded-full" />
+          <div className="absolute top-[20%] -right-[10%] w-[30%] h-[30%] bg-blue-600/10 blur-[120px] rounded-full" />
         </div>
 
-      </section>
+        {/* HERO */}
+        <section className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-16 text-center">
 
-      {/* PARALLAX CARD */}
-      <section className="flex justify-center mt-16">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+            Make money from your API
+            <span className="block text-cyan-400">
+              in minutes
+            </span>
+          </h1>
 
-        <div
-          className="bg-slate-900 border border-slate-700 p-6 rounded-xl shadow-xl transition"
-          style={{
-            transform: `rotateX(${mouse.y * -10}deg) rotateY(${mouse.x * 10}deg)`
-          }}
-        >
-
-          <p className="text-sm text-slate-400 text-center">
-            Live Monetization Demo
+          <p className="max-w-xl mx-auto text-slate-400 mb-8">
+            Track usage, enforce limits and charge users automatically.
           </p>
 
-          <p className="text-xs text-yellow-400 text-center mt-1">
-            ⚠️ Free users hit limits — upgrade required
-          </p>
+          <div className="flex justify-center gap-3">
+            <Link href="/auth/login" className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-cyan-400 transition">
+              🚀 Start Free
+            </Link>
 
-          <input
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 bg-black/40 border border-slate-800 rounded mt-4"
-          />
-
-          <div className="w-full bg-slate-950 h-2 rounded mt-4">
-            <div
-              className={blocked ? "h-2 bg-red-500" : "h-2 bg-blue-500"}
-              style={{ width: percent + "%" }}
-            />
+            <Link href="/docs" className="border border-white/10 px-6 py-2 rounded-full text-sm hover:bg-white/10">
+              Docs
+            </Link>
           </div>
 
-          <p className="text-xs text-slate-400 text-center mt-2">
-            {usage} / {limit} requests
-          </p>
+        </section>
 
-          {!blocked ? (
-            <button
-              onClick={runRequest}
-              className="mt-4 w-full bg-blue-600 py-2 rounded"
-            >
-              Run API Request
-            </button>
-          ) : (
-            <button className="mt-4 w-full bg-green-600 py-2 rounded animate-pulse">
-              🚀 Upgrade
-            </button>
-          )}
+        {/* DEMO CARD */}
+        <section className="relative z-10 flex justify-center mt-10 pb-16">
 
-        </div>
+          <div className="w-full max-w-md bg-[#0A0A0A] border border-white/10 rounded-2xl p-6 shadow-xl">
 
-      </section>
+            <p className="text-center text-sm text-slate-400">
+              Live Monetization Demo
+            </p>
 
-      {/* TRUST */}
-      <section className="text-center border-y border-slate-900 py-8 mt-16 text-xs text-slate-500">
-        Trusted by developers worldwide
+            <p className="text-center text-xs text-yellow-400 mt-1">
+              ⚠️ Free users hit limits — upgrade required
+            </p>
 
-        <div className="mt-4 flex justify-center gap-6 opacity-30 text-white">
-          <span>▲ VERCEL</span>
-          <span>linear</span>
-          <span>supabase</span>
-          <span>resend</span>
-        </div>
+            <div className="mt-4">
 
-      </section>
+              <div className="w-full bg-slate-900 h-2 rounded">
+                <div
+                  className={blocked ? "h-2 bg-red-500" : "h-2 bg-cyan-500"}
+                  style={{ width: percent + "%" }}
+                />
+              </div>
 
-      {/* PROBLEM */}
-      <section className="text-center mt-20 space-y-10">
+              <p className="text-xs text-center text-slate-400 mt-2">
+                {usage} / {limit} requests
+              </p>
 
-        <h2 className="text-3xl font-bold">
-          API monetization is broken
-        </h2>
+            </div>
 
-        <div className="flex justify-center gap-6 flex-wrap text-sm text-slate-400">
-          <div className="bg-slate-900 p-4 rounded border border-slate-800">Usage tracking is complex</div>
-          <div className="bg-slate-900 p-4 rounded border border-slate-800">Limits break systems</div>
-          <div className="bg-slate-900 p-4 rounded border border-slate-800">Billing is painful</div>
-        </div>
+            {!blocked ? (
+              <button
+                onClick={runRequest}
+                className="mt-4 w-full bg-cyan-600 py-2 rounded-lg hover:bg-cyan-500 transition"
+              >
+                Run API Request
+              </button>
+            ) : (
+              <button className="mt-4 w-full bg-green-600 py-2 rounded-lg animate-pulse">
+                🚀 Upgrade to continue
+              </button>
+            )}
 
-      </section>
+          </div>
 
-      {/* PRICING */}
-      <section className="flex justify-center gap-6 mt-16 flex-wrap">
+        </section>
 
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded w-56">
-          <h3 className="font-bold">Free</h3>
-          <p className="mt-2">$0</p>
-        </div>
+        {/* TRUST */}
+        <section className="border-y border-white/5 py-10 text-center text-xs text-slate-500">
 
-        <div className="bg-slate-900 border border-blue-500 p-6 rounded w-56">
-          <h3 className="font-bold">Pro</h3>
-          <p className="mt-2">$9</p>
-        </div>
+          Trusted by developers worldwide
 
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded w-56">
-          <h3 className="font-bold">Scale</h3>
-          <p className="mt-2">$29</p>
-        </div>
+          <div className="mt-4 flex justify-center gap-8 opacity-30">
+            <span>▲ VERCEL</span>
+            <span>linear</span>
+            <span>supabase</span>
+            <span>resend</span>
+          </div>
 
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section className="text-center mt-20 pb-24">
+        {/* PROBLEM */}
+        <section className="max-w-5xl mx-auto px-6 py-16 text-center">
 
-        <h2 className="text-3xl font-bold mb-6">
-          Start making money from your API
-        </h2>
+          <h2 className="text-3xl font-bold mb-10">
+            API monetization is broken
+          </h2>
 
-        <Link href="/auth/login" className="bg-blue-600 px-6 py-3 rounded">
-          🚀 Create Free Account
-        </Link>
+          <div className="grid md:grid-cols-3 gap-6 text-sm text-slate-400">
 
-      </section>
+            <div className="bg-white/5 border border-white/10 p-4 rounded">
+              Usage tracking is complex
+            </div>
 
+            <div className="bg-white/5 border border-white/10 p-4 rounded">
+              Limits break systems
+            </div>
+
+            <div className="bg-white/5 border border-white/10 p-4 rounded">
+              Billing is painful
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* PRICING */}
+        <section className="max-w-5xl mx-auto px-6 pb-20 grid md:grid-cols-3 gap-6">
+
+          <div className="bg-[#0A0A0A] border border-white/10 p-6 rounded">
+            <h3 className="font-bold">Free</h3>
+            <p className="mt-2 text-2xl">$0</p>
+          </div>
+
+          <div className="bg-[#0A0A0A] border border-cyan-500 p-6 rounded">
+            <h3 className="font-bold">Pro</h3>
+            <p className="mt-2 text-2xl">$9</p>
+          </div>
+
+          <div className="bg-[#0A0A0A] border border-white/10 p-6 rounded">
+            <h3 className="font-bold">Scale</h3>
+            <p className="mt-2 text-2xl">$29</p>
+          </div>
+
+        </section>
+
+        {/* CTA */}
+        <section className="text-center pb-24">
+
+          <h2 className="text-3xl font-bold mb-6">
+            Start making money from your API
+          </h2>
+
+          <Link href="/auth/login" className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-cyan-400 transition">
+            🚀 Create Free Account
+          </Link>
+
+        </section>
+
+      </main>
     </div>
   );
 }
