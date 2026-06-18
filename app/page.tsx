@@ -143,20 +143,31 @@ export default function Home() {
 
         <h2 className="text-3xl font-bold">
           How it works
+
+{/* HOW_IT_WORKS_PRO */}
         </h2>
 
         <div className="grid md:grid-cols-3 gap-8 text-sm text-gray-400">
 
           <div>
-            1. Connect your API
+            <div className="group hover:scale-105 transition bg-white/5 p-4 rounded">
+  <p className="font-bold text-blue-400">1.</p>
+  <p>Connect your API</p>
+</div>
           </div>
 
           <div>
-            2. Track usage automatically
+            <div className="group hover:scale-105 transition bg-white/5 p-4 rounded">
+  <p className="font-bold text-purple-400">2.</p>
+  <p>Track usage automatically</p>
+</div>
           </div>
 
           <div>
-            3. Set limits & monetize
+            <div className="group hover:scale-105 transition bg-white/5 p-4 rounded">
+  <p className="font-bold text-green-400">3.</p>
+  <p>Set limits & monetize</p>
+</div>
           </div>
 
         </div>
