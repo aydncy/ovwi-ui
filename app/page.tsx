@@ -43,13 +43,13 @@ export default function Home() {
 
         <div className="flex justify-center gap-4">
 
-          /auth/login
-            🚀 Start Free
-          </Link>
+          <Link href="/auth/login">
+  🚀 Start Free
+</Link>
 
-          /docs
-            Docs
-          </Link>
+          <Link href="/docs">
+  Docs
+</Link>
 
         </div>
 
