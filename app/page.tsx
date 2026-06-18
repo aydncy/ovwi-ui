@@ -102,7 +102,7 @@ export default function Home() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
           </span>
-          500+ developers monetizing their APIs
+          500+ developers already monetizing
         </motion.div>
 
         <motion.div variants={itemVariants}>
@@ -119,7 +119,7 @@ export default function Home() {
           className="max-w-2xl mx-auto text-lg md:text-xl text-slate-400/80 mb-12 leading-relaxed"
           variants={itemVariants}
         >
-          Start charging for your API in minutes. Automatic usage tracking, smart rate limits, instant payouts. Zero infrastructure headaches.
+          Start charging for your API in minutes. Automatic usage tracking, smart rate limits, and instant payouts. No infrastructure headaches.
         </motion.p>
 
         <motion.div
@@ -151,7 +151,7 @@ export default function Home() {
           className="mt-6 text-sm text-slate-500"
           variants={itemVariants}
         >
-          Setup takes 5 minutes
+          Setup takes less than 5 minutes
         </motion.p>
       </motion.section>
 
@@ -171,7 +171,9 @@ export default function Home() {
             transition={{ duration: 0.3 }}
           >
             <div className="mb-8">
-              <p className="text-sm text-cyan-400/80 font-semibold tracking-wider uppercase">Real-time Demo</p>
+              <p className="text-sm text-cyan-400/80 font-semibold tracking-wider uppercase">
+                Real-time Demo
+              </p>
               <h3 className="text-2xl font-bold mt-2 text-white">See Your Earnings</h3>
             </div>
 
@@ -188,14 +190,14 @@ export default function Home() {
                 className="bg-white/5 border border-white/10 rounded-xl p-4"
                 whileHover={{ y: -2, borderColor: "rgb(34, 211, 238)" }}
               >
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Limit</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider">Monthly Limit</p>
                 <p className="text-2xl font-bold mt-2 text-cyan-400">{limit}</p>
               </motion.div>
             </div>
 
             <div className="mb-6">
               <div className="flex justify-between items-center mb-3">
-                <label className="text-sm font-semibold text-slate-300">Progress</label>
+                <label className="text-sm font-semibold text-slate-300">Usage Progress</label>
                 <span className={`text-sm font-bold ${blocked ? "text-red-400" : "text-cyan-400"}`}>
                   {percent.toFixed(0)}%
                 </span>
@@ -226,7 +228,7 @@ export default function Home() {
               animate={{ opacity: 1 }}
             >
               <p className="text-sm font-medium">
-                {blocked ? "Developers upgrade within 2 minutes" : "Keep building — upgrade anytime"}
+                {blocked ? "Upgrade to Pro or Scale to keep using" : "Keep building — upgrade anytime"}
               </p>
             </motion.div>
 
@@ -241,7 +243,7 @@ export default function Home() {
                   : "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
               }`}
             >
-              {blocked ? "Upgrade to Pro" : "Simulate Request"}
+              {blocked ? "Upgrade Now" : "Simulate Request"}
             </motion.button>
           </motion.div>
         </div>
@@ -260,7 +262,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Three Things Your API Needs
+          How It Works
         </motion.h2>
 
         <motion.p
@@ -270,7 +272,7 @@ export default function Home() {
           transition={{ delay: 0.1 }}
           viewport={{ once: true }}
         >
-          Monetization, protection, reliability
+          Three things every API needs
         </motion.p>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -278,32 +280,32 @@ export default function Home() {
             { 
               icon: "📊", 
               title: "Track Every Call", 
-              desc: "See exactly who uses your API and how much they consume"
+              desc: "See exactly who called your API and how much they used"
             },
             { 
               icon: "🛡️", 
               title: "Stop Abuse Instantly", 
-              desc: "Automatic rate limiting blocks abuse before it hurts you"
+              desc: "Automatic rate limits protect your infrastructure from overuse"
             },
             { 
               icon: "💰", 
               title: "Charge Per Request", 
-              desc: "Bill automatically as users use your API"
+              desc: "Billing happens automatically — customers pay only for what they use"
             },
             { 
               icon: "🌍", 
               title: "Get Paid Globally", 
-              desc: "Withdraw to 150+ countries"
+              desc: "Withdraw to 150+ countries in your local currency"
             },
             { 
               icon: "⚡", 
-              title: "Sub-100ms Latency", 
-              desc: "Your API stays fast"
+              title: "Sub-100ms Overhead", 
+              desc: "Your API stays blazingly fast — we add milliseconds, not seconds"
             },
             { 
               icon: "🔒", 
               title: "Bank-Grade Security", 
-              desc: "SOC2 compliant, encrypted"
+              desc: "SOC2 compliant, encrypted, and audited for your peace of mind"
             },
           ].map((feature, i) => (
             <motion.div
@@ -340,7 +342,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Pricing
+          Choose Your Plan
         </motion.h2>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -348,20 +350,31 @@ export default function Home() {
             {
               name: "Free",
               price: "0",
-              features: ["1M requests/mo", "Basic analytics", "Email support"],
+              desc: "Perfect for testing",
+              features: ["50 requests/month", "Perfect for testing only", "Not enough for real applications"],
               popular: false,
+              link: "#",
+              cta: "Start Free",
             },
             {
               name: "Pro",
-              price: "29",
-              features: ["50M requests/mo", "Advanced analytics", "Priority support", "Best for scaling"],
+              price: "9",
+              currency: "EUR",
+              desc: "Full production access",
+              features: ["2,000 requests/month", "Full production API access", "Faster processing", "No demo limitations"],
               popular: true,
+              link: "https://aydncy.gumroad.com/l/ovwi_pro",
+              cta: "Buy Pro",
             },
             {
-              name: "Enterprise",
-              price: "Custom",
-              features: ["Unlimited requests", "Dedicated support", "SLA guarantee"],
+              name: "Scale",
+              price: "29",
+              currency: "EUR",
+              desc: "High-volume usage",
+              features: ["10,000 requests/month", "High-volume API usage", "Advanced performance", "Priority support"],
               popular: false,
+              link: "https://aydncy.gumroad.com/l/ovwi_scale",
+              cta: "Buy Scale",
             },
           ].map((plan, i) => (
             <motion.div
@@ -384,20 +397,22 @@ export default function Home() {
               )}
 
               <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
-              <p className="text-4xl font-bold text-cyan-400 mt-4">${plan.price}</p>
+              <p className="text-sm text-slate-400 mt-1">{plan.desc}</p>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-cyan-400">{plan.price}</span>
+                {plan.currency && <span className="text-slate-400">{plan.currency}</span>}
+              </div>
 
               <ul className="mt-6 space-y-3">
                 {plan.features.map((feature, j) => (
-                  <li key={j} className="flex items-center gap-3 text-slate-300 text-sm">
-                    <span className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                      +
-                    </span>
+                  <li key={j} className="flex items-start gap-3 text-slate-300 text-sm">
+                    <span className="text-xs text-slate-500 mt-1">•</span>
                     {feature}
                   </li>
                 ))}
               </ul>
 
-              <Link href="/auth/login" className="w-full mt-8 block">
+              <Link href={plan.link} className="w-full mt-8 block">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -407,11 +422,15 @@ export default function Home() {
                       : "bg-white/10 hover:bg-white/20 border border-white/20"
                   }`}
                 >
-                  Get Started
+                  {plan.cta}
                 </motion.button>
               </Link>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-12 text-center text-slate-400 text-sm">
+          <p>All plans include automatic usage tracking, rate limiting, and bank-grade security.</p>
         </div>
       </motion.section>
 
@@ -428,7 +447,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Ready to Start
+          Ready to Scale
         </motion.h2>
 
         <motion.p
@@ -438,9 +457,7 @@ export default function Home() {
           transition={{ delay: 0.1 }}
           viewport={{ once: true }}
         >
-          Join 500+ developers monetizing their APIs.
-          <br />
-          <span className="text-cyan-400 font-semibold">Free tier users upgrade within 2 minutes.</span>
+          Start with Free, upgrade to Pro or Scale when you need more. No commitments, cancel anytime.
         </motion.p>
 
         <Link href="/auth/login">
@@ -454,7 +471,7 @@ export default function Home() {
         </Link>
 
         <p className="mt-4 text-sm text-slate-500">
-          5-minute setup, no card required
+          50 requests/month to get started
         </p>
       </motion.section>
 
