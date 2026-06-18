@@ -1,30 +1,24 @@
-'use client';
+import { useEffect, useState } from "react";
+import { sb } from "@/lib/supabase"; // path sende farklıysa düzelt
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase-browser';
-
-export function useAuth() {
+export default function useAuth() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const sb = supabase;
-
     async function init() {
-      const { data: { user } } = await sb.auth.getUser();
-      setUser(user ?? null);
+      if (!sb) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      const { data } = await sb.auth.getUser();
+      setUser(data?.user ?? null);
       setLoading(false);
     }
 
     init();
-
-    const { data: listener } = sb.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => listener.subscription.unsubscribe();
   }, []);
 
   return { user, loading };
