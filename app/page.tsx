@@ -102,16 +102,16 @@ export default function Home() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
           </span>
-          Now with AI Usage Limits
+          500+ developers monetizing their APIs
         </motion.div>
 
         <motion.div variants={itemVariants}>
           <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-tight mb-6">
             <span className="bg-gradient-to-r from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent">
-              Make Money
+              Turn API Traffic
             </span>
             <br />
-            <span className="text-white">from Your AI API</span>
+            <span className="text-white">Into Real Revenue</span>
           </h1>
         </motion.div>
 
@@ -119,7 +119,7 @@ export default function Home() {
           className="max-w-2xl mx-auto text-lg md:text-xl text-slate-400/80 mb-12 leading-relaxed"
           variants={itemVariants}
         >
-          Track usage in real-time, enforce smart limits, and charge users automatically. Build monetization in minutes, not months.
+          Start charging for your API in minutes. Automatic usage tracking, smart rate limits, instant payouts. Zero infrastructure headaches.
         </motion.p>
 
         <motion.div
@@ -132,7 +132,7 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-lg shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)] transition-all"
             >
-              Start Free
+              Start Free (No Card)
             </motion.button>
           </Link>
 
@@ -142,10 +142,17 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm font-semibold text-lg hover:bg-white/10 hover:border-white/40 transition-all"
             >
-              Documentation
+              See Docs
             </motion.button>
           </Link>
         </motion.div>
+
+        <motion.p
+          className="mt-6 text-sm text-slate-500"
+          variants={itemVariants}
+        >
+          Setup takes 5 minutes
+        </motion.p>
       </motion.section>
 
       <motion.section
@@ -164,10 +171,8 @@ export default function Home() {
             transition={{ duration: 0.3 }}
           >
             <div className="mb-8">
-              <p className="text-sm text-cyan-400/80 font-semibold tracking-wider uppercase">
-                Live Engine
-              </p>
-              <h3 className="text-2xl font-bold mt-2 text-white">API Usage Tracker</h3>
+              <p className="text-sm text-cyan-400/80 font-semibold tracking-wider uppercase">Real-time Demo</p>
+              <h3 className="text-2xl font-bold mt-2 text-white">See Your Earnings</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
@@ -175,7 +180,7 @@ export default function Home() {
                 className="bg-white/5 border border-white/10 rounded-xl p-4"
                 whileHover={{ y: -2, borderColor: "rgb(34, 211, 238)" }}
               >
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Requests</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider">API Calls</p>
                 <p className="text-2xl font-bold mt-2 text-cyan-400">{usage}</p>
               </motion.div>
 
@@ -214,14 +219,14 @@ export default function Home() {
             <motion.div
               className={`p-4 rounded-xl mb-6 border ${
                 blocked
-                  ? "bg-red-500/10 border-red-500/30 text-red-300"
+                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
                   : "bg-cyan-500/10 border-cyan-500/30 text-cyan-300"
               }`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
               <p className="text-sm font-medium">
-                {blocked ? "Usage limit reached" : "Keep building"}
+                {blocked ? "Developers upgrade within 2 minutes" : "Keep building — upgrade anytime"}
               </p>
             </motion.div>
 
@@ -236,7 +241,7 @@ export default function Home() {
                   : "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
               }`}
             >
-              {blocked ? "Upgrade" : "Run Request"}
+              {blocked ? "Upgrade to Pro" : "Simulate Request"}
             </motion.button>
           </motion.div>
         </div>
@@ -255,7 +260,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Why Money Engine
+          Three Things Your API Needs
         </motion.h2>
 
         <motion.p
@@ -265,17 +270,41 @@ export default function Home() {
           transition={{ delay: 0.1 }}
           viewport={{ once: true }}
         >
-          Everything you need to monetize
+          Monetization, protection, reliability
         </motion.p>
 
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { icon: "📊", title: "Analytics", desc: "Real-time tracking" },
-            { icon: "🛡️", title: "Limits", desc: "Rate limiting" },
-            { icon: "💳", title: "Billing", desc: "Auto charging" },
-            { icon: "🌍", title: "Payouts", desc: "Global support" },
-            { icon: "⚡", title: "Fast", desc: "Sub-100ms" },
-            { icon: "🔒", title: "Secure", desc: "Bank-grade" },
+            { 
+              icon: "📊", 
+              title: "Track Every Call", 
+              desc: "See exactly who uses your API and how much they consume"
+            },
+            { 
+              icon: "🛡️", 
+              title: "Stop Abuse Instantly", 
+              desc: "Automatic rate limiting blocks abuse before it hurts you"
+            },
+            { 
+              icon: "💰", 
+              title: "Charge Per Request", 
+              desc: "Bill automatically as users use your API"
+            },
+            { 
+              icon: "🌍", 
+              title: "Get Paid Globally", 
+              desc: "Withdraw to 150+ countries"
+            },
+            { 
+              icon: "⚡", 
+              title: "Sub-100ms Latency", 
+              desc: "Your API stays fast"
+            },
+            { 
+              icon: "🔒", 
+              title: "Bank-Grade Security", 
+              desc: "SOC2 compliant, encrypted"
+            },
           ].map((feature, i) => (
             <motion.div
               key={i}
@@ -317,21 +346,21 @@ export default function Home() {
         <div className="grid md:grid-cols-3 gap-6">
           {[
             {
-              name: "Starter",
+              name: "Free",
               price: "0",
-              features: ["1M requests", "Analytics", "Email"],
+              features: ["1M requests/mo", "Basic analytics", "Email support"],
               popular: false,
             },
             {
               name: "Pro",
               price: "29",
-              features: ["50M requests", "Advanced", "Priority"],
+              features: ["50M requests/mo", "Advanced analytics", "Priority support", "Best for scaling"],
               popular: true,
             },
             {
               name: "Enterprise",
               price: "Custom",
-              features: ["Unlimited", "Dedicated", "SLA"],
+              features: ["Unlimited requests", "Dedicated support", "SLA guarantee"],
               popular: false,
             },
           ].map((plan, i) => (
@@ -350,7 +379,7 @@ export default function Home() {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-xs font-bold text-white">
-                  Popular
+                  Most Popular
                 </div>
               )}
 
@@ -360,7 +389,7 @@ export default function Home() {
               <ul className="mt-6 space-y-3">
                 {plan.features.map((feature, j) => (
                   <li key={j} className="flex items-center gap-3 text-slate-300 text-sm">
-                    <span className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center text-xs">
+                    <span className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center">
                       +
                     </span>
                     {feature}
@@ -378,7 +407,7 @@ export default function Home() {
                       : "bg-white/10 hover:bg-white/20 border border-white/20"
                   }`}
                 >
-                  Start
+                  Get Started
                 </motion.button>
               </Link>
             </motion.div>
@@ -399,7 +428,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Ready to Monetize
+          Ready to Start
         </motion.h2>
 
         <motion.p
@@ -409,7 +438,9 @@ export default function Home() {
           transition={{ delay: 0.1 }}
           viewport={{ once: true }}
         >
-          Join 500+ developers making money from APIs
+          Join 500+ developers monetizing their APIs.
+          <br />
+          <span className="text-cyan-400 font-semibold">Free tier users upgrade within 2 minutes.</span>
         </motion.p>
 
         <Link href="/auth/login">
@@ -418,9 +449,13 @@ export default function Home() {
             whileTap={{ scale: 0.95 }}
             className="px-10 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg shadow-[0_0_40px_rgba(34,211,238,0.4)] hover:shadow-[0_0_60px_rgba(34,211,238,0.6)] transition-all"
           >
-            Create Account
+            Start Free Now
           </motion.button>
         </Link>
+
+        <p className="mt-4 text-sm text-slate-500">
+          5-minute setup, no card required
+        </p>
       </motion.section>
 
       <div className="h-20" />
