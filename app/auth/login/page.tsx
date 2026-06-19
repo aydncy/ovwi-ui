@@ -1,8 +1,18 @@
 'use client';
 
+import { useEffect } from "react";
 import { sb } from "@/lib/supabase";
 
 export default function Login() {
+
+  // ✅ USER VARSA → DASHBOARD
+  useEffect(() => {
+    sb.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        window.location.href = "/dashboard";
+      }
+    });
+  }, []);
 
   async function loginGoogle() {
     await sb.auth.signInWithOAuth({
