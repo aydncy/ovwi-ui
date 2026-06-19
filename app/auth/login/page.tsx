@@ -5,7 +5,7 @@ import { sb } from "@/lib/supabase";
 
 export default function Login() {
 
-  // ✅ USER VARSA → DASHBOARD
+  // ✅ Eğer zaten login ise → dashboard
   useEffect(() => {
     sb.auth.getUser().then(({ data }) => {
       if (data.user) {
@@ -18,7 +18,7 @@ export default function Login() {
     await sb.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin + "/dashboard"
+        redirectTo: window.location.origin + "/auth/callback"
       }
     });
   }
