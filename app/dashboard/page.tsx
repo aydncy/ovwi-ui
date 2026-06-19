@@ -1,153 +1,140 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { sb } from '@/lib/supabase';
+import { useEffect, useState } from "react";
+import { sb } from "@/lib/supabase";
 
 export default function Dashboard() {
 
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  const [stats, setStats] = useState({
-    requests: 0,
-    revenue: 0,
-    users: 0,
-    latency: 42,
-  });
-
+  const [user, setUser] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
 
-  async function loadData(userId: string) {
-
-    // ✅ EVENTS ÇEK
-    const { data } = await sb
-      .from('api_events')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(20);
-
-    if (!data) return;
-
-    setEvents(data);
-
-    const totalRevenue = data.reduce((sum, e) => sum + Number(e.price), 0);
-    const totalCalls = data.length;
-
-    setStats({
-      requests: totalCalls,
-      revenue: totalRevenue,
-      users: 1, // şimdilik sen
-      latency: 42
-    });
-  }
+  const LIMIT = 1000;
 
   useEffect(() => {
+    async function load() {
 
-    sb.auth.getUser().then(async ({ data }) => {
+      const { data } = await sb.auth.getUser();
 
       if (!data.user) {
-        window.location.href = '/auth/login';
+        location.href = "/auth/login";
         return;
       }
 
-      setEmail(data.user.email || '');
+      setUser(data.user);
 
-      await loadData(data.user.id);
+      const { data: ev } = await sb
+        .from("api_events")
+        .select("*")
+        .eq("user_id", data.user.id);
 
-      setLoading(false);
-    });
+      setEvents(ev || []);
+    }
 
+    load();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-10 h-10 border-2 border-cyan-500 border-t-transparent rounded-full"
-        />
-      </div>
-    );
-  }
+  const calls = events.length;
+  const revenue = events.reduce((s, e) => s + Number(e.price), 0);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white flex justify-center">
 
-      {/* HEADER */}
-      <div className="border-b border-white/10 px-6 py-4 flex justify-between">
+      <div className="w-full max-w-5xl px-6 py-12">
 
-        <div>
-          <h1 className="text-xl font-bold">Your API Business</h1>
-          <p className="text-xs text-slate-500">{email}</p>
+        {/* HEADER */}
+        <div className="mb-10">
+
+          <h1 className="text-2xl font-bold">
+            Your API Business
+          </h1>
+
+          <p className="text-sm text-slate-500">
+            {user?.email}
+          </p>
+
         </div>
 
-        <button
-          onClick={() => sb.auth.signOut()}
-          className="text-red-400 text-sm"
-        >
-          Sign Out
-        </button>
+        {/* LIMIT CARD */}
+        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6">
 
-      </div>
+          <p className="text-sm text-slate-400 mb-2">
+            API Usage
+          </p>
 
-      <div className="max-w-6xl mx-auto px-6 py-10">
+          <div className="w-full h-3 bg-slate-800 rounded">
+            <div
+              className="h-3 bg-cyan-500"
+              style={{ width: `${(calls / LIMIT) * 100}%` }}
+            />
+          </div>
+
+          <p className="text-xs mt-2 text-slate-400">
+            {calls} / {LIMIT} requests used
+          </p>
+
+        </div>
 
         {/* STATS */}
-        <div className="grid md:grid-cols-4 gap-6 mb-10">
-
-          <div className="bg-[#0A0A0A] p-6 rounded">
-            <p className="text-sm text-slate-400">📊 API Calls</p>
-            <h2 className="text-2xl font-bold">{stats.requests}</h2>
-          </div>
+        <div className="grid md:grid-cols-3 gap-6 mb-10">
 
           <div className="bg-[#0A0A0A] p-6 rounded">
             <p className="text-sm text-slate-400">💰 Revenue</p>
             <h2 className="text-2xl font-bold">
-              ${stats.revenue.toFixed(2)}
+              ${revenue.toFixed(2)}
             </h2>
           </div>
 
           <div className="bg-[#0A0A0A] p-6 rounded">
-            <p className="text-sm text-slate-400">👤 Users</p>
-            <h2 className="text-2xl font-bold">{stats.users}</h2>
+            <p className="text-sm text-slate-400">📊 API Calls</p>
+            <h2 className="text-2xl font-bold">
+              {calls}
+            </h2>
           </div>
 
           <div className="bg-[#0A0A0A] p-6 rounded">
-            <p className="text-sm text-slate-400">⚡ Latency</p>
-            <h2 className="text-2xl font-bold">{stats.latency}ms</h2>
+            <p className="text-sm text-slate-400">⚡ Status</p>
+            <h2 className="text-2xl font-bold text-green-400">
+              Active
+            </h2>
           </div>
 
         </div>
 
+        {/* EMPTY STATE */}
+        {calls === 0 && (
+          <div className="bg-[#0A0A0A] p-6 rounded mb-6 text-sm text-slate-400">
+
+            No usage yet.
+
+            <br /><br />
+
+            👉 Trigger your first API call to start generating revenue
+
+          </div>
+        )}
+
         {/* EVENTS */}
         <div className="bg-[#0A0A0A] p-6 rounded">
 
-          <h3 className="mb-4">💸 Real Revenue Events</h3>
+          <h3 className="mb-4">Recent API Revenue</h3>
 
-          {events.length === 0 && (
-            <p className="text-slate-500 text-sm">
-              No traffic yet — trigger an API call
-            </p>
-          )}
+          {events.map((e, i) => (
+            <div key={i} className="flex justify-between border-b border-white/10 py-2 text-sm">
+              <span>{e.endpoint}</span>
+              <span className="text-cyan-400">
+                ${Number(e.price).toFixed(3)}
+              </span>
+            </div>
+          ))}
 
-          <div className="space-y-2">
+        </div>
 
-            {events.map((e, i) => (
-              <div key={i} className="flex justify-between text-sm border-b border-white/5 pb-2">
+        {/* CTA */}
+        <div className="mt-10 text-center">
 
-                <span>{e.endpoint}</span>
-
-                <span className="text-cyan-400 font-medium">
-                  ${Number(e.price).toFixed(3)}
-                </span>
-
-              </div>
-            ))}
-
-          </div>
+          <button className="bg-cyan-500 px-6 py-3 rounded text-black font-bold">
+            Upgrade Plan
+          </button>
 
         </div>
 
