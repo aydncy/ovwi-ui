@@ -1,40 +1,24 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from "next/server";
+import { sb } from "@/lib/supabase";
 
 function generateKey() {
-  return 'ovwi_' + Math.random().toString(36).substring(2, 20);
+  return "sk_live_" + Math.random().toString(36).substring(2, 12);
 }
 
-export async function POST(req: Request) {
-  const token = req.headers.get('Authorization');
+export async function POST() {
 
-  if (!token) {
-    return NextResponse.json({ error: 'no auth' }, { status: 401 });
+  const { data } = await sb.auth.getUser();
+
+  if (!data.user) {
+    return NextResponse.json({ error: "unauthorized" });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const key = generateKey();
 
-  const { data } = await supabase.auth.getUser(
-    token.replace('Bearer ', '')
-  );
-
-  const userId = data.user?.id;
-
-  if (!userId) {
-    return NextResponse.json({ error: 'no user' }, { status: 401 });
-  }
-
-  const apiKey = generateKey();
-
-  await supabase.from('api_keys').insert({
-    user_id: userId,
-    key: apiKey
+  await sb.from("api_keys").insert({
+    user_id: data.user.id,
+    api_key: key
   });
 
-  return NextResponse.json({
-    key: apiKey
-  });
+  return NextResponse.json({ apiKey: key });
 }

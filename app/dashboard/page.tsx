@@ -143,3 +143,22 @@ export default function Dashboard() {
     </div>
   );
 }
+
+{/* API KEY */}
+<div className="bg-[#0A0A0A] p-6 rounded mt-10">
+
+  <h3 className="mb-4">Your API Key</h3>
+
+  <button
+    onClick={async () => {
+      const res = await fetch("/api/create-key", { method: "POST" });
+      const data = await res.json();
+      alert("API KEY: " + data.apiKey);
+    }}
+    className="bg-cyan-500 px-4 py-2 rounded text-black"
+  >
+    Generate API Key
+  </button>
+
+</div>
+
