@@ -7,244 +7,198 @@ export default function Dashboard() {
 
   const [user, setUser] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
+  const [plan, setPlan] = useState("free");
+  const [loading, setLoading] = useState(true);
 
-  const LIMIT = 1000;
+  function getLimit(p: string) {
+    if (p === "pro") return 2000;
+    if (p === "scale") return 10000;
+    return 50;
+  }
 
-  useEffect(() => {
-    async function load() {
+  async function load() {
+    const { data } = await sb.auth.getUser();
 
-      const { data } = await sb.auth.getUser();
-
-      if (!data.user) {
-        location.href = "/auth/login";
-        return;
-      }
-
-      setUser(data.user);
-
-      const { data: ev } = await sb
-        .from("api_events")
-        .select("*")
-        .eq("user_id", data.user.id);
-
-      setEvents(ev || []);
+    if (!data.user) {
+      location.href = "/auth/login";
+      return;
     }
 
+    setUser(data.user);
+
+    // PLAN
+    const { data: profile } = await sb
+      .from("profiles")
+      .select("plan")
+      .eq("id", data.user.id)
+      .single();
+
+    const p = profile?.plan || "free";
+    setPlan(p);
+
+    // EVENTS
+    const { data: ev } = await sb
+      .from("api_events")
+      .select("*")
+      .eq("user_id", data.user.id);
+
+    setEvents(ev || []);
+    setLoading(false);
+  }
+
+  useEffect(() => {
     load();
   }, []);
 
+  if (loading) return <div className="text-white p-10">Loading...</div>;
+
   const calls = events.length;
   const revenue = events.reduce((s, e) => s + Number(e.price), 0);
+  const limit = getLimit(plan);
+
+  async function runCall() {
+
+    // API KEY
+    const { data: key } = await sb
+      .from("api_keys")
+      .select("api_key")
+      .limit(1)
+      .single();
+
+    if (!key) {
+      alert("⚠️ Generate API key first");
+      return;
+    }
+
+    const res = await fetch("/api/use-api", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ apiKey: key.api_key })
+    });
+
+    const data = await res.json();
+
+    if (data.error === "limit reached") {
+      alert(
+        "🚫 LIMIT REACHED\n\nFREE: 50\nPRO: 2000 (€9)\nSCALE: 10000 (€29)\n\n👉 Upgrade now"
+      );
+      return;
+    }
+
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    load();
+  }
 
   return (
     <div className="min-h-screen bg-black text-white flex justify-center">
 
-      <div className="w-full max-w-5xl px-6 py-12">
+      <div className="w-full max-w-4xl px-6 py-12">
 
         {/* HEADER */}
-        <div className="mb-10">
-
-          <h1 className="text-2xl font-bold">
-            Your API Business
-          </h1>
-
-          <p className="text-sm text-slate-500">
-            {user?.email}
-          </p>
-
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold">Your API Business</h1>
+          <p className="text-sm text-slate-500">{user?.email}</p>
         </div>
 
-        {/* LIMIT CARD */}
-        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6">
+        {/* FIRST ACTION */}
+        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6 text-center">
+          <h2 className="text-lg font-bold mb-2">
+            🚀 Run your first API call
+          </h2>
 
-          <p className="text-sm text-slate-400 mb-2">
-            API Usage
+          <button
+            onClick={runCall}
+            className="bg-cyan-500 px-6 py-3 rounded text-black font-bold hover:bg-cyan-400"
+          >
+            Run API Call
+          </button>
+        </div>
+
+        {/* USAGE BAR */}
+        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6">
+          <p className="text-sm mb-2">
+            {calls} / {limit} requests
           </p>
 
-          <div className="w-full h-3 bg-slate-800 rounded">
+          <div className="w-full bg-slate-800 h-3 rounded">
             <div
-              className="h-3 bg-cyan-500"
-              style={{ width: `${(calls / LIMIT) * 100}%` }}
+              className="bg-cyan-500 h-3"
+              style={{
+                width: `${Math.min((calls / limit) * 100, 100)}%`
+              }}
             />
           </div>
-
-          <p className="text-xs mt-2 text-slate-400">
-            {calls} / {LIMIT} requests used
-          </p>
-
         </div>
 
         {/* STATS */}
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-2 gap-6 mb-6">
 
           <div className="bg-[#0A0A0A] p-6 rounded">
-            <p className="text-sm text-slate-400">💰 Revenue</p>
-            <h2 className="text-2xl font-bold">
-              ${revenue.toFixed(2)}
-            </h2>
+            <p>Revenue</p>
+            <h2>${revenue.toFixed(2)}</h2>
           </div>
 
           <div className="bg-[#0A0A0A] p-6 rounded">
-            <p className="text-sm text-slate-400">📊 API Calls</p>
-            <h2 className="text-2xl font-bold">
-              {calls}
-            </h2>
-          </div>
-
-          <div className="bg-[#0A0A0A] p-6 rounded">
-            <p className="text-sm text-slate-400">⚡ Status</p>
-            <h2 className="text-2xl font-bold text-green-400">
-              Active
-            </h2>
+            <p>Plan</p>
+            <h2 className="capitalize">{plan}</h2>
           </div>
 
         </div>
-
-        {/* EMPTY STATE */}
-        {calls === 0 && (
-          <div className="bg-[#0A0A0A] p-6 rounded mb-6 text-sm text-slate-400">
-
-            No usage yet.
-
-            <br /><br />
-
-            👉 Trigger your first API call to start generating revenue
-
-          </div>
-        )}
 
         {/* EVENTS */}
         <div className="bg-[#0A0A0A] p-6 rounded">
 
-          <h3 className="mb-4">Recent API Revenue</h3>
+          <h3 className="mb-4">API Usage</h3>
+
+          {events.length === 0 && (
+            <p className="text-slate-500 text-sm">
+              No usage yet. Click above to start.
+            </p>
+          )}
 
           {events.map((e, i) => (
-            <div key={i} className="flex justify-between border-b border-white/10 py-2 text-sm">
+            <div key={i} className="flex justify-between text-sm border-b border-white/5 py-2">
               <span>{e.endpoint}</span>
-              <span className="text-cyan-400">
-                ${Number(e.price).toFixed(3)}
-              </span>
+              <span>${Number(e.price).toFixed(3)}</span>
             </div>
           ))}
 
         </div>
 
-        {/* CTA */}
-        <div className="mt-10 text-center">
+        {/* LIMIT POPUP STATE */}
+        {calls >= limit && (
+          <div className="mt-8 bg-red-500/10 border border-red-500/30 p-6 rounded text-center">
 
-          <button className="bg-cyan-500 px-6 py-3 rounded text-black font-bold">
-            Upgrade Plan
-          </button>
+            <h2 className="text-red-400 font-bold mb-2">
+              🚫 Limit Reached
+            </h2>
 
-        </div>
+            <p className="text-sm mb-4">
+              Upgrade to continue using the API
+            </p>
+
+            <div className="flex justify-center gap-4">
+
+              https://aydncy.gumroad.com/l/ovwi_pro
+                🚀 Pro (€9)
+              </a>
+
+              https://aydncy.gumroad.com/l/ovwi_scale
+                💎 Scale (€29)
+              </a>
+
+            </div>
+
+          </div>
+        )}
 
       </div>
-
     </div>
   );
 }
-
-{/* API KEY */}
-<div className="bg-[#0A0A0A] p-6 rounded mt-10">
-
-  <h3 className="mb-4">Your API Key</h3>
-
-  <button
-    onClick={async () => {
-      const res = await fetch("/api/create-key", { method: "POST" });
-      const data = await res.json();
-      alert("API KEY: " + data.apiKey);
-    }}
-    className="bg-cyan-500 px-4 py-2 rounded text-black"
-  >
-    Generate API Key
-  </button>
-
-</div>
-
-
-{/* ===== BILLING / UPGRADE ===== */}
-<div className="mt-10 bg-[#0A0A0A] p-6 rounded-xl">
-
-  <h3 className="text-lg font-bold mb-4">
-    Upgrade Your Plan
-  </h3>
-
-  <div className="flex gap-4 mb-6">
-
-    <a
-      href="https://aydncy.gumroad.com/l/ovwi_pro"
-      target="_blank"
-      className="bg-cyan-500 px-4 py-2 rounded text-black font-bold"
-    >
-      🚀 Buy Pro
-    </a>
-
-    <a
-      href="https://aydncy.gumroad.com/l/ovwi_scale"
-      target="_blank"
-      className="bg-purple-500 px-4 py-2 rounded text-white font-bold"
-    >
-      💎 Buy Scale
-    </a>
-
-  </div>
-
-  <div className="flex gap-3">
-
-    <input
-      id="license"
-      placeholder="Paste your Gumroad license key"
-      className="flex-1 p-3 bg-black border border-white/20 rounded"
-    />
-
-    <button
-      onClick={async () => {
-        const license = (document.getElementById("license") as HTMLInputElement).value;
-
-        const res = await fetch("/api/verify-payment", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ license_key: license })
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-          alert("✅ Upgraded to " + data.plan.toUpperCase());
-          location.reload();
-        } else {
-          alert("❌ Invalid license key");
-        }
-      }}
-      className="bg-green-500 px-4 rounded text-white"
-    >
-      Verify
-    </button>
-
-  </div>
-
-</div>
-
-
-{/* PLAN + LIMIT */}
-<div className="bg-[#0A0A0A] p-6 rounded mt-6">
-
-  <h3 className="mb-3 text-lg font-bold">Plan Usage</h3>
-
-  <p className="text-sm text-slate-400">
-    Plan: {stats.requests > 50 ? "PRO / SCALE" : "FREE"}
-  </p>
-
-  <p className="text-sm text-slate-400">
-    Used: {stats.requests}
-  </p>
-
-  <p className="text-sm text-slate-400">
-    Limit: {stats.requests > 50 ? "2000 / 10000" : "50"}
-  </p>
-
-</div>
-
