@@ -8,7 +8,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [plan, setPlan] = useState("free");
-  const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
 
   function getLimit(p: string) {
     if (p === "pro") return 2000;
@@ -16,7 +16,26 @@ export default function Dashboard() {
     return 50;
   }
 
+  async function init(userId: string) {
+
+    const { data: existing } = await sb
+      .from("api_keys")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
+
+    if (!existing) {
+      const key = "sk_live_" + Math.random().toString(36).slice(2, 12);
+
+      await sb.from("api_keys").insert({
+        user_id: userId,
+        api_key: key
+      });
+    }
+  }
+
   async function load() {
+
     const { data } = await sb.auth.getUser();
 
     if (!data.user) {
@@ -26,14 +45,15 @@ export default function Dashboard() {
 
     setUser(data.user);
 
+    await init(data.user.id);
+
     const { data: profile } = await sb
       .from("profiles")
       .select("plan")
       .eq("id", data.user.id)
       .single();
 
-    const p = profile?.plan || "free";
-    setPlan(p);
+    setPlan(profile?.plan || "free");
 
     const { data: ev } = await sb
       .from("api_events")
@@ -41,14 +61,16 @@ export default function Dashboard() {
       .eq("user_id", data.user.id);
 
     setEvents(ev || []);
-    setLoading(false);
+    setReady(true);
   }
 
   useEffect(() => {
     load();
   }, []);
 
-  if (loading) return <div className="text-white p-10">Loading...</div>;
+  if (!ready) {
+    return <div className="text-white p-10">Loading...</div>;
+  }
 
   const calls = events.length;
   const revenue = events.reduce((s, e) => s + Number(e.price), 0);
@@ -62,28 +84,18 @@ export default function Dashboard() {
       .limit(1)
       .single();
 
-    if (!key) {
-      alert("⚠️ Generate API key first");
-      return;
-    }
-
     const res = await fetch("/api/use-api", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ apiKey: key.api_key })
+      body: JSON.stringify({ apiKey: key?.api_key })
     });
 
     const data = await res.json();
 
     if (data.error === "limit reached") {
-      alert("🚫 Limit reached → Upgrade required");
-      return;
-    }
-
-    if (data.error) {
-      alert(data.error);
+      alert("🚫 Limit reached → Upgrade plan");
       return;
     }
 
@@ -93,75 +105,107 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-black text-white flex justify-center">
 
-      <div className="w-full max-w-4xl px-6 py-12">
+      <div className="w-full max-w-4xl px-6 py-12 text-center">
 
-        <h1 className="text-xl mb-6 text-center">
+        <h1 className="text-2xl font-bold mb-6">
           Your API Business
         </h1>
 
-        {/* RUN */}
-        <div className="bg-[#0A0A0A] p-6 rounded text-center mb-6">
+        {/* ACTION */}
+        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6">
+
           <button
             onClick={runCall}
             className="bg-cyan-500 px-6 py-3 rounded text-black font-bold"
           >
-            Run API Call
+            🚀 Run API Call
           </button>
+
         </div>
 
         {/* USAGE */}
-        <div className="bg-[#0A0A0A] p-6 rounded mb-6">
-          <p>{calls} / {limit}</p>
+        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6">
+
+          <p className="mb-2 text-sm text-slate-400">
+            {calls} / {limit} requests used
+          </p>
+
           <div className="w-full bg-slate-800 h-3 rounded">
             <div
               className="bg-cyan-500 h-3"
               style={{ width: `${(calls / limit) * 100}%` }}
             />
           </div>
+
         </div>
 
         {/* STATS */}
         <div className="grid grid-cols-2 gap-6 mb-6">
-          <div className="bg-[#0A0A0A] p-6 rounded">
-            Revenue: ${revenue.toFixed(2)}
+
+          <div className="bg-[#0A0A0A] p-6 rounded-xl">
+            💰 Revenue: ${revenue.toFixed(2)}
           </div>
-          <div className="bg-[#0A0A0A] p-6 rounded">
-            Plan: {plan}
+
+          <div className="bg-[#0A0A0A] p-6 rounded-xl">
+            📊 Plan: {plan}
           </div>
+
         </div>
 
         {/* EVENTS */}
-        <div className="bg-[#0A0A0A] p-6 rounded mb-6">
+        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6 text-left">
+
+          <h3 className="mb-4 font-bold">
+            API Calls
+          </h3>
+
+          {events.length === 0 && (
+            <p className="text-sm text-slate-500">
+              No calls yet
+            </p>
+          )}
+
           {events.map((e, i) => (
-            <div key={i} className="flex justify-between text-sm">
+            <div key={i} className="flex justify-between text-sm border-b border-white/5 py-2">
               <span>{e.endpoint}</span>
               <span>${Number(e.price).toFixed(3)}</span>
             </div>
           ))}
+
         </div>
 
-        {/* UPGRADE LINKS ✅ FIXED */}
-        <div className="text-center">
+        {/* LIMIT BLOCK */}
+        {calls >= limit && (
+          <div className="bg-red-500/20 p-6 rounded-xl mb-6">
 
-          <a
-            href="https://aydncy.gumroad.com/l/ovwi_pro"
-            target="_blank"
-            className="bg-cyan-500 px-4 py-2 rounded text-black mr-4"
-          >
+            <h2 className="text-red-400 font-bold">
+              🚫 Limit Reached
+            </h2>
+
+            <p className="text-sm mb-4">
+              Upgrade to continue
+            </p>
+
+          </div>
+        )}
+
+        {/* UPGRADE */}
+        <div className="flex justify-center gap-4">
+
+          <a href="https://aydncy.gumroad.com/l/ovwi_pro"
+             className="bg-cyan-500 px-4 py-2 rounded text-black">
             🚀 Pro (€9)
           </a>
 
-          <a
-            href="https://aydncy.gumroad.com/l/ovwi_scale"
-            target="_blank"
-            className="bg-purple-500 px-4 py-2 rounded text-white"
-          >
+          <a href="https://aydncy.gumroad.com/l/ovwi_scale"
+             className="bg-purple-500 px-4 py-2 rounded text-white">
             💎 Scale (€29)
           </a>
 
         </div>
 
       </div>
+
     </div>
   );
 }
