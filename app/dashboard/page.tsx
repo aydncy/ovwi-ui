@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { getSupabase } from '@/lib/supabase-browser';
 
 interface UserData {
@@ -14,24 +15,33 @@ interface UserData {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const supabase = getSupabase();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [copied, setCopied] = useState(false);
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
 
     const fetchData = async () => {
       try {
-        const { data: authData } = await supabase.auth.getUser();
-        if (!authData.user) {
-          window.location.href = '/auth/login';
+        const { data: authData, error: authError } = await supabase.auth.getUser();
+        
+        if (authError || !authData.user) {
+          console.log('Not authenticated, redirecting to login');
+          router.push('/auth/login');
           return;
         }
 
-        setEmail(authData.user.email || '');
+        const userEmail = authData.user.email || '';
+        setEmail(userEmail);
+        setUserId(authData.user.id);
 
         const { data, error } = await supabase
           .from('users_licenses')
@@ -39,10 +49,11 @@ export default function Dashboard() {
           .eq('user_id', authData.user.id)
           .single();
 
-        if (error) {
-          console.log('Creating new license for user...');
+        if (error || !data) {
+          console.log('No license found, creating new one...');
           const newApiKey = `sk_live_${Math.random().toString(36).substring(2, 15)}`;
-          const { data: newData } = await supabase
+          
+          const { data: newData, error: insertError } = await supabase
             .from('users_licenses')
             .insert([
               {
@@ -56,54 +67,60 @@ export default function Dashboard() {
             ])
             .select()
             .single();
-          setUserData(newData);
+
+          if (insertError) {
+            console.error('Error creating license:', insertError);
+          } else {
+            setUserData(newData);
+          }
         } else {
           setUserData(data);
         }
       } catch (err) {
-        console.error(err);
+        console.error('Dashboard error:', err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [supabase]);
+  }, [supabase, router]);
 
   const handleSimulateCall = async () => {
-    if (!supabase || !userData) return;
-
-    const { data: authData } = await supabase.auth.getUser();
-    if (!authData.user) return;
+    if (!supabase || !userData || !userId) return;
 
     if (userData.monthly_usage >= userData.monthly_limit) {
       return;
     }
 
-    const newUsage = userData.monthly_usage + 1;
-    const newRevenue = userData.total_revenue + 0.03;
+    try {
+      const newUsage = userData.monthly_usage + 1;
+      const newRevenue = userData.total_revenue + 0.03;
 
-    const { data: updated } = await supabase
-      .from('users_licenses')
-      .update({
-        monthly_usage: newUsage,
-        total_revenue: newRevenue,
-      })
-      .eq('user_id', authData.user.id)
-      .select()
-      .single();
+      const { data: updated } = await supabase
+        .from('users_licenses')
+        .update({
+          monthly_usage: newUsage,
+          total_revenue: newRevenue,
+        })
+        .eq('user_id', userId)
+        .select()
+        .single();
 
-    if (updated) {
-      setUserData(updated);
+      if (updated) {
+        setUserData(updated);
+      }
+
+      await supabase.from('api_calls').insert([
+        {
+          user_id: userId,
+          endpoint: 'POST /api/v1/process',
+          status: 200,
+        },
+      ]);
+    } catch (err) {
+      console.error('Error simulating call:', err);
     }
-
-    await supabase.from('api_calls').insert([
-      {
-        user_id: authData.user.id,
-        endpoint: 'POST /api/v1/process',
-        status: 200,
-      },
-    ]);
   };
 
   const copyApiKey = () => {
@@ -175,8 +192,10 @@ export default function Dashboard() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               onClick={async () => {
-                if (supabase) await supabase.auth.signOut();
-                window.location.href = '/';
+                if (supabase) {
+                  await supabase.auth.signOut();
+                  router.push('/');
+                }
               }}
               className="px-4 py-2 rounded-full border border-red-500/30 text-red-400 hover:text-red-300 text-sm font-semibold transition-all"
             >
