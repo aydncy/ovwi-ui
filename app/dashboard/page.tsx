@@ -162,3 +162,69 @@ export default function Dashboard() {
 
 </div>
 
+
+{/* ===== BILLING / UPGRADE ===== */}
+<div className="mt-10 bg-[#0A0A0A] p-6 rounded-xl">
+
+  <h3 className="text-lg font-bold mb-4">
+    Upgrade Your Plan
+  </h3>
+
+  <div className="flex gap-4 mb-6">
+
+    <a
+      href="https://aydncy.gumroad.com/l/ovwi_pro"
+      target="_blank"
+      className="bg-cyan-500 px-4 py-2 rounded text-black font-bold"
+    >
+      🚀 Buy Pro
+    </a>
+
+    <a
+      href="https://aydncy.gumroad.com/l/ovwi_scale"
+      target="_blank"
+      className="bg-purple-500 px-4 py-2 rounded text-white font-bold"
+    >
+      💎 Buy Scale
+    </a>
+
+  </div>
+
+  <div className="flex gap-3">
+
+    <input
+      id="license"
+      placeholder="Paste your Gumroad license key"
+      className="flex-1 p-3 bg-black border border-white/20 rounded"
+    />
+
+    <button
+      onClick={async () => {
+        const license = (document.getElementById("license") as HTMLInputElement).value;
+
+        const res = await fetch("/api/verify-payment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ license_key: license })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert("✅ Upgraded to " + data.plan.toUpperCase());
+          location.reload();
+        } else {
+          alert("❌ Invalid license key");
+        }
+      }}
+      className="bg-green-500 px-4 rounded text-white"
+    >
+      Verify
+    </button>
+
+  </div>
+
+</div>
+
