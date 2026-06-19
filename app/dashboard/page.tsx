@@ -26,7 +26,6 @@ export default function Dashboard() {
 
     setUser(data.user);
 
-    // PLAN
     const { data: profile } = await sb
       .from("profiles")
       .select("plan")
@@ -36,7 +35,6 @@ export default function Dashboard() {
     const p = profile?.plan || "free";
     setPlan(p);
 
-    // EVENTS
     const { data: ev } = await sb
       .from("api_events")
       .select("*")
@@ -58,7 +56,6 @@ export default function Dashboard() {
 
   async function runCall() {
 
-    // API KEY
     const { data: key } = await sb
       .from("api_keys")
       .select("api_key")
@@ -81,9 +78,7 @@ export default function Dashboard() {
     const data = await res.json();
 
     if (data.error === "limit reached") {
-      alert(
-        "🚫 LIMIT REACHED\n\nFREE: 50\nPRO: 2000 (€9)\nSCALE: 10000 (€29)\n\n👉 Upgrade now"
-      );
+      alert("🚫 Limit reached → Upgrade required");
       return;
     }
 
@@ -100,103 +95,71 @@ export default function Dashboard() {
 
       <div className="w-full max-w-4xl px-6 py-12">
 
-        {/* HEADER */}
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold">Your API Business</h1>
-          <p className="text-sm text-slate-500">{user?.email}</p>
-        </div>
+        <h1 className="text-xl mb-6 text-center">
+          Your API Business
+        </h1>
 
-        {/* FIRST ACTION */}
-        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6 text-center">
-          <h2 className="text-lg font-bold mb-2">
-            🚀 Run your first API call
-          </h2>
-
+        {/* RUN */}
+        <div className="bg-[#0A0A0A] p-6 rounded text-center mb-6">
           <button
             onClick={runCall}
-            className="bg-cyan-500 px-6 py-3 rounded text-black font-bold hover:bg-cyan-400"
+            className="bg-cyan-500 px-6 py-3 rounded text-black font-bold"
           >
             Run API Call
           </button>
         </div>
 
-        {/* USAGE BAR */}
-        <div className="bg-[#0A0A0A] p-6 rounded-xl mb-6">
-          <p className="text-sm mb-2">
-            {calls} / {limit} requests
-          </p>
-
+        {/* USAGE */}
+        <div className="bg-[#0A0A0A] p-6 rounded mb-6">
+          <p>{calls} / {limit}</p>
           <div className="w-full bg-slate-800 h-3 rounded">
             <div
               className="bg-cyan-500 h-3"
-              style={{
-                width: `${Math.min((calls / limit) * 100, 100)}%`
-              }}
+              style={{ width: `${(calls / limit) * 100}%` }}
             />
           </div>
         </div>
 
         {/* STATS */}
         <div className="grid grid-cols-2 gap-6 mb-6">
-
           <div className="bg-[#0A0A0A] p-6 rounded">
-            <p>Revenue</p>
-            <h2>${revenue.toFixed(2)}</h2>
+            Revenue: ${revenue.toFixed(2)}
           </div>
-
           <div className="bg-[#0A0A0A] p-6 rounded">
-            <p>Plan</p>
-            <h2 className="capitalize">{plan}</h2>
+            Plan: {plan}
           </div>
-
         </div>
 
         {/* EVENTS */}
-        <div className="bg-[#0A0A0A] p-6 rounded">
-
-          <h3 className="mb-4">API Usage</h3>
-
-          {events.length === 0 && (
-            <p className="text-slate-500 text-sm">
-              No usage yet. Click above to start.
-            </p>
-          )}
-
+        <div className="bg-[#0A0A0A] p-6 rounded mb-6">
           {events.map((e, i) => (
-            <div key={i} className="flex justify-between text-sm border-b border-white/5 py-2">
+            <div key={i} className="flex justify-between text-sm">
               <span>{e.endpoint}</span>
               <span>${Number(e.price).toFixed(3)}</span>
             </div>
           ))}
-
         </div>
 
-        {/* LIMIT POPUP STATE */}
-        {calls >= limit && (
-          <div className="mt-8 bg-red-500/10 border border-red-500/30 p-6 rounded text-center">
+        {/* UPGRADE LINKS ✅ FIXED */}
+        <div className="text-center">
 
-            <h2 className="text-red-400 font-bold mb-2">
-              🚫 Limit Reached
-            </h2>
+          <a
+            href="https://aydncy.gumroad.com/l/ovwi_pro"
+            target="_blank"
+            className="bg-cyan-500 px-4 py-2 rounded text-black mr-4"
+          >
+            🚀 Pro (€9)
+          </a>
 
-            <p className="text-sm mb-4">
-              Upgrade to continue using the API
-            </p>
+          <a
+            href="https://aydncy.gumroad.com/l/ovwi_scale"
+            target="_blank"
+            className="bg-purple-500 px-4 py-2 rounded text-white"
+          >
+            💎 Scale (€29)
+          </a>
 
-            <div className="flex justify-center gap-4">
-
-              https://aydncy.gumroad.com/l/ovwi_pro
-                🚀 Pro (€9)
-              </a>
-
-              https://aydncy.gumroad.com/l/ovwi_scale
-                💎 Scale (€29)
-              </a>
-
-            </div>
-
-          </div>
-        )}
+        </div>
 
       </div>
     </div>
