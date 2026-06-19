@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { sb } from "@/lib/supabase";
 import { getLimit } from "@/lib/plan";
 
-export async function POST(req) {
+export async function POST(req: Request) {
 
   const { apiKey } = await req.json();
 
-  // key doğrula
+  // ✅ KEY CHECK
   const { data: keyData } = await sb
     .from("api_keys")
     .select("*")
@@ -19,7 +19,7 @@ export async function POST(req) {
 
   const userId = keyData.user_id;
 
-  // plan çek
+  // ✅ PLAN CHECK
   const { data: profile } = await sb
     .from("profiles")
     .select("plan")
@@ -28,7 +28,7 @@ export async function POST(req) {
 
   const plan = profile?.plan || "free";
 
-  // kullanım say
+  // ✅ COUNT USAGE
   const { count } = await sb
     .from("api_events")
     .select("*", { count: "exact", head: true })
@@ -36,16 +36,14 @@ export async function POST(req) {
 
   const limit = getLimit(plan);
 
-  // LIMIT BLOCK 🔒
+  // ✅ LIMIT BLOCK
   if ((count || 0) >= limit) {
     return NextResponse.json({
-      error: "limit reached",
-      plan,
-      limit
+      error: "limit reached"
     });
   }
 
-  // event yaz
+  // ✅ INSERT EVENT
   await sb.from("api_events").insert({
     user_id: userId,
     endpoint: "api-call",
