@@ -228,3 +228,23 @@ export default function Dashboard() {
 
 </div>
 
+
+{/* PLAN + LIMIT */}
+<div className="bg-[#0A0A0A] p-6 rounded mt-6">
+
+  <h3 className="mb-3 text-lg font-bold">Plan Usage</h3>
+
+  <p className="text-sm text-slate-400">
+    Plan: {stats.requests > 50 ? "PRO / SCALE" : "FREE"}
+  </p>
+
+  <p className="text-sm text-slate-400">
+    Used: {stats.requests}
+  </p>
+
+  <p className="text-sm text-slate-400">
+    Limit: {stats.requests > 50 ? "2000 / 10000" : "50"}
+  </p>
+
+</div>
+
