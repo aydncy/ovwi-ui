@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
-import { generateEvent } from "@/lib/fakeEngine";
+import { sb } from "@/lib/supabase";
 
 export default function Dashboard() {
 
@@ -10,16 +10,28 @@ export default function Dashboard() {
   const [revenue, setRevenue] = useState(0);
   const [calls, setCalls] = useState(0);
 
+  async function load() {
+    const { data } = await sb
+      .from("api_events")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (!data) return;
+
+    setEvents(data);
+
+    setRevenue(
+      data.reduce((sum, e) => sum + Number(e.price), 0)
+    );
+
+    setCalls(data.length);
+  }
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      const e = generateEvent();
+    load();
 
-      setEvents(prev => [e, ...prev.slice(0, 5)]);
-      setRevenue(r => r + e.price);
-      setCalls(c => c + 1);
-
-    }, 1200);
-
+    const interval = setInterval(load, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -30,7 +42,6 @@ export default function Dashboard() {
 
       <div className="max-w-6xl mx-auto px-6 py-10">
 
-        {/* HEADER */}
         <h1 className="text-2xl font-bold mb-6">
           Your API Business
         </h1>
@@ -38,20 +49,18 @@ export default function Dashboard() {
         {/* METRICS */}
         <div className="grid grid-cols-3 gap-6 mb-10">
 
-          <div className="bg-[#0A0A0A] p-6 rounded-xl">
+          <div className="bg-[#0A0A0A] p-6 rounded">
             <p>💰 Revenue</p>
-            <h2 className="text-2xl font-bold">
-              ${revenue.toFixed(2)}
-            </h2>
+            <h2>${revenue.toFixed(2)}</h2>
           </div>
 
-          <div className="bg-[#0A0A0A] p-6 rounded-xl">
-            <p>📊 API Calls</p>
+          <div className="bg-[#0A0A0A] p-6 rounded">
+            <p>📊 Calls</p>
             <h2>{calls}</h2>
           </div>
 
-          <div className="bg-[#0A0A0A] p-6 rounded-xl">
-            <p>💸 Avg / Call</p>
+          <div className="bg-[#0A0A0A] p-6 rounded">
+            <p>💸 Avg</p>
             <h2>
               {calls === 0 ? 0 : (revenue / calls).toFixed(3)}
             </h2>
@@ -60,22 +69,16 @@ export default function Dashboard() {
         </div>
 
         {/* EVENTS */}
-        <div className="bg-[#0A0A0A] p-6 rounded-xl">
+        <div className="bg-[#0A0A0A] p-6 rounded">
 
-          <h3 className="mb-4">💸 Live Revenue Stream</h3>
+          <h3 className="mb-4">💸 Real Events</h3>
 
-          <div className="space-y-2">
-
-            {events.map((e, i) => (
-              <div key={i} className="flex justify-between">
-
-                <span>{e.type}</span>
-                <span>${e.price.toFixed(3)}</span>
-
-              </div>
-            ))}
-
-          </div>
+          {events.map((e, i) => (
+            <div key={i} className="flex justify-between mb-2">
+              <span>{e.endpoint}</span>
+              <span>${e.price}</span>
+            </div>
+          ))}
 
         </div>
 
