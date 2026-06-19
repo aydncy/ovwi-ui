@@ -127,7 +127,7 @@ export default function Dashboard() {
   }
 
   const percent = userData ? Math.min((userData.monthly_usage / userData.monthly_limit) * 100, 100) : 0;
-  const isLimitReached = userData && userData.monthly_usage >= userData.monthly_limit;
+  const isLimitReached = (git push -fuserData) && (userData.monthly_usage >= userData.monthly_limit);
 
   const getPlanUpgradeLink = () => {
     if (userData?.plan === 'free') {
