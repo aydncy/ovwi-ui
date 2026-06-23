@@ -1,62 +1,32 @@
-'use client';
+"use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { sb } from "@/lib/supabase";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
 
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    sb.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
-
-    const { data: listener } = sb.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
-
-  async function signOut() {
-    await sb.auth.signOut();
-    location.href = "/";
+  // ✅ DASHBOARD'TA NAVBAR GÖSTERME
+  if (pathname?.startsWith("/dashboard")) {
+    return null;
   }
 
   return (
-    <div className="flex justify-between items-center px-6 py-4 border-b border-white/10">
-
-      <Link href="/">
-        <h1 className="text-cyan-400 font-bold">OVWI</h1>
-      </Link>
-
-      <div className="flex gap-6 items-center">
-
-        <Link href="/">Home</Link>
-        <Link href="/docs">Docs</Link>
-
-        {user && (
-          <Link href="/dashboard">Dashboard</Link>
-        )}
-
-        {!user ? (
-          <Link href="/auth/login">
-            <button className="bg-cyan-500 px-4 py-2 rounded text-black">
-              Sign In
-            </button>
-          </Link>
-        ) : (
-          <button onClick={signOut} className="bg-red-500 px-4 py-2 rounded">
-            Sign Out
-          </button>
-        )}
-
+    <div className="flex items-center justify-between px-6 py-4">
+      <div className="text-cyan-400 font-semibold text-lg">
+        OVWI
       </div>
 
+      <div className="flex items-center gap-6 text-sm">
+        <Link href="/">Home</Link>
+        <Link href="/docs">Docs</Link>
+        <Link
+          href="/login"
+          className="px-4 py-2 bg-cyan-500 text-black rounded-lg hover:bg-cyan-400 transition"
+        >
+          Sign In
+        </Link>
+      </div>
     </div>
   );
 }
