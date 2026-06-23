@@ -4,23 +4,23 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { sb } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [user, setUser] = useState(null);
+  // ✅ TYPE FIX
+  const [user, setUser] = useState<User | null>(null);
 
-  // ✅ kullanıcıyı çek
   useEffect(() => {
     const getUser = async () => {
       const { data } = await sb.auth.getUser();
-      setUser(data?.user || null);
+      setUser(data?.user ?? null);
     };
 
     getUser();
 
-    // ✅ login/logout listener
     const { data: listener } = sb.auth.onAuthStateChange(() => {
       getUser();
     });
@@ -30,7 +30,6 @@ export default function Navbar() {
     };
   }, []);
 
-  // ✅ dashboard'ta navbar yok
   if (pathname?.startsWith("/dashboard")) return null;
 
   const handleLogout = async () => {
@@ -51,19 +50,13 @@ export default function Navbar() {
         <div className="flex items-center gap-8 text-sm text-white/80">
           <Link href="/">Home</Link>
           <Link href="/docs">Docs</Link>
-
           {user && <Link href="/dashboard">Dashboard</Link>}
         </div>
 
         {/* RIGHT */}
         <div>
           {!user ? (
-            <Link
-              href="/login"
-              className="px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition"
-            >
-              Sign In
-            </Link>
+            <Link href="/login">Sign In</Link>
           ) : (
             <button
               onClick={handleLogout}
