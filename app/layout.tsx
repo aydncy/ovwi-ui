@@ -1,21 +1,17 @@
-import './globals.css';
-import Navbar from '@/components/Navbar';
+"use client";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import { usePathname } from "next/navigation";
+import Navbar from "@/components/Navbar";
+
+export default function RootLayout({ children }) {
+  const pathname = usePathname();
+  const isDashboard = pathname?.startsWith("/dashboard");
+
   return (
     <html lang="en">
-      <body className="bg-gradient-to-br from-black via-gray-900 to-black text-white min-h-screen">
-
-        <Navbar />
-
-        <main className="min-h-screen">
-          {children}
-        </main>
-
+      <body>
+        {!isDashboard && <Navbar />}
+        {children}
       </body>
     </html>
   );
