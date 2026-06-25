@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sb } from "@/lib/supabase";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +17,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const input = body.text || "";
 
-    // ✅ USER CHECK
+    // ✅ kullanıcı kontrol
     const { data: user } = await sb
       .from("users_licenses")
       .select("*")
@@ -30,19 +35,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ✅ SIMPLE AI OPTIMIZER (REAL VALUE)
-    const optimized = input
-      .replace(/\bi\b/g, "we")
-      .replace(/\bvery\b/g, "extremely")
-      .replace(/\bgood\b/g, "high-quality")
-      .replace(/\bbad\b/g, "low-quality");
+    // ✅ GERÇEK AI CALL
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are an SEO optimizer. Improve clarity, engagement and SEO.",
+        },
+        {
+          role: "user",
+          content: input,
+        },
+      ],
+    });
 
-    // ✅ USAGE UPDATE
+    const output = completion.choices[0].message.content;
+
+    // ✅ usage + revenue
     await sb
       .from("users_licenses")
       .update({
         monthly_usage: user.monthly_usage + 1,
-        total_revenue: (user.total_revenue || 0) + 0.03,
+        total_revenue: (user.total_revenue || 0) + 0.05,
       })
       .eq("user_id", user.user_id);
 
@@ -50,16 +65,9 @@ export async function POST(req: NextRequest) {
       user_id: user.user_id,
     });
 
-    await sb.from("api_calls").insert({
-      user_id: user.user_id,
-      endpoint: "ai_optimize",
-      status: 200,
-    });
-
     return NextResponse.json({
       success: true,
-      original: input,
-      optimized,
+      result: output,
     });
 
   } catch (err) {
