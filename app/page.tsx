@@ -1,12 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { sb } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 export default function Home() {
-  const [copied, setCopied] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const [apiResponse, setApiResponse] = useState('');
   const [demoLoading, setDemoLoading] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await sb.auth.getUser();
+      setUser(data?.user || null);
+    };
+    load();
+  }, []);
 
   const codeExample = `fetch("https://ovwi.cyzora.com/api/ovwi", {
   method: "POST",
@@ -19,15 +29,8 @@ export default function Home() {
   })
 })`;
 
-  const copyCode = () => {
-    navigator.clipboard.writeText(codeExample);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const runDemo = async () => {
     setDemoLoading(true);
-
     try {
       const res = await fetch("/api/ovwi", {
         method: "POST",
@@ -36,7 +39,7 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: "this is a very bad seo text with poor structure"
+          text: "this is a very bad seo text"
         }),
       });
 
@@ -56,36 +59,22 @@ export default function Home() {
         Rank Higher with AI 🚀
       </h1>
 
-      <p className="text-center text-gray-400 mb-10">
+      <p className="text-center text-gray-400 mb-8">
         AI API that rewrites your content for SEO and traffic.
       </p>
 
       <div className="flex justify-center mb-12">
-        <Link href="/auth/login">
+        <Link href={user ? "/dashboard" : "/auth/login"}>
           <button className="px-6 py-3 bg-cyan-500 text-black rounded">
-            Get API Access
+            {user ? "Go to Dashboard" : "Get API Access"}
           </button>
         </Link>
       </div>
 
-      {/* BEFORE AFTER */}
-      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 mb-16">
-        <div className="bg-red-500/10 p-4 rounded">
-          ❌ Bad text for SEO
-        </div>
-        <div className="bg-green-500/10 p-4 rounded">
-          ✅ Optimized content for ranking
-        </div>
-      </div>
-
-      {/* DEMO */}
       <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
 
-        <div className="bg-black border border-white/10 p-4 rounded">
-          <pre className="text-cyan-400 text-xs">{codeExample}</pre>
-          <button onClick={copyCode} className="mt-2 text-xs">
-            {copied ? 'Copied' : 'Copy'}
-          </button>
+        <div className="bg-black border border-white/10 p-4 rounded text-xs text-cyan-400">
+          <pre>{codeExample}</pre>
         </div>
 
         <div className="bg-black border border-white/10 p-4 rounded text-xs text-green-400">
@@ -100,6 +89,7 @@ export default function Home() {
           >
             Run Demo
           </button>
+
         </div>
 
       </div>
