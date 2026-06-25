@@ -30,7 +30,7 @@ export default function Navbar() {
     };
   }, []);
 
-  if (pathname?.startsWith("/dashboard")) return null;
+  // navbar visible
 
   const handleLogout = async () => {
     await sb.auth.signOut();
