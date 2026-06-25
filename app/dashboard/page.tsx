@@ -4,10 +4,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { sb } from "@/lib/supabase";
 import UpgradeUI from "./UpgradeUI";
+import UsageGraph from "./UsageGraph";
+import Leaderboard from "./Leaderboard";
+
+type License = {
+  user_id: string;
+  api_key: string;
+  plan: string;
+  monthly_limit: number;
+  monthly_usage: number;
+};
 
 export default function Dashboard() {
   const router = useRouter();
-  const [license, setLicense] = useState<any>(null);
+  const [license, setLicense] = useState<License | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,6 +35,10 @@ export default function Dashboard() {
         .eq("user_id", userData.user.id)
         .single();
 
+      if (data?.plan === "pro") {
+        data.monthly_limit = 999999;
+      }
+
       setLicense(data);
       setLoading(false);
     };
@@ -40,6 +54,10 @@ export default function Dashboard() {
       user_id: license.user_id,
       endpoint: "simulate",
       status: 200,
+    });
+
+    await sb.from("usage_logs").insert({
+      user_id: license.user_id,
     });
 
     await sb
@@ -69,60 +87,26 @@ export default function Dashboard() {
     <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-4xl mx-auto space-y-6">
 
-        {/* ✅ HERO VALUE */}
-        <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-white/10 p-6 rounded-2xl">
-          <h1 className="text-2xl font-semibold mb-2">
-            Your API Business 💸
-          </h1>
-          <p className="text-white/60 text-sm mb-4">
-            You are monetizing API usage. Each call = €0.03 revenue.
-          </p>
-
-          <div className="text-3xl font-bold text-cyan-400">
+        <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 p-6 rounded-2xl">
+          <h1 className="text-2xl font-semibold">Your API Business</h1>
+          <div className="text-3xl text-cyan-400 mt-2">
             €{revenue}
           </div>
-
-          <p className="text-xs text-white/40 mt-1">
-            Estimated revenue this month
-          </p>
         </div>
 
-        {/* ✅ CONVERSION UI */}
         <UpgradeUI
           usage={license.monthly_usage}
           limit={license.monthly_limit}
           plan={license.plan}
         />
 
-        {/* ✅ API KEY */}
-        <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
-          <div className="text-sm text-white/60 mb-1">
-            Your API Key (use this in your app)
-          </div>
-          <div className="text-sm break-all">
-            {license.api_key}
-          </div>
-        </div>
+        <UsageGraph userId={license.user_id} />
 
-        {/* ✅ QUICK START */}
-        <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
-          <div className="text-sm text-white/60 mb-2">
-            Quick Start Example
-          </div>
+        <Leaderboard me={license.user_id} />
 
-          <pre className="text-xs text-white/70 bg-black p-3 rounded-lg overflow-x-auto">
-{`fetch("https://api.ovwi.com/your-endpoint", {
-  headers: {
-    Authorization: "Bearer ${license.api_key}"
-  }
-}).then(res => res.json())`}
-          </pre>
-        </div>
-
-        {/* ✅ ACTION */}
         <button
           onClick={simulateCall}
-          className="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 hover:opacity-90 transition"
+          className="px-4 py-2 bg-cyan-500 rounded-lg"
         >
           Simulate API Call
         </button>
