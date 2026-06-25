@@ -7,7 +7,6 @@ import UpgradeUI from "./UpgradeUI";
 
 export default function Dashboard() {
   const router = useRouter();
-
   const [license, setLicense] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +34,6 @@ export default function Dashboard() {
 
   const simulateCall = async () => {
     if (!license) return;
-
     if (license.monthly_usage >= license.monthly_limit) return;
 
     await sb.from("api_calls").insert({
@@ -66,33 +64,41 @@ export default function Dashboard() {
   }
 
   return (
-    <>
-      <div className="min-h-screen bg-black text-white p-6 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-black text-white p-6">
+      <div className="max-w-4xl mx-auto">
 
-        <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
+        {/* ✅ CARD */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl">
 
-        {/* ✅ Conversion UI */}
-        <UpgradeUI
-          usage={license.monthly_usage}
-          limit={license.monthly_limit}
-          plan={license.plan}
-        />
+          <h1 className="text-2xl font-semibold mb-6">
+            Dashboard
+          </h1>
 
-        <div className="mb-6">
-          <div className="text-sm text-white/60 mb-1">API Key</div>
-          <div className="bg-white/10 p-3 rounded-lg text-sm break-all">
-            {license.api_key}
+          {/* ✅ Conversion UI */}
+          <UpgradeUI
+            usage={license.monthly_usage}
+            limit={license.monthly_limit}
+            plan={license.plan}
+          />
+
+          {/* ✅ API KEY */}
+          <div className="mb-6 bg-white/5 border border-white/10 p-4 rounded-xl">
+            <div className="text-sm text-white/60 mb-1">API Key</div>
+            <div className="text-sm break-all">
+              {license.api_key}
+            </div>
           </div>
+
+          {/* ✅ BUTTON */}
+          <button
+            onClick={simulateCall}
+            className="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 hover:opacity-90 transition"
+          >
+            Simulate API Call
+          </button>
+
         </div>
-
-        <button
-          onClick={simulateCall}
-          className="mt-4 px-4 py-2 bg-cyan-500 rounded-lg"
-        >
-          Simulate API Call
-        </button>
-
       </div>
-    </>
+    </div>
   );
 }
