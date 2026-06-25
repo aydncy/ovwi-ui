@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { sb } from "@/lib/supabase";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: NextRequest) {
   try {
+    // ✅ CLIENT BURADA OLUŞTURULUR (FIX)
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const apiKey = req.headers.get("authorization")?.replace("Bearer ", "");
 
     if (!apiKey) {
@@ -17,7 +18,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const input = body.text || "";
 
-    // ✅ kullanıcı kontrol
     const { data: user } = await sb
       .from("users_licenses")
       .select("*")
@@ -35,13 +35,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ✅ GERÇEK AI CALL
+    // ✅ AI CALL
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are an SEO optimizer. Improve clarity, engagement and SEO.",
+          content: "You improve text for SEO and clarity.",
         },
         {
           role: "user",
@@ -52,7 +52,6 @@ export async function POST(req: NextRequest) {
 
     const output = completion.choices[0].message.content;
 
-    // ✅ usage + revenue
     await sb
       .from("users_licenses")
       .update({
