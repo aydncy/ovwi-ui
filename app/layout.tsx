@@ -1,5 +1,6 @@
-import "@/app/globals.css";
-import Navbar from "@/components/Navbar";
+import './globals.css';
+import { ThemeUIProvider } from 'theme-ui';
+import { theme } from '@/lib/theme';
 
 export default function RootLayout({
   children,
@@ -9,8 +10,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        {children}
+        <ThemeUIProvider theme={theme}>
+          {children}
+        </ThemeUIProvider>
       </body>
     </html>
   );
