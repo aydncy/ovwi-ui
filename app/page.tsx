@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Navbar from './components/Navbar';
+import Navbar from '@/app/components/Navbar';
 import { CHECKOUTS } from '@/lib/checkout';
 import { supabase } from '@/lib/supabase-browser';
 
