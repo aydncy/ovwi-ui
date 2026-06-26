@@ -7,6 +7,7 @@ import type { User } from "@supabase/supabase-js";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const [apiResponse, setApiResponse] = useState('');
   const [demoLoading, setDemoLoading] = useState(false);
 
@@ -14,32 +15,38 @@ export default function Home() {
     const load = async () => {
       const { data } = await sb.auth.getUser();
       setUser(data?.user || null);
+
+      if (data?.user) {
+        const { data: row } = await sb
+          .from("users_licenses")
+          .select("api_key")
+          .eq("user_id", data.user.id)
+          .single();
+
+        setApiKey(row?.api_key || null);
+      }
     };
+
     load();
   }, []);
 
-  const codeExample = `fetch("https://ovwi.cyzora.com/api/ovwi", {
-  method: "POST",
-  headers: {
-    Authorization: "Bearer YOUR_API_KEY",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    text: "this is a very bad seo text"
-  })
-})`;
-
   const runDemo = async () => {
+    if (!apiKey) {
+      setApiResponse("Login required to run demo");
+      return;
+    }
+
     setDemoLoading(true);
+
     try {
       const res = await fetch("/api/ovwi", {
         method: "POST",
         headers: {
-          Authorization: "Bearer demo_key",
+          Authorization: "Bearer " + apiKey,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: "this is a very bad seo text"
+          text: "this is a very bad seo text",
         }),
       });
 
@@ -71,26 +78,18 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+      <div className="max-w-3xl mx-auto bg-black border border-white/10 p-6 rounded text-green-400 text-xs">
 
-        <div className="bg-black border border-white/10 p-4 rounded text-xs text-cyan-400">
-          <pre>{codeExample}</pre>
-        </div>
+        {demoLoading
+          ? "Running real AI request..."
+          : apiResponse || "Click Run Demo"}
 
-        <div className="bg-black border border-white/10 p-4 rounded text-xs text-green-400">
-
-          {demoLoading
-            ? "Running real AI request..."
-            : apiResponse || "Click Run Demo"}
-
-          <button
-            onClick={runDemo}
-            className="block mt-4 w-full bg-cyan-500 text-black py-2 rounded"
-          >
-            Run Demo
-          </button>
-
-        </div>
+        <button
+          onClick={runDemo}
+          className="block mt-4 w-full bg-cyan-500 text-black py-2 rounded"
+        >
+          Run Demo
+        </button>
 
       </div>
 
