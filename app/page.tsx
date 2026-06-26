@@ -1,109 +1,138 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { getSupabase } from '@/lib/supabase-browser';
-import type { User } from '@supabase/supabase-js';
+import { useState } from 'react';
 
 export default function Home() {
-  const supabase = getSupabase();
+  const [result, setResult] = useState('');
 
-  const [apiResponse, setApiResponse] = useState('');
-  const [demoLoading, setDemoLoading] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [demoCount, setDemoCount] = useState(0);
-
-  useEffect(() => {
-    if (!supabase) return;
-
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data?.user || null);
+  const run = async () => {
+    const res = await fetch('/api/ovwi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: "bad seo content example" })
     });
-  }, [supabase]);
 
-  const runDemo = async () => {
-    if (!user && demoCount >= 3) return;
-
-    setDemoLoading(true);
-
-    try {
-      const res = await fetch('/api/ovwi', {
-        method: 'POST',
-        headers: {
-          Authorization: apiKey ? 'Bearer ' + apiKey : '',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: 'This is a very bad SEO text with poor structure and no keywords',
-        }),
-      });
-
-      const data = await res.json();
-      setApiResponse((data?.data?.optimized_text || JSON.stringify(data)) + "\n\nSEO Score: " + (data?.data?.seo_score || "8.5") + "\n✅ Better keywords\n✅ Improved readability");
-      setDemoCount(p => p + 1);
-    } catch {
-      setApiResponse('Error');
-    }
-
-    setDemoLoading(false);
+    const data = await res.json();
+    setResult(data?.data?.optimized_text || 'error');
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div style={{
+      minHeight: '100vh',
+      background: '#060816',
+      color: '#fff',
+      fontFamily: 'Inter, sans-serif'
+    }}>
 
-      {/* NAVBAR INLINE */}
-      <div className="flex justify-between p-6 border-b border-white/10">
-        <Link href="/"><b>OVWI</b></Link>
-        <div className="flex gap-4">
-          <Link href="/docs">Docs</Link>
-          <Link href="/dashboard">Dashboard</Link>
+      {/* NAV */}
+      <div style={{
+        display:'flex',
+        justifyContent:'space-between',
+        padding:'20px 40px',
+        borderBottom:'1px solid rgba(255,255,255,0.05)'
+      }}>
+        <h2 style={{
+          fontSize:22,
+          fontWeight:800,
+          background:'linear-gradient(90deg,#69a8ff,#32d7ff)',
+          WebkitBackgroundClip:'text',
+          WebkitTextFillColor:'transparent'
+        }}>
+          OVWI
+        </h2>
+
+        <div style={{display:'flex', gap:20}}>
+          <span>Docs</span>
+          <span>Login</span>
         </div>
       </div>
 
       {/* HERO */}
-      <div className="text-center pt-20 pb-10">
-        <h1 className="text-5xl font-bold mb-4">
-          Turn Content Into Traffic 🚀
+      <div style={{textAlign:'center', padding:'120px 20px'}}>
+
+        <h1 style={{
+          fontSize:64,
+          fontWeight:900,
+          lineHeight:1.1,
+          marginBottom:20
+        }}>
+          Turn Bad Content <br />
+          Into <span style={{
+            background:'linear-gradient(90deg,#7db7ff,#2ee4ff)',
+            WebkitBackgroundClip:'text',
+            WebkitTextFillColor:'transparent'
+          }}>
+            SEO Traffic
+          </span>
         </h1>
-        <p className="text-gray-400 mb-6">
-          Paste content → get optimized version instantly
+
+        <p style={{
+          color:'#a0b4d4',
+          maxWidth:600,
+          margin:'auto',
+          marginBottom:40
+        }}>
+          AI API that rewrites your content for better SEO, clarity,
+          and ranking in seconds.
         </p>
 
         <button
-          onClick={runDemo}
-          className="bg-cyan-500 text-black px-6 py-3 rounded-lg font-bold"
+          onClick={run}
+          style={{
+            padding:'14px 28px',
+            borderRadius:12,
+            fontWeight:700,
+            background:'linear-gradient(90deg,#2f7dff,#18d6ff)',
+            border:'none',
+            color:'#fff',
+            cursor:'pointer'
+          }}
         >
-          {demoLoading ? 'Running...' : '🚀 Generate SEO Content'}
+          🚀 Generate SEO Content
         </button>
 
-        <p className="mt-3 text-sm text-gray-500">
-          {Math.max(0, 3 - demoCount)} free demos left
-        </p>
-
-        <div className="mt-6 max-w-xl mx-auto bg-black border p-4 text-green-400 text-sm">
-          {apiResponse || 'Output will appear here'}
+        {/* output */}
+        <div style={{
+          marginTop:30,
+          maxWidth:700,
+          marginInline:'auto',
+          padding:20,
+          background:'#0b1223',
+          borderRadius:16,
+          border:'1px solid rgba(255,255,255,0.08)'
+        }}>
+          {result || 'Your optimized result will appear here...'}
         </div>
-      </div>
 
+        {/* before after */}
+        {result && (
+          <div style={{
+            display:'grid',
+            gridTemplateColumns:'1fr 1fr',
+            gap:20,
+            marginTop:30
+          }}>
+            <div style={{
+              background:'rgba(255,0,0,0.08)',
+              padding:15,
+              borderRadius:12
+            }}>
+              <p style={{color:'red'}}>Before</p>
+              <p>bad seo content example</p>
+            </div>
+
+            <div style={{
+              background:'rgba(0,255,0,0.08)',
+              padding:15,
+              borderRadius:12
+            }}>
+              <p style={{color:'lime'}}>After</p>
+              <p>{result}</p>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
-
-{/* ✅ BEFORE AFTER SECTION */}
-{apiResponse && (
-  <div style={{marginTop:20, display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, fontSize:12}}>
-    
-    <div style={{background:"rgba(255,0,0,0.1)", padding:10}}>
-      <p style={{color:"red"}}>Before</p>
-      <p>This is a very bad SEO text with poor structure and no keywords</p>
-    </div>
-
-    <div style={{background:"rgba(0,255,0,0.1)", padding:10}}>
-      <p style={{color:"lime"}}>After</p>
-      <pre>{apiResponse}</pre>
-    </div>
-
-  </div>
-)}
