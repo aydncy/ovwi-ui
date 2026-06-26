@@ -1,212 +1,231 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { getSupabase } from '@/lib/supabase-browser';
-import type { User } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react';
+import Navbar from './components/Navbar';
+import { CHECKOUTS } from '@/lib/checkout';
+import { supabase } from '@/lib/supabase-browser';
 
 export default function Home() {
-  const supabase = getSupabase();
 
-  const [apiResponse, setApiResponse] = useState('');
-  const [demoLoading, setDemoLoading] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [demoCount, setDemoCount] = useState(0);
+  const [loggedIn,setLoggedIn] = useState(false);
+  const [email,setEmail] = useState('');
+  const [payload,setPayload] = useState('{\n  "id":"evt_123456789",\n  "type":"charge.succeeded"\n}');
+  const [result,setResult] = useState(null);
+  const [loading,setLoading] = useState(false);
 
-  useEffect(() => {
-  if (!supabase) return;
-    const load = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data?.user || null);
+  useEffect(()=>{
+    supabase.auth.getSession().then(({data})=>{
+      setLoggedIn(!!data.session);
+    });
+  },[]);
 
-      if (data?.user) {
-        const { data: row } = await supabase
-          .from('users_licenses')
-          .select('api_key')
-          .eq('user_id', data.user.id)
-          .single();
+  const verify = async () => {
+    setLoading(true);
 
-        setApiKey(row?.api_key || null);
-      }
-    };
-
-    load();
-  }, [supabase]);
-
-  const runDemo = async () => {
-    if (!user && demoCount >= 3) return;
-
-    setDemoLoading(true);
-
-    try {
-      const res = await fetch('/api/ovwi', {
-        method: 'POST',
-        headers: {
-          Authorization: apiKey ? 'Bearer ' + apiKey : '',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          text: 'This is a very bad SEO text with poor structure and no keywords'
-        })
+    try{
+      const res = await fetch('/api/verify',{
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({ email })
       });
 
       const data = await res.json();
-      setApiResponse(data?.data?.optimized_text || JSON.stringify(data));
-      setDemoCount(p => p + 1);
-    } catch {
-      setApiResponse('Error');
-    }
+      setResult(data);
 
-    setDemoLoading(false);
+    } finally{
+      setLoading(false);
+    }
+  };
+
+  const secureCheckout = (url:string) => {
+    if(!loggedIn){
+      window.location.href='/auth/login';
+      return;
+    }
+    window.location.href=url;
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <>
+      <Navbar />
 
-      {/* HERO */}
-      <section className="text-center pt-28 pb-16">
+      {/* ✅ HERO SPLIT */}
+      <section className="hero">
 
-        <h1 className="text-6xl font-bold mb-4">
-          Turn Bad Content Into High-Ranking SEO Articles 🚀
-        </h1>
+        {/* LEFT */}
+        <div>
+          <div className="label">Now available</div>
 
-        <p className="text-slate-400 mb-8">
-          Paste your content → get optimized SEO version instantly
-        </p>
+          <h1>
+            Stop debugging.
+            <br />
+            Start <span>verifying.</span>
+          </h1>
 
-        <Link href={user ? "/dashboard" : "/auth/login"}>
-          <button className="px-6 py-3 bg-cyan-600 rounded-lg font-bold">
-            {user ? "Go to Dashboard" : "Get API Access"}
-          </button>
-        </Link>
+          <p>
+            Verify webhooks instantly with real-time feedback, live usage tracking,
+            and upgrade paths built in from day one.
+          </p>
 
-      </section>
+          <div className="hero-actions">
+            <a href="/auth/signup">
+              <button className="primary-btn nav-btn">
+                Get Started
+              </button>
+            </a>
 
-      {/* DEMO */}
-      <section className="max-w-4xl mx-auto px-6">
-
-        <div className="border border-white/10 p-4 rounded-lg">
-
-          <div className="min-h-[120px] text-emerald-300">
-            {demoLoading ? "Running..." : apiResponse || "Click Run Demo"}
+            <a href="/docs">
+              <button className="nav-btn">
+                View Docs
+              </button>
+            </a>
           </div>
 
-          <button
-            onClick={runDemo}
-            className="mt-4 w-full py-3 bg-cyan-500 text-black rounded-lg font-bold"
-          >
-            🚀 Generate SEO Content
-          </button>
-
-        </div>
-
-        <p className="text-center mt-4 text-sm text-slate-500">
-          {Math.max(0, 3 - demoCount)} free demos left
-        </p>
-
-        {/* BEFORE AFTER */}
-        {apiResponse && (
-          <div className="mt-10 grid md:grid-cols-2 gap-6">
-
-            <div className="bg-red-500/10 p-5 rounded-xl">
-              <p className="text-red-400 mb-2">Before</p>
-              <p className="text-white/70">
-                This is a very bad SEO text with poor structure and no keywords
-              </p>
+          <div style={{marginTop:30, display:'flex', gap:30}}>
+            <div>
+              <strong>1M+</strong>
+              <p className="label">Verifications</p>
             </div>
 
-            <div className="bg-green-500/10 p-5 rounded-xl">
-              <p className="text-green-400 mb-2">After</p>
-              <p className="text-green-300">
-                {apiResponse}
-              </p>
+            <div>
+              <strong>99.9%</strong>
+              <p className="label">Success Rate</p>
             </div>
 
+            <div>
+              <strong>45ms</strong>
+              <p className="label">Latency</p>
+            </div>
           </div>
-        )}
+
+        </div>
+
+        {/* RIGHT PANEL */}
+        <div className="hero-card">
+
+          <label className="label">Email</label>
+          <input
+            className="input"
+            value={email}
+            onChange={e=>setEmail(e.target.value)}
+            placeholder="Login required"
+          />
+
+          <label className="label">Payload</label>
+          <textarea
+            className="textarea"
+            value={payload}
+            onChange={e=>setPayload(e.target.value)}
+          />
+
+          <label className="label">API Key</label>
+          <input
+            className="input"
+            disabled
+            placeholder="Generated after login"
+          />
+
+          <div className="hero-actions">
+            <button onClick={verify} className="verify-btn">
+              {loading ? 'Verifying...' : 'Verify Webhook'}
+            </button>
+
+            <button
+              onClick={()=>setResult(null)}
+              className="nav-btn"
+              style={{flex:1}}
+            >
+              Reset
+            </button>
+          </div>
+
+          {result && (
+            <div className="result">
+              {JSON.stringify(result,null,2)}
+            </div>
+          )}
+
+        </div>
 
       </section>
 
-      {/* PROBLEM */}
-      <section className="max-w-5xl mx-auto mt-24 px-6 text-center">
+      {/* ✅ FEATURES */}
+      <section className="section">
 
-        <h2 className="text-4xl font-bold mb-6">
-          Most Content Doesn't Rank
-        </h2>
+        <h2 className="section-title">Infrastructure Features</h2>
 
-        <div className="grid md:grid-cols-3 gap-6 mt-10">
+        <div className="features">
 
-          <div className="bg-white/5 p-6 rounded-xl">
-            ❌ Poor SEO
+          <div className="feature">
+            <h3>Authentication</h3>
+            <p>Secure login system with Supabase auth and session handling.</p>
           </div>
 
-          <div className="bg-white/5 p-6 rounded-xl">
-            ❌ No traffic
+          <div className="feature">
+            <h3>Analytics</h3>
+            <p>Real-time usage tracking, limits and request insights.</p>
           </div>
 
-          <div className="bg-white/5 p-6 rounded-xl">
-            ❌ Wasted time
+          <div className="feature">
+            <h3>Monetization</h3>
+            <p>Built-in upgrade flow with Lemon Squeezy checkout.</p>
           </div>
 
         </div>
 
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="max-w-5xl mx-auto mt-24 px-6 text-center">
+      {/* ✅ PRICING */}
+      <section className="section">
 
-        <h2 className="text-4xl font-bold mb-10">
-          How It Works
-        </h2>
+        <h2 className="section-title">Simple Pricing</h2>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="pricing">
 
-          <div className="bg-white/5 p-6 rounded-xl">
-            1. Paste content
+          <div className="price-card">
+            <h3>Starter</h3>
+            <p>50 requests / month</p>
+            <div className="price">$0</div>
+            <a href="/auth/signupe="nav-btn">Get Started</button>
+            </a>
           </div>
 
-          <div className="bg-white/5 p-6 rounded-xl">
-            2. AI optimization
+          <div className="price-card popular">
+            <div className="badge">Most Popular</div>
+            <h3>Pro</h3>
+            <p>1,000 requests / month</p>
+            <div className="price">€6</div>
+            <button onClick={()=>secureCheckout(CHECKOUTS.pro)} className="verify-btn">
+              Upgrade
+            </button>
           </div>
 
-          <div className="bg-white/5 p-6 rounded-xl">
-            3. Get better ranking
+          <div className="price-card">
+            <h3>Enterprise</h3>
+            <p>10,000 / month</p>
+            <div className="price">€18</div>
+            <button onClick={()=>secureCheckout(CHECKOUTS.enterprise)} className="verify-btn">
+              Upgrade
+            </button>
+          </div>
+
+          <div className="price-card">
+            <h3>Scale</h3>
+            <p>100,000 / month</p>
+            <div className="price">€49</div>
+            <button onClick={()=>secureCheckout(CHECKOUTS.scale)} className="verify-btn">
+              Upgrade
+            </button>
           </div>
 
         </div>
 
       </section>
 
-      {/* TRUST */}
-      <section className="text-center mt-24 opacity-40">
+      <footer className="footer">
+        2026 OVWI Infrastructure Platform
+      </footer>
 
-        <p className="mb-4">Powered by</p>
-
-        <div className="flex justify-center gap-10">
-          <span>OpenAI</span>
-          <span>API</span>
-          <span>Developers</span>
-        </div>
-
-      </section>
-
-      {/* CTA */}
-      <section className="text-center mt-24 pb-20">
-
-        <h2 className="text-5xl font-bold mb-6">
-          Start Optimizing Your Content Today
-        </h2>
-
-        <Link href={user ? "/dashboard" : "/auth/login"}>
-          <button className="px-8 py-4 bg-cyan-600 rounded-lg font-bold text-lg">
-            Start Free Now
-          </button>
-        </Link>
-
-      </section>
-
-    </div>
+    </>
   );
 }
