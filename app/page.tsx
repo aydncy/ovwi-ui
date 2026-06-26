@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
 export default function Home() {
-  const [copied, setCopied] = useState(false);
+
   const [logs, setLogs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -29,134 +28,93 @@ export default function Home() {
     setLoading(false);
   };
 
-  const codeExample = `fetch("https://ovwi.cyzora.com/api/workflow", {
-  method: "POST",
-  headers: {
-    Authorization: "Bearer YOUR_API_KEY",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    workflow: "payment_process",
-    payload: { amount: 100 }
-  })
-})`;
-
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
-
-      {/* BACKGROUND */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <motion.div className="absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/15 blur-3xl rounded-full"
-          animate={{ y: [0, 40, 0] }} transition={{ duration: 8, repeat: Infinity }}
-        />
-        <motion.div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-600/15 blur-3xl rounded-full"
-          animate={{ y: [0, -40, 0] }} transition={{ duration: 10, repeat: Infinity }}
-        />
-      </div>
+    <div className="min-h-screen bg-[#050816] text-white">
 
       {/* NAVBAR */}
-      <motion.nav className="relative z-10 border-b border-white/10 bg-black/50 backdrop-blur-md sticky top-0">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div className="border-b border-white/10">
+        <div className="max-w-6xl mx-auto flex justify-between items-center h-16 px-6">
+
           <Link href="/">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            <span className="font-bold text-lg bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
               OVWI
-            </h1>
+            </span>
           </Link>
 
-          <div className="flex gap-4 items-center">
-            <Link href="/docs"><span className="text-slate-400 hover:text-white">Docs</span></Link>
-            <Link href="/dashboard">
-              <button className="px-4 py-2 bg-cyan-600 rounded-full font-semibold">
-                Dashboard
-              </button>
-            </Link>
+          <div className="flex gap-6 text-sm text-slate-300">
+            <Link href="/docs">Docs</Link>
+            <Link href="/dashboard">Dashboard</Link>
           </div>
+
         </div>
-      </motion.nav>
+      </div>
 
       {/* HERO */}
-      <section className="relative z-10 max-w-6xl mx-auto px-6 pt-32 text-center">
+      <div className="max-w-4xl mx-auto text-center py-24 px-6">
 
-        <p className="text-cyan-400 text-xs mb-6">
+        <p className="text-xs text-cyan-400 mb-4">
           Open Verifiable Workflow Infrastructure
         </p>
 
-        <h1 className="text-7xl font-bold mb-6">
-          Build Verifiable <br />
-          Workflows
+        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          Build Verifiable <br /> Workflows
         </h1>
 
-        <p className="text-slate-400 max-w-xl mx-auto mb-10">
+        <p className="text-slate-400 mb-10 max-w-lg mx-auto">
           Execute, verify and audit workflows across your systems.
-          OVWI provides infrastructure-level trust for automation.
         </p>
 
         <div className="flex gap-4 justify-center">
           <Link href="/dashboard">
-            <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-bold">
+            <button className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold">
               Start Building
             </button>
           </Link>
 
           <button
             onClick={runWorkflow}
-            className="px-8 py-4 border border-white/20 rounded-full"
+            className="px-6 py-3 border border-white/20 rounded-lg"
           >
             Run Demo
           </button>
         </div>
 
-      </section>
+      </div>
 
       {/* FEATURES */}
-      <section className="relative z-10 max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-3 gap-6">
+      <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-3 gap-4 mb-20">
         {[
           "Verifiable execution logs",
           "Audit-ready workflows",
           "Deterministic processing",
           "API-first architecture",
-          "System-wide traceability",
-          "Compliance infrastructure"
-        ].map((t,i)=>(
-          <div key={i} className="bg-white/5 p-6 rounded-xl">
-            {t}
+          "System traceability",
+          "Compliance ready"
+        ].map((item, i) => (
+          <div key={i} className="bg-white/5 p-4 rounded-lg">
+            {item}
           </div>
         ))}
-      </section>
+      </div>
 
-      {/* PLAYGROUND */}
-      <section className="relative z-10 max-w-4xl mx-auto px-6 pb-20">
+      {/* LOG PANEL */}
+      <div className="max-w-3xl mx-auto px-6 pb-20">
 
-        <div className="bg-slate-900 p-6 rounded-xl mb-6">
-          <pre className="text-cyan-400 text-sm">{codeExample}</pre>
-        </div>
+        <div className="bg-black border border-white/10 rounded-lg p-6 font-mono text-sm min-h-[180px]">
 
-        <div className="bg-black border border-white/10 rounded-xl p-6 h-64 overflow-auto font-mono text-sm">
-          {loading ? (
-            <p>Running...</p>
-          ) : logs.length ? (
-            logs.map((l,i)=>(
-              <p key={i} className="text-emerald-400">{l}</p>
-            ))
-          ) : (
+          {loading && <p>Running...</p>}
+
+          {!loading && logs.length === 0 && (
             <p className="text-slate-500">Run workflow to see logs</p>
           )}
+
+          {logs.map((l, i) => (
+            <p key={i} className="text-emerald-400">{l}</p>
+          ))}
+
         </div>
 
-      </section>
-
-      {/* CTA */}
-      <section className="text-center pb-32">
-        <h2 className="text-5xl font-bold mb-6">
-          Start Building Trusted Systems
-        </h2>
-
-        <Link href="/dashboard">
-          <button className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-bold">
-            Open Dashboard
-          </button>
-        </Link>
-      </section>
+      </div>
 
     </div>
   );
