@@ -5,32 +5,23 @@ import Link from 'next/link';
 
 export default function Home() {
 
-  const [result, setResult] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
 
-  const run = async () => {
-    setLoading(true);
-
-    const res = await fetch('/api/ovwi', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ text:"bad seo content example" })
-    });
-
-    const data = await res.json();
-    setResult(data?.data?.optimized_text || 'error');
-
-    setLoading(false);
+  const runWorkflow = () => {
+    setLogs([
+      "→ Request received",
+      "→ Validating signature",
+      "→ Executing workflow",
+      "→ Logging execution",
+      "✅ Verified & completed"
+    ]);
   };
 
   return (
     <div style={{background:'#050816', minHeight:'100vh', color:'#fff'}}>
 
       {/* ✅ NAVBAR */}
-      <div style={{
-        borderBottom:'1px solid rgba(255,255,255,0.05)',
-        backdropFilter:'blur(12px)'
-      }}>
+      <div style={{borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
         <div style={{
           maxWidth:1200,
           margin:'0 auto',
@@ -40,138 +31,110 @@ export default function Home() {
           justifyContent:'space-between',
           padding:'0 20px'
         }}>
+          <span style={{fontWeight:900}}>OVWI</span>
 
-          <Link href="/">
-            <div style={{
-              fontWeight:900,
-              fontSize:20,
-              background:'linear-gradient(90deg,#69a8ff,#32d7ff)',
-              WebkitBackgroundClip:'text',
-              WebkitTextFillColor:'transparent',
-              cursor:'pointer'
-            }}>
-              OVWI
-            </div>
-          </Link>
-
-          <div style={{
-            display:'flex',
-            alignItems:'center',
-            gap:24
-          }}>
-
-            <Link href="/docs">
-              <span style={{cursor:'pointer', color:'#9fb4d6'}}>
-                Docs
-              </span>
-            </Link>
-
-            <Link href="/auth/login">
-              <div style={{
-                padding:'8px 16px',
-                borderRadius:10,
-                background:'linear-gradient(90deg,#2f7dff,#18d6ff)',
-                fontWeight:600,
-                cursor:'pointer'
-              }}>
-                Login
-              </div>
-            </Link>
-
+          <div style={{display:'flex', gap:24}}>
+            <Link href="/docs">Docs</Link>
+            <Link href="/dashboard">Dashboard</Link>
           </div>
         </div>
       </div>
 
       {/* ✅ HERO */}
       <div style={{
-        maxWidth:1100,
+        maxWidth:1000,
         margin:'0 auto',
-        padding:'120px 20px 60px',
-        textAlign:'center'
+        textAlign:'center',
+        padding:'120px 20px'
       }}>
-
-        <h1 style={{
-          fontSize:72,
-          fontWeight:900,
-          lineHeight:1.05,
-          marginBottom:20
-        }}>
-          Turn Bad Content <br />
-          <span style={{
-            background:'linear-gradient(90deg,#7db7ff,#2ee4ff)',
-            WebkitBackgroundClip:'text',
-            WebkitTextFillColor:'transparent'
-          }}>
-            Into SEO Traffic
-          </span>
+        <h1 style={{fontSize:64,fontWeight:900}}>
+          Build Verifiable Workflows
         </h1>
 
-        <p style={{
-          color:'#9fb4d6',
-          fontSize:18,
-          marginBottom:40
-        }}>
-          Generate optimized SEO content instantly with AI.
+        <p style={{color:'#9fb4d6', marginTop:20}}>
+          Infrastructure to run, verify, and audit every execution.
         </p>
 
-        <button
-          onClick={run}
-          style={{
-            padding:'14px 36px',
-            borderRadius:14,
-            fontWeight:700,
-            fontSize:16,
+        <div style={{marginTop:40, display:'flex', gap:20, justifyContent:'center'}}>
+          <button style={{
+            padding:'14px 30px',
             background:'linear-gradient(90deg,#2f7dff,#18d6ff)',
-            border:'none',
-            cursor:'pointer',
-            boxShadow:'0 10px 30px rgba(47,125,255,.35)'
-          }}
-        >
-          {loading ? 'Running...' : '🚀 Generate SEO Content'}
+            borderRadius:12,
+            fontWeight:700,
+            border:'none'
+          }}>
+            Start Building
+          </button>
+
+          <Link href="/docs">
+            <button style={{
+              padding:'14px 30px',
+              border:'1px solid rgba(255,255,255,0.1)',
+              borderRadius:12
+            }}>
+              View Docs
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      {/* ✅ PLAYGROUND = LOG ENGINE */}
+      <div style={{
+        maxWidth:900,
+        margin:'0 auto',
+        padding:'40px 20px'
+      }}>
+
+        <button onClick={runWorkflow} style={{
+          padding:'12px 20px',
+          background:'#0b1223',
+          borderRadius:10,
+          marginBottom:20
+        }}>
+          Run Workflow
         </button>
 
-        {/* ✅ OUTPUT PANEL */}
         <div style={{
-          marginTop:50,
-          borderRadius:20,
-          padding:30,
-          textAlign:'left',
-          background:'rgba(255,255,255,0.04)',
-          border:'1px solid rgba(255,255,255,0.08)',
-          boxShadow:'0 20px 60px rgba(0,0,0,.4)'
+          background:'#0b1223',
+          padding:20,
+          borderRadius:16,
+          minHeight:200,
+          border:'1px solid rgba(255,255,255,0.08)'
         }}>
-          <pre style={{whiteSpace:'pre-wrap'}}>
-            {result || 'Your optimized output will appear here'}
-          </pre>
+          {logs.length === 0 ? (
+            <p style={{color:'#667'}}>No execution</p>
+          ) : (
+            logs.map((l, i) => (
+              <p key={i} style={{marginBottom:6, color:'#aef'}}>{l}</p>
+            ))
+          )}
         </div>
 
-        {/* ✅ BEFORE AFTER */}
-        {result && (
-          <div style={{
-            display:'grid',
-            gridTemplateColumns:'1fr 1fr',
-            gap:20,
-            marginTop:30
-          }}>
-            <div style={{
-              background:'rgba(255,0,0,0.08)',
-              padding:20,
-              borderRadius:16
-            }}>
-              <p style={{color:'#ff4d4d'}}>Before</p>
-              <p>bad seo content example</p>
-            </div>
+      </div>
 
-            <div style={{
-              background:'rgba(0,255,140,0.08)',
-              padding:20,
-              borderRadius:16
-            }}>
-              <p style={{color:'#00ffa0'}}>After</p>
-              <p>{result}</p>
-            </div>
+      {/* ✅ FEATURES */}
+      <div style={{
+        maxWidth:1100,
+        margin:'0 auto',
+        padding:'60px 20px',
+        display:'grid',
+        gridTemplateColumns:'repeat(3,1fr)',
+        gap:20
+      }}>
+
+        {[
+          "Verifiable execution logs",
+          "Audit-ready workflow system",
+          "API-first infrastructure"
+        ].map((t,i)=>(
+          <div key={i} style={{
+            background:'rgba(255,255,255,0.04)',
+            padding:20,
+            borderRadius:16
+          }}>
+            {t}
           </div>
-        )}
+        ))}
 
       </div>
 
