@@ -7,8 +7,8 @@ export default function Navbar() {
     <div className="navbar">
       <div className="nav-inner">
 
-        <Link href="/" className="brand">
-          OVWI
+        <Link href="/">
+          <span className="brand">OVWI</span>
         </Link>
 
         <div className="nav-links">
