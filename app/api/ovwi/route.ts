@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
       .toLowerCase()
       .replace(/[^a-z0-9 ]/g, '')
       .split(' ')
-      .filter(w => w.length > 2)
+      .filter((w: string) => w.length > 2)
       .join(' ');
 
     return NextResponse.json({
