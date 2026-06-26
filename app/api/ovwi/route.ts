@@ -7,37 +7,45 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const auth = req.headers.get("authorization");
+    const authHeader = request.headers.get('authorization');
 
     let user = null;
 
-    if (auth && auth.startsWith("Bearer ")) {
-      const key = auth.replace("Bearer ", "");
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const apiKey = authHeader.substring(7);
 
       const { data } = await supabase
-        .from("users_licenses")
-        .select("*")
-        .eq("api_key", key)
+        .from('users_licenses')
+        .select('*')
+        .eq('api_key', apiKey)
         .single();
 
       user = data;
     }
 
-    const body = await req.json();
-    const text = body.text || "";
+    const body = await request.json();
+    const text = body.text;
 
+    if (!text || typeof text !== 'string') {
+      return NextResponse.json(
+        { error: 'Text field is required' },
+        { status: 400 }
+      );
+    }
+
+    // ✅ REAL AI
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
 
-    const ai = await openai.chat.completions.create({
+    const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "Improve this text for SEO and clarity"
+          content: "Rewrite this content for SEO, clarity and engagement."
         },
         {
           role: "user",
@@ -46,29 +54,42 @@ export async function POST(req: NextRequest) {
       ]
     });
 
-    const result = ai.choices[0].message.content;
+    const output = completion.choices[0].message.content;
 
+    // ✅ USER varsa usage arttır
     if (user) {
       await supabase
-        .from("users_licenses")
+        .from('users_licenses')
         .update({
-          monthly_usage: user.monthly_usage + 1
+          monthly_usage: user.monthly_usage + 1,
+          total_revenue: (user.total_revenue || 0) + 0.05,
         })
-        .eq("user_id", user.user_id);
+        .eq('user_id', user.user_id);
 
-      await supabase.from("api_calls").insert({
-        user_id: user.user_id,
-        endpoint: "ovwi",
-        status: 200
-      });
+      await supabase
+        .from('api_calls')
+        .insert({
+          user_id: user.user_id,
+          endpoint: 'POST /api/ovwi',
+          status: 200,
+        });
     }
 
     return NextResponse.json({
       success: true,
-      result
+      data: {
+        status: 'completed',
+        original_length: text.length,
+        optimized_length: output.length,
+        optimized_text: output
+      }
     });
 
   } catch (err) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    console.error('API error:', err);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
