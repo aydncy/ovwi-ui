@@ -1,30 +1,63 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { sb } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await sb.auth.getUser();
+      setUser(data?.user ?? null);
+    };
+
+    getUser();
+
+    const { data: listener } = sb.auth.onAuthStateChange(() => {
+      getUser();
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await sb.auth.signOut();
+    router.push("/");
+  };
+
   return (
-    <div className="navbar">
-      <div className="nav-inner">
+    <div className="w-full border-b border-white/10 bg-black/60 backdrop-blur-md sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
 
-        <Link href="/">
-          <span className="brand">OVWI</span>
-        </Link>
+        <div className="text-cyan-400 font-semibold text-lg">
+          OVWI
+        </div>
 
-        <div className="nav-links">
+        <div className="flex items-center gap-8 text-sm text-white/80">
+          <Link href="/">Home</Link>
+          <Link href="/docs">Docs</Link>
+          {user && <Link href="/dashboard">Dashboard</Link>}
+        </div>
 
-          <Link href="/docs">
-            <button className="nav-btn">Docs</button>
-          </Link>
-
-          <Link href="/dashboard">
-            <button className="nav-btn">Dashboard</button>
-          </Link>
-
-          <Link href="/auth/login">
-            <button className="nav-btn primary-btn">Login</button>
-          </Link>
-
+        <div>
+          {!user ? (
+            <Link href="/login">Sign In</Link>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition"
+            >
+              Sign Out
+            </button>
+          )}
         </div>
 
       </div>
