@@ -1,15 +1,17 @@
 "use client";
 
-import { sb } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase-browser";
 
 type Provider = "google" | "github";
 
 export default function LoginPage() {
   const signIn = async (provider: Provider) => {
-    await sb.auth.signInWithOAuth({
+    const supabase = getSupabase();
+    if (!supabase) return;
+    await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: window.location.origin + "/dashboard",
+        redirectTo: window.location.origin + "/auth/callback",
       },
     });
   };

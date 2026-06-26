@@ -2,9 +2,15 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
+import { useUser } from '@/lib/useUser';
+import { getSupabase } from '@/lib/supabase-browser';
 
 export default function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
+  const { user, loading } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -12,6 +18,15 @@ export default function LandingNav() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const signOut = async () => {
+    const supabase = getSupabase();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    router.push('/');
+    router.refresh();
+  };
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
@@ -33,18 +48,40 @@ export default function LandingNav() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link
-            href="/auth/login"
-            className="hidden rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:text-foreground sm:block"
-          >
-            Login
-          </Link>
-          <Link
-            href="/dashboard"
-            className="rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 hover:shadow-blue-500/50"
-          >
-            Start Building
-          </Link>
+          {loading ? (
+            <div className="h-9 w-24 animate-pulse rounded-lg bg-white/5" />
+          ) : user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 hover:shadow-blue-500/50"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={signOut}
+                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted transition hover:bg-white/5 hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign out</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="hidden rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:text-foreground sm:block"
+              >
+                Login
+              </Link>
+              <Link
+                href="/dashboard"
+                className="rounded-lg bg-gradient-to-r from-sky-400 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 hover:shadow-blue-500/50"
+              >
+                Start Building
+              </Link>
+            </>
+          )}
         </div>
       </nav>
     </header>
