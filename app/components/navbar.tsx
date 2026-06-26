@@ -5,39 +5,55 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase-browser';
 
 export default function Navbar() {
-  const [user, setUser] = useState<any | null>(null);
+
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (!supabase) return;
-
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
+    supabase.auth.getSession().then(({ data }) => {
+      setLoggedIn(!!data.session);
     });
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user || null);
-    });
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange((_event, session) => {
+        setLoggedIn(!!session);
+      });
 
-    return () => sub.subscription.unsubscribe();
+    return () => subscription.unsubscribe();
   }, []);
 
+  const logout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
+
   return (
-    <div className="w-full border-b border-gray-800 bg-[#020617] sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div className="navbar">
+      <div className="nav-inner">
 
-        <h1 className="font-bold text-white">OVWI</h1>
+        <Link href="/" className="brand">
+          OVWI
+        </Link>
 
-        <div className="flex gap-6 text-sm text-gray-300">
+        <div className="nav-links">
 
-          <Link href="/">Home</Link>
-          <Link href="/docs">Docs</Link>
+          <Link href="/docs">
+            <button className="nav-btn">Docs</button>
+          </Link>
 
-          {user && <Link href="/dashboard">Dashboard</Link>}
+          {loggedIn ? (
+            <>
+              <Link href="/dashboard">
+                <button className="nav-btn">Dashboard</button>
+              </Link>
 
-          {user ? (
-            <Link href="/auth/logout">Logout</Link>
+              <button onClick={logout} className="nav-btn primary-btn">
+                Logout
+              </button>
+            </>
           ) : (
-            <Link href="/auth/login">Login</Link>
+            <Link href="/auth/login">
+              <button className="nav-btn primary-btn">Login</button>
+            </Link>
           )}
 
         </div>
