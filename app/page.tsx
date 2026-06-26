@@ -63,7 +63,7 @@ export default function Home() {
       const res = await fetch('/api/ovwi', {
         method: 'POST',
         headers: {
-          Authorization: apiKey ? 'Bearer ' + apiKey : '',   // ✅ FIX 1
+          Authorization: apiKey ? 'Bearer ' + apiKey : '', // ✅ FIX
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -73,9 +73,11 @@ export default function Home() {
 
       const data = await res.json();
 
-      setApiResponse(data?.data?.optimized_text || JSON.stringify(data, null, 2)); // ✅ FIX 2
+      // ✅ FIX: JSON yerine gerçek output göster
+      setApiResponse(data?.data?.optimized_text || JSON.stringify(data, null, 2));
 
       setDemoCount(prev => prev + 1);
+
     } catch (err) {
       setApiResponse(JSON.stringify({ error: 'API Error', message: String(err) }, null, 2));
     }
@@ -92,34 +94,42 @@ export default function Home() {
   body: JSON.stringify({
     text: "your content"
   })
-})
-  .then(r => r.json())
-  .then(data => console.log(data))`;
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
-  };
+})`;
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white">
 
-      {/* HERO vs diğer tüm UI AYNEN KORUNDU */}
+      <h1 className="text-6xl text-center mt-20">Rank Higher with AI 🚀</h1>
 
-      <motion.p
-        className="mt-6 text-sm text-slate-500"
-        variants={itemVariants}
-      >
-        {user ? '✅ Logged in' : `Free tier • No credit card required • ${Math.max(0, 3 - demoCount)} free demos left`} {/* ✅ FIX 3 */}
-      </motion.p>
+      <p className="text-center text-gray-400 mt-4">
+        AI API that rewrites your content for SEO and traffic.
+      </p>
+
+      <div className="flex justify-center mt-6">
+        <Link href={user ? "/dashboard" : "/auth/login"}>
+          <button className="bg-cyan-500 text-black px-6 py-3 rounded">
+            {user ? "Go to Dashboard" : "Get API Access"}
+          </button>
+        </Link>
+      </div>
+
+      <div className="max-w-2xl mx-auto mt-10 border p-4 text-green-400 text-xs">
+
+        {demoLoading ? "Running..." : apiResponse || "Click Run Demo"}
+
+        <button
+          onClick={runDemo}
+          className="mt-4 block w-full bg-cyan-500 text-black py-2"
+        >
+          Run Demo
+        </button>
+
+      </div>
+
+      <p className="text-center mt-6 text-sm text-gray-500">
+        {/* ✅ FIX */}
+        {Math.max(0, 3 - demoCount)} free demos left
+      </p>
 
     </div>
   );
