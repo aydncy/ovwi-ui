@@ -16,6 +16,7 @@ export default function Home() {
   const [demoCount, setDemoCount] = useState(0);
 
   useEffect(() => {
+  if (!supabase) return;
     const load = async () => {
       const { data } = await supabase.auth.getUser();
       setUser(data?.user || null);
