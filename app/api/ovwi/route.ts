@@ -1,76 +1,74 @@
-import { NextRequest, NextResponse } from "next/server";
-import { sb } from "@/lib/supabase";
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import OpenAI from "openai";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+);
 
 export async function POST(req: NextRequest) {
   try {
-    // ✅ CLIENT BURADA OLUŞTURULUR (FIX)
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    const auth = req.headers.get("authorization");
 
-    const apiKey = req.headers.get("authorization")?.replace("Bearer ", "");
+    let user = null;
 
-    if (!apiKey) {
-      return NextResponse.json({ error: "No API key" }, { status: 401 });
+    if (auth && auth.startsWith("Bearer ")) {
+      const key = auth.replace("Bearer ", "");
+
+      const { data } = await supabase
+        .from("users_licenses")
+        .select("*")
+        .eq("api_key", key)
+        .single();
+
+      user = data;
     }
 
     const body = await req.json();
-    const input = body.text || "";
+    const text = body.text || "";
 
-    const { data: user } = await sb
-      .from("users_licenses")
-      .select("*")
-      .eq("api_key", apiKey)
-      .single();
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
 
-    if (!user) {
-      return NextResponse.json({ error: "Invalid API key" }, { status: 403 });
-    }
-
-    if (user.monthly_usage >= user.monthly_limit) {
-      return NextResponse.json(
-        { error: "Limit reached. Upgrade required." },
-        { status: 403 }
-      );
-    }
-
-    // ✅ AI CALL
-    const completion = await openai.chat.completions.create({
+    const ai = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You improve text for SEO and clarity.",
+          content: "Improve this text for SEO and clarity"
         },
         {
           role: "user",
-          content: input,
-        },
-      ],
+          content: text
+        }
+      ]
     });
 
-    const output = completion.choices[0].message.content;
+    const result = ai.choices[0].message.content;
 
-    await sb
-      .from("users_licenses")
-      .update({
-        monthly_usage: user.monthly_usage + 1,
-        total_revenue: (user.total_revenue || 0) + 0.05,
-      })
-      .eq("user_id", user.user_id);
+    if (user) {
+      await supabase
+        .from("users_licenses")
+        .update({
+          monthly_usage: user.monthly_usage + 1
+        })
+        .eq("user_id", user.user_id);
 
-    await sb.from("usage_logs").insert({
-      user_id: user.user_id,
-    });
+      await supabase.from("api_calls").insert({
+        user_id: user.user_id,
+        endpoint: "ovwi",
+        status: 200
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      result: output,
+      result
     });
 
   } catch (err) {
-    console.error(err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
