@@ -186,7 +186,7 @@ export default function Home() {
             <h3>Starter</h3>
             <p>50 requests / month</p>
             <div className="price">$0</div>
-            <a href="/auth/signupe="nav-btn">Get Started</button>
+            <a href="/auth/signup"><button class="nav-btn">Get Started</button>
             </a>
           </div>
 
