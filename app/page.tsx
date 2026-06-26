@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
+
   const [result, setResult] = useState('');
 
   const run = async () => {
@@ -17,71 +19,73 @@ export default function Home() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#060816',
-      color: '#fff',
-      fontFamily: 'Inter, sans-serif'
-    }}>
+    <div style={{minHeight: '100vh', background: '#060816', color: '#fff'}}>
 
-      {/* NAV */}
+      {/* ✅ NAVBAR FIXED */}
       <div style={{
-        display:'flex',
-        justifyContent:'space-between',
-        padding:'20px 40px',
-        borderBottom:'1px solid rgba(255,255,255,0.05)'
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        padding: '0 20px'
       }}>
-        <h2 style={{
-          fontSize:22,
-          fontWeight:800,
-          background:'linear-gradient(90deg,#69a8ff,#32d7ff)',
-          WebkitBackgroundClip:'text',
-          WebkitTextFillColor:'transparent'
+        <div style={{
+          maxWidth: 1200,
+          margin: '0 auto',
+          height: 70,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
         }}>
-          OVWI
-        </h2>
 
-        <div style={{display:'flex', gap:20}}>
-          <span>Docs</span>
-          <span>Login</span>
+          <Link href="/">
+            <h2 style={{
+              fontWeight: 900,
+              cursor: 'pointer'
+            }}>
+              OVWI
+            </h2>
+          </Link>
+
+          <div style={{
+            display: 'flex',
+            gap: 20
+          }}>
+
+            <Link href="/docs">
+              <span style={{
+                cursor: 'pointer'
+              }}>
+                Docs
+              </span>
+            </Link>
+
+            <Link href="/auth/login">
+              <span style={{
+                cursor: 'pointer',
+                padding: '6px 12px',
+                borderRadius: 8,
+                background: '#0b1223'
+              }}>
+                Login
+              </span>
+            </Link>
+
+          </div>
         </div>
       </div>
 
       {/* HERO */}
-      <div style={{textAlign:'center', padding:'120px 20px'}}>
+      <div style={{textAlign:'center', paddingTop:100}}>
 
-        <h1 style={{
-          fontSize:64,
-          fontWeight:900,
-          lineHeight:1.1,
-          marginBottom:20
-        }}>
+        <h1 style={{fontSize:60, fontWeight:900}}>
           Turn Bad Content <br />
-          Into <span style={{
-            background:'linear-gradient(90deg,#7db7ff,#2ee4ff)',
-            WebkitBackgroundClip:'text',
-            WebkitTextFillColor:'transparent'
-          }}>
-            SEO Traffic
-          </span>
+          Into SEO Traffic
         </h1>
-
-        <p style={{
-          color:'#a0b4d4',
-          maxWidth:600,
-          margin:'auto',
-          marginBottom:40
-        }}>
-          AI API that rewrites your content for better SEO, clarity,
-          and ranking in seconds.
-        </p>
 
         <button
           onClick={run}
           style={{
-            padding:'14px 28px',
-            borderRadius:12,
-            fontWeight:700,
+            marginTop:20,
+            padding:'12px 24px',
+            borderRadius:10,
             background:'linear-gradient(90deg,#2f7dff,#18d6ff)',
             border:'none',
             color:'#fff',
@@ -91,48 +95,19 @@ export default function Home() {
           🚀 Generate SEO Content
         </button>
 
-        {/* output */}
         <div style={{
           marginTop:30,
-          maxWidth:700,
+          maxWidth:600,
           marginInline:'auto',
           padding:20,
           background:'#0b1223',
-          borderRadius:16,
-          border:'1px solid rgba(255,255,255,0.08)'
+          borderRadius:12
         }}>
-          {result || 'Your optimized result will appear here...'}
+          {result || 'Result here'}
         </div>
 
-        {/* before after */}
-        {result && (
-          <div style={{
-            display:'grid',
-            gridTemplateColumns:'1fr 1fr',
-            gap:20,
-            marginTop:30
-          }}>
-            <div style={{
-              background:'rgba(255,0,0,0.08)',
-              padding:15,
-              borderRadius:12
-            }}>
-              <p style={{color:'red'}}>Before</p>
-              <p>bad seo content example</p>
-            </div>
-
-            <div style={{
-              background:'rgba(0,255,0,0.08)',
-              padding:15,
-              borderRadius:12
-            }}>
-              <p style={{color:'lime'}}>After</p>
-              <p>{result}</p>
-            </div>
-          </div>
-        )}
-
       </div>
+
     </div>
   );
 }
