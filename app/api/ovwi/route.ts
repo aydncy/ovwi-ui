@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ✅ REAL AI
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
@@ -54,9 +53,9 @@ export async function POST(request: NextRequest) {
       ]
     });
 
-    const output = completion.choices[0].message.content;
+    // ✅ FIX: null-safe output
+    const output = completion.choices?.[0]?.message?.content || "";
 
-    // ✅ USER varsa usage arttır
     if (user) {
       await supabase
         .from('users_licenses')
