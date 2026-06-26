@@ -8,7 +8,7 @@ import type { User } from '@supabase/supabase-js';
 
 export default function Home() {
   const supabase = getSupabase();
-  const [copied, setCopied] = useState(false);
+
   const [apiResponse, setApiResponse] = useState('');
   const [demoLoading, setDemoLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -16,46 +16,26 @@ export default function Home() {
   const [demoCount, setDemoCount] = useState(0);
 
   useEffect(() => {
-    if (!supabase) return;
-
     const load = async () => {
-      try {
-        const { data } = await supabase.auth.getUser();
-        setUser(data?.user || null);
+      const { data } = await supabase.auth.getUser();
+      setUser(data?.user || null);
 
-        if (data?.user) {
-          const { data: row } = await supabase
-            .from('users_licenses')
-            .select('api_key')
-            .eq('user_id', data.user.id)
-            .single();
+      if (data?.user) {
+        const { data: row } = await supabase
+          .from('users_licenses')
+          .select('api_key')
+          .eq('user_id', data.user.id)
+          .single();
 
-          setApiKey(row?.api_key || null);
-        }
-      } catch (err) {
-        console.error('Auth load error:', err);
+        setApiKey(row?.api_key || null);
       }
     };
 
     load();
   }, [supabase]);
 
-  const copyCode = () => {
-    navigator.clipboard.writeText(codeExample);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const runDemo = async () => {
-    if (!user && demoCount >= 3) {
-      setApiResponse('Free limit reached (3 calls). Sign up to get unlimited access.');
-      return;
-    }
-
-    if (!apiKey && user) {
-      setApiResponse('No API key found. Contact support.');
-      return;
-    }
+    if (!user && demoCount >= 3) return;
 
     setDemoLoading(true);
 
@@ -63,73 +43,168 @@ export default function Home() {
       const res = await fetch('/api/ovwi', {
         method: 'POST',
         headers: {
-          Authorization: apiKey ? 'Bearer ' + apiKey : '', // ✅ FIX
-          'Content-Type': 'application/json',
+          Authorization: apiKey ? 'Bearer ' + apiKey : '',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          text: 'This is a very bad SEO text with poor structure and no keywords',
-        }),
+          text: 'This is a very bad SEO text with poor structure and no keywords'
+        })
       });
 
       const data = await res.json();
-
-      // ✅ FIX: JSON yerine gerçek output göster
-      setApiResponse(data?.data?.optimized_text || JSON.stringify(data, null, 2));
-
-      setDemoCount(prev => prev + 1);
-
-    } catch (err) {
-      setApiResponse(JSON.stringify({ error: 'API Error', message: String(err) }, null, 2));
+      setApiResponse(data?.data?.optimized_text || JSON.stringify(data));
+      setDemoCount(p => p + 1);
+    } catch {
+      setApiResponse('Error');
     }
 
     setDemoLoading(false);
   };
 
-  const codeExample = `fetch("https://ovwi.cyzora.com/api/ovwi", {
-  method: "POST",
-  headers: {
-    Authorization: "Bearer YOUR_API_KEY",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    text: "your content"
-  })
-})`;
-
   return (
     <div className="min-h-screen bg-black text-white">
 
-      <h1 className="text-6xl text-center mt-20">Rank Higher with AI 🚀</h1>
+      {/* HERO */}
+      <section className="text-center pt-28 pb-16">
 
-      <p className="text-center text-gray-400 mt-4">
-        AI API that rewrites your content for SEO and traffic.
-      </p>
+        <h1 className="text-6xl font-bold mb-4">
+          Turn Bad Content Into High-Ranking SEO Articles 🚀
+        </h1>
 
-      <div className="flex justify-center mt-6">
+        <p className="text-slate-400 mb-8">
+          Paste your content → get optimized SEO version instantly
+        </p>
+
         <Link href={user ? "/dashboard" : "/auth/login"}>
-          <button className="bg-cyan-500 text-black px-6 py-3 rounded">
+          <button className="px-6 py-3 bg-cyan-600 rounded-lg font-bold">
             {user ? "Go to Dashboard" : "Get API Access"}
           </button>
         </Link>
-      </div>
 
-      <div className="max-w-2xl mx-auto mt-10 border p-4 text-green-400 text-xs">
+      </section>
 
-        {demoLoading ? "Running..." : apiResponse || "Click Run Demo"}
+      {/* DEMO */}
+      <section className="max-w-4xl mx-auto px-6">
 
-        <button
-          onClick={runDemo}
-          className="mt-4 block w-full bg-cyan-500 text-black py-2"
-        >
-          Run Demo
-        </button>
+        <div className="border border-white/10 p-4 rounded-lg">
 
-      </div>
+          <div className="min-h-[120px] text-emerald-300">
+            {demoLoading ? "Running..." : apiResponse || "Click Run Demo"}
+          </div>
 
-      <p className="text-center mt-6 text-sm text-gray-500">
-        {/* ✅ FIX */}
-        {Math.max(0, 3 - demoCount)} free demos left
-      </p>
+          <button
+            onClick={runDemo}
+            className="mt-4 w-full py-3 bg-cyan-500 text-black rounded-lg font-bold"
+          >
+            🚀 Generate SEO Content
+          </button>
+
+        </div>
+
+        <p className="text-center mt-4 text-sm text-slate-500">
+          {Math.max(0, 3 - demoCount)} free demos left
+        </p>
+
+        {/* BEFORE AFTER */}
+        {apiResponse && (
+          <div className="mt-10 grid md:grid-cols-2 gap-6">
+
+            <div className="bg-red-500/10 p-5 rounded-xl">
+              <p className="text-red-400 mb-2">Before</p>
+              <p className="text-white/70">
+                This is a very bad SEO text with poor structure and no keywords
+              </p>
+            </div>
+
+            <div className="bg-green-500/10 p-5 rounded-xl">
+              <p className="text-green-400 mb-2">After</p>
+              <p className="text-green-300">
+                {apiResponse}
+              </p>
+            </div>
+
+          </div>
+        )}
+
+      </section>
+
+      {/* PROBLEM */}
+      <section className="max-w-5xl mx-auto mt-24 px-6 text-center">
+
+        <h2 className="text-4xl font-bold mb-6">
+          Most Content Doesn't Rank
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6 mt-10">
+
+          <div className="bg-white/5 p-6 rounded-xl">
+            ❌ Poor SEO
+          </div>
+
+          <div className="bg-white/5 p-6 rounded-xl">
+            ❌ No traffic
+          </div>
+
+          <div className="bg-white/5 p-6 rounded-xl">
+            ❌ Wasted time
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="max-w-5xl mx-auto mt-24 px-6 text-center">
+
+        <h2 className="text-4xl font-bold mb-10">
+          How It Works
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6">
+
+          <div className="bg-white/5 p-6 rounded-xl">
+            1. Paste content
+          </div>
+
+          <div className="bg-white/5 p-6 rounded-xl">
+            2. AI optimization
+          </div>
+
+          <div className="bg-white/5 p-6 rounded-xl">
+            3. Get better ranking
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* TRUST */}
+      <section className="text-center mt-24 opacity-40">
+
+        <p className="mb-4">Powered by</p>
+
+        <div className="flex justify-center gap-10">
+          <span>OpenAI</span>
+          <span>API</span>
+          <span>Developers</span>
+        </div>
+
+      </section>
+
+      {/* CTA */}
+      <section className="text-center mt-24 pb-20">
+
+        <h2 className="text-5xl font-bold mb-6">
+          Start Optimizing Your Content Today
+        </h2>
+
+        <Link href={user ? "/dashboard" : "/auth/login"}>
+          <button className="px-8 py-4 bg-cyan-600 rounded-lg font-bold text-lg">
+            Start Free Now
+          </button>
+        </Link>
+
+      </section>
 
     </div>
   );
