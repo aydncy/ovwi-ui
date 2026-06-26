@@ -1,117 +1,70 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { sb } from "@/lib/supabase";
-import UpgradeUI from "./UpgradeUI";
-import UsageGraph from "./UsageGraph";
-import Leaderboard from "./Leaderboard";
-
-type License = {
-  user_id: string;
-  api_key: string;
-  plan: string;
-  monthly_limit: number;
-  monthly_usage: number;
-};
+import { useEffect, useState } from 'react';
+import { getSupabase } from '@/lib/supabase-browser';
 
 export default function Dashboard() {
-  const router = useRouter();
-  const [license, setLicense] = useState<License | null>(null);
-  const [loading, setLoading] = useState(true);
+  const supabase = getSupabase();
+
+  const [usage, setUsage] = useState(0);
+  const [limit, setLimit] = useState(1000);
+  const [plan, setPlan] = useState("free");
+  const [apiKey, setApiKey] = useState("");
 
   useEffect(() => {
+    if (!supabase) return;
+
     const load = async () => {
-      const { data: userData } = await sb.auth.getUser();
+      const { data } = await supabase.auth.getUser();
 
-      if (!userData?.user) {
-        router.push("/login");
-        return;
+      if (data?.user) {
+        const { data: row } = await supabase
+          .from('users_licenses')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .single();
+
+        setUsage(row?.monthly_usage || 0);
+        setLimit(row?.monthly_limit || 1000);
+        setPlan(row?.plan || "free");
+        setApiKey(row?.api_key || "");
       }
-
-      const { data } = await sb
-        .from("users_licenses")
-        .select("*")
-        .eq("user_id", userData.user.id)
-        .single();
-
-      if (data?.plan === "pro") {
-        data.monthly_limit = 999999;
-      }
-
-      setLicense(data);
-      setLoading(false);
     };
 
     load();
-  }, []);
-
-  const simulateCall = async () => {
-    if (!license) return;
-    if (license.monthly_usage >= license.monthly_limit) return;
-
-    await sb.from("api_calls").insert({
-      user_id: license.user_id,
-      endpoint: "simulate",
-      status: 200,
-    });
-
-    await sb.from("usage_logs").insert({
-      user_id: license.user_id,
-    });
-
-    await sb
-      .from("users_licenses")
-      .update({
-        monthly_usage: license.monthly_usage + 1,
-      })
-      .eq("user_id", license.user_id);
-
-    setLicense({
-      ...license,
-      monthly_usage: license.monthly_usage + 1,
-    });
-  };
-
-  if (loading || !license) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        Loading...
-      </div>
-    );
-  }
-
-  const revenue = (license.monthly_usage * 0.03).toFixed(2);
+  }, [supabase]);
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#020617] text-white p-10">
 
-        <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 p-6 rounded-2xl">
-          <h1 className="text-2xl font-semibold">Your API Business</h1>
-          <div className="text-3xl text-cyan-400 mt-2">
-            €{revenue}
-          </div>
+      <h1 className="text-5xl font-bold mb-10">Dashboard</h1>
+
+      <div className="grid md:grid-cols-3 gap-6 mb-10">
+
+        <div className="p-6 bg-white/5 rounded-xl">
+          <p>Usage</p>
+          <h2 className="text-3xl">{usage}</h2>
         </div>
 
-        <UpgradeUI
-          usage={license.monthly_usage}
-          limit={license.monthly_limit}
-          plan={license.plan}
-        />
+        <div className="p-6 bg-white/5 rounded-xl">
+          <p>Limit</p>
+          <h2 className="text-3xl text-green-400">{limit}</h2>
+        </div>
 
-        <UsageGraph userId={license.user_id} />
-
-        <Leaderboard me={license.user_id} />
-
-        <button
-          onClick={simulateCall}
-          className="px-4 py-2 bg-cyan-500 rounded-lg"
-        >
-          Simulate API Call
-        </button>
+        <div className="p-6 bg-white/5 rounded-xl">
+          <p>Plan</p>
+          <h2 className="text-3xl text-yellow-400">{plan}</h2>
+        </div>
 
       </div>
+
+      <div className="bg-white/5 p-6 rounded-xl mb-10">
+        <p className="mb-2">API Key</p>
+        <div className="border p-3 rounded flex justify-between">
+          <span className="text-xs">{apiKey}</span>
+        </div>
+      </div>
+
     </div>
   );
 }
