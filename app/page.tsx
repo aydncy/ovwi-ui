@@ -1,26 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 
 export default function Home() {
 
-  const [logs, setLogs] = useState<string[]>([]);
-
-  const runWorkflow = () => {
-    setLogs([
-      "→ Request received",
-      "→ Validating signature",
-      "→ Executing workflow",
-      "→ Logging execution",
-      "✅ Verified & completed"
-    ]);
-  };
-
   return (
     <div style={{background:'#050816', minHeight:'100vh', color:'#fff'}}>
 
-      {/* ✅ NAVBAR */}
+      {/* ✅ NAV */}
       <div style={{borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
         <div style={{
           maxWidth:1200,
@@ -31,11 +18,11 @@ export default function Home() {
           justifyContent:'space-between',
           padding:'0 20px'
         }}>
-          <span style={{fontWeight:900}}>OVWI</span>
+          <b>OVWI</b>
 
-          <div style={{display:'flex', gap:24}}>
+          <div style={{display:'flex', gap:20}}>
             <Link href="/docs">Docs</Link>
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/auth/login">Login</Link>
           </div>
         </div>
       </div>
@@ -52,89 +39,79 @@ export default function Home() {
         </h1>
 
         <p style={{color:'#9fb4d6', marginTop:20}}>
-          Infrastructure to run, verify, and audit every execution.
+          Infrastructure for execution, verification and audit.
         </p>
 
-        <div style={{marginTop:40, display:'flex', gap:20, justifyContent:'center'}}>
-          <button style={{
-            padding:'14px 30px',
-            background:'linear-gradient(90deg,#2f7dff,#18d6ff)',
-            borderRadius:12,
-            fontWeight:700,
-            border:'none'
-          }}>
-            Start Building
-          </button>
-
-          <Link href="/docs">
+        <div style={{marginTop:30}}>
+          <Link href="/dashboard">
             <button style={{
               padding:'14px 30px',
-              border:'1px solid rgba(255,255,255,0.1)',
-              borderRadius:12
+              background:'linear-gradient(90deg,#2f7dff,#18d6ff)',
+              borderRadius:12,
+              border:'none',
+              fontWeight:700
             }}>
-              View Docs
+              Open Dashboard
             </button>
           </Link>
         </div>
       </div>
 
-      {/* ✅ PLAYGROUND = LOG ENGINE */}
+      {/* ✅ DASHBOARD PREVIEW */}
       <div style={{
-        maxWidth:900,
+        maxWidth:1100,
         margin:'0 auto',
         padding:'40px 20px'
       }}>
 
-        <button onClick={runWorkflow} style={{
-          padding:'12px 20px',
-          background:'#0b1223',
-          borderRadius:10,
-          marginBottom:20
-        }}>
-          Run Workflow
-        </button>
-
         <div style={{
-          background:'#0b1223',
-          padding:20,
-          borderRadius:16,
-          minHeight:200,
-          border:'1px solid rgba(255,255,255,0.08)'
+          background:'rgba(255,255,255,0.04)',
+          border:'1px solid rgba(255,255,255,0.08)',
+          borderRadius:20,
+          padding:30,
+          boxShadow:'0 20px 60px rgba(0,0,0,.4)'
         }}>
-          {logs.length === 0 ? (
-            <p style={{color:'#667'}}>No execution</p>
-          ) : (
-            logs.map((l, i) => (
-              <p key={i} style={{marginBottom:6, color:'#aef'}}>{l}</p>
-            ))
-          )}
-        </div>
 
-      </div>
+          <h3 style={{marginBottom:20}}>System Overview</h3>
 
-      {/* ✅ FEATURES */}
-      <div style={{
-        maxWidth:1100,
-        margin:'0 auto',
-        padding:'60px 20px',
-        display:'grid',
-        gridTemplateColumns:'repeat(3,1fr)',
-        gap:20
-      }}>
-
-        {[
-          "Verifiable execution logs",
-          "Audit-ready workflow system",
-          "API-first infrastructure"
-        ].map((t,i)=>(
-          <div key={i} style={{
-            background:'rgba(255,255,255,0.04)',
-            padding:20,
-            borderRadius:16
+          <div style={{
+            display:'grid',
+            gridTemplateColumns:'repeat(4,1fr)',
+            gap:20
           }}>
-            {t}
+            {[
+              "12,543 requests",
+              "$2,847 revenue",
+              "89 users",
+              "47ms latency"
+            ].map((v,i)=>(
+              <div key={i} style={{
+                background:'#0b1223',
+                padding:20,
+                borderRadius:12
+              }}>
+                {v}
+              </div>
+            ))}
           </div>
-        ))}
+
+          <div style={{
+            marginTop:30,
+            background:'#0b1223',
+            padding:20,
+            borderRadius:12
+          }}>
+            <p style={{color:'#888'}}>Execution logs</p>
+
+            <p style={{color:'#7df'}}>
+              → Request received<br/>
+              → Validated<br/>
+              → Executed<br/>
+              ✅ Verified
+            </p>
+          </div>
+
+        </div>
 
       </div>
 
