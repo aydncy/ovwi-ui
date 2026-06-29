@@ -2,22 +2,39 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, ArrowRight } from 'lucide-react';
 
-const plans = [
+type Plan = {
+  name: string;
+  price: string;
+  period: string;
+  tagline: string;
+  executions: string;
+  features: string[];
+  cta: string;
+  href: string;
+  external: boolean;
+  highlighted: boolean;
+};
+
+const plans: Plan[] = [
   {
     name: 'Free',
-    price: '$0',
+    price: '€0',
     period: '/mo',
+    tagline: 'For prototyping and side projects.',
     executions: '50 executions / month',
-    features: ['Verifiable execution', 'Full audit logs', 'Community support'],
-    cta: 'Get Started',
+    features: ['Verifiable execution', 'Full audit logs', 'API access', 'Community support'],
+    cta: 'Start for free',
+    href: '/auth/signup',
+    external: false,
     highlighted: false,
   },
   {
     name: 'Pro',
-    price: '$49',
+    price: '€9',
     period: '/mo',
+    tagline: 'For production workloads that need proof.',
     executions: '1,000 executions / month',
     features: [
       'Everything in Free',
@@ -25,13 +42,16 @@ const plans = [
       'Exportable evidence',
       'Email support',
     ],
-    cta: 'Get Started',
+    cta: 'Get Pro',
+    href: 'https://aydncy.gumroad.com/l/ovwi_pro',
+    external: true,
     highlighted: true,
   },
   {
     name: 'Scale',
-    price: '$299',
+    price: '€29',
     period: '/mo',
+    tagline: 'For teams operating at high volume.',
     executions: '100,000 executions / month',
     features: [
       'Everything in Pro',
@@ -39,14 +59,16 @@ const plans = [
       'Retention policies',
       'Priority support',
     ],
-    cta: 'Get Started',
+    cta: 'Get Scale',
+    href: 'https://aydncy.gumroad.com/l/ovwi_scale',
+    external: true,
     highlighted: false,
   },
 ];
 
 export default function Pricing() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-24">
+    <section id="pricing" className="mx-auto max-w-6xl px-6 py-24">
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-sm font-semibold uppercase tracking-wider text-sky-400">
           Pricing
@@ -55,7 +77,7 @@ export default function Pricing() {
           Simple, usage-based plans
         </h2>
         <p className="mt-4 text-pretty text-lg leading-relaxed text-muted">
-          Start free, scale as your workflows grow. Every plan includes verifiable logs.
+          Start free, scale as your workflows grow. Every plan includes verifiable logs. No credit card required to start.
         </p>
       </div>
 
@@ -77,6 +99,7 @@ export default function Pricing() {
               </span>
             )}
             <h3 className="text-lg font-semibold text-foreground">{plan.name}</h3>
+            <p className="mt-1 text-sm text-muted">{plan.tagline}</p>
             <div className="mt-4 flex items-baseline gap-1">
               <span className="text-4xl font-bold text-foreground">{plan.price}</span>
               <span className="text-sm text-muted">{plan.period}</span>
@@ -92,19 +115,35 @@ export default function Pricing() {
               ))}
             </ul>
 
-            <Link
-              href="/auth/login"
-              className={`mt-8 inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold transition hover:-translate-y-0.5 ${
-                plan.highlighted
-                  ? 'bg-gradient-to-r from-sky-400 to-blue-600 text-white shadow-lg shadow-blue-500/40'
-                  : 'border border-white/12 bg-white/5 text-foreground hover:border-white/25 hover:bg-white/10'
-              }`}
-            >
-              {plan.cta}
-            </Link>
+            {plan.external ? (
+              <a
+                href={plan.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group mt-8 inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition hover:-translate-y-0.5 ${
+                  plan.highlighted
+                    ? 'bg-gradient-to-r from-sky-400 to-blue-600 text-white shadow-lg shadow-blue-500/40'
+                    : 'border border-white/12 bg-white/5 text-foreground hover:border-white/25 hover:bg-white/10'
+                }`}
+              >
+                {plan.cta}
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </a>
+            ) : (
+              <Link
+                href={plan.href}
+                className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground transition hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10"
+              >
+                {plan.cta}
+              </Link>
+            )}
           </motion.div>
         ))}
       </div>
+
+      <p className="mt-10 text-center text-sm text-muted">
+        Prices in EUR. Pro and Scale are billed securely via Gumroad. Cancel anytime.
+      </p>
     </section>
   );
 }
