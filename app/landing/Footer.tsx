@@ -1,25 +1,37 @@
+'use client';
+
 import Link from 'next/link';
+import { useUser } from '@/lib/useUser';
 
 export default function Footer() {
+  const { user } = useUser();
+
   return (
-    <footer className="border-t border-white/8">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 py-10 sm:flex-row">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 text-xs font-black text-white">
+    <footer className="mt-24 border-t border-white/10">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-8">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 text-xs font-black text-white">
             O
-          </span>
-          <span className="font-bold tracking-tight text-foreground">OVWI</span>
-        </Link>
+          </div>
+          <span className="font-bold text-white">OVWI</span>
+        </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted">
-          <Link href="/docs" className="transition hover:text-foreground">Docs</Link>
-          <Link href="/auth/login" className="transition hover:text-foreground">Login</Link>
-          <Link href="/auth/signup" className="transition hover:text-foreground">Sign up</Link>
-        </nav>
+        <div className="flex items-center gap-6 text-sm text-slate-400">
+          /docsDocs</Link>
 
-        <p className="text-xs text-slate-500">
-          © {new Date().getFullYear()} OVWI · Open Verifiable Workflow Infrastructure
-        </p>
+          {user ? (
+            /dashboardDashboard</Link>
+          ) : (
+            <>
+              /auth/loginLogin</Link>
+              /auth/signupSign up</Link>
+            </>
+          )}
+        </div>
+
+        <div className="text-sm text-slate-500">
+          © 2026 OVWI · Open Verifiable Workflow Infrastructure
+        </div>
       </div>
     </footer>
   );
