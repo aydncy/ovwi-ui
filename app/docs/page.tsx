@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export default function DocsPage() {
   return (
@@ -24,34 +25,34 @@ export default function DocsPage() {
         <div className="grid lg:grid-cols-[280px_1fr] gap-12">
 
           <aside className="border-r border-white/10 pr-8">
-            <div className="space-y-4 text-sm">
-              <a hrefg-started
+            <div className="space-y-4 text-sm flex flex-col">
+              <Link href="#getting-started" className="block text-slate-300 hover:text-white transition">
                 Getting Started
-              </a>
+              </Link>
 
-              " className="block text-slate-300 hover:text-white">
+              <Link href="#auth" className="block text-slate-300 hover:text-white transition">
                 Authentication
-              </a>
+              </Link>
 
-              #workflows className="block text-slate-300 hover:text-white">
+              <Link href="#workflows" className="block text-slate-300 hover:text-white transition">
                 Workflows
-              </a>
+              </Link>
 
-              logs" className="block text-slate-300 hover:text-white">
+              <Link href="#logs" className="block text-slate-300 hover:text-white transition">
                 Execution Logs
-              </a>
+              </Link>
 
-              " className="block text-slate-300 hover:text-white">
+              <Link href="#audit" className="block text-slate-300 hover:text-white transition">
                 Audit Records
-              </a>
+              </Link>
 
-              #proofs className="block text-slate-300 hover:text-white">
+              <Link href="#proofs" className="block text-slate-300 hover:text-white transition">
                 Verification Proofs
-              </a>
+              </Link>
 
-              #apiName="block text-slate-300 hover:text-white">
+              <Link href="#api" className="block text-slate-300 hover:text-white transition">
                 API Reference
-              </a>
+              </Link>
             </div>
           </aside>
 
