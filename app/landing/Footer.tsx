@@ -13,26 +13,31 @@ export default function Footer() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 text-xs font-black text-white">
             O
           </div>
-          <span className="font-bold text-white">OVWI</span>
+
+          <span className="font-bold text-white">
+            OVWI
+          </span>
         </div>
 
         <div className="flex items-center gap-6 text-sm text-slate-400">
-          /docs hover:text-white">
+          /docs
             Docs
           </Link>
 
           {user ? (
-            /dashboard
+            dashboard"
+              className="transition hover:text-white"
+            >
               Dashboard
             </Link>
           ) : (
             <>
-              /auth/logintransition hover:text-white">
+              /auth/login
                 Login
               </Link>
 
-              /auth/signup
-                Sign up
+              <Link
+                       Sign up
               </Link>
             </>
           )}
