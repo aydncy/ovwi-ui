@@ -13,7 +13,6 @@ export default function Footer() {
 
         <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted">
           <Link href="/docs" className="transition hover:text-foreground">Docs</Link>
-          <Link href="/dashboard" className="transition hover:text-foreground">Dashboard</Link>
           <Link href="/auth/login" className="transition hover:text-foreground">Login</Link>
           <Link href="/auth/signup" className="transition hover:text-foreground">Sign up</Link>
         </nav>
