@@ -17,7 +17,7 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-6 text-sm text-slate-400">
-          /docs
+          /docs hover:text-white">
             Docs
           </Link>
 
@@ -27,10 +27,11 @@ export default function Footer() {
             </Link>
           ) : (
             <>
-              <Link href="/auth           Login
+              /auth/logintransition hover:text-white">
+                Login
               </Link>
 
-              /signup" className="transition hover:text-white">
+              /auth/signup
                 Sign up
               </Link>
             </>
