@@ -1,4 +1,3 @@
-import LandingNav from '../landing/LandingNav';
 'use client';
 
 import { motion } from 'framer-motion';
@@ -6,8 +5,6 @@ import Link from 'next/link';
 
 export default function DocsPage() {
   return (
-<>
-  <LandingNav />
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-6 py-20">
 
@@ -88,7 +85,8 @@ export default function DocsPage() {
               </h2>
 
               <div className="rounded-2xl border border-white/10 bg-slate-950 p-6 font-mono text-sm overflow-x-auto">
-{`await fetch("/api/workflow", {
+                <pre>
+                  {`await fetch("/api/workflow", {
   method: "POST",
   headers: {
     Authorization: "Bearer API_KEY"
@@ -97,7 +95,8 @@ export default function DocsPage() {
     workflow: "payment_process",
     amount: 100
   })
-})`}
+});`}
+                </pre>
               </div>
             </section>
 
@@ -134,13 +133,15 @@ export default function DocsPage() {
               </h2>
 
               <div className="rounded-2xl border border-white/10 bg-slate-950 p-6 font-mono text-sm overflow-x-auto">
-{`{
-  "workflow_id":"wf_8f3d2a",
-  "status":"VERIFIED",
-  "checksum":"sha256-...",
-  "signature":"0x7f83ab...",
-  "immutable":true
+                <pre>
+                  {`{
+  "workflow_id": "wf_8f3d2a",
+  "status": "VERIFIED",
+  "checksum": "sha256-...",
+  "signature": "0x7f83ab...",
+  "immutable": true
 }`}
+                </pre>
               </div>
             </section>
 
