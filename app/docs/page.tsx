@@ -1,3 +1,4 @@
+import LandingNav from '../landing/LandingNav';
 'use client';
 
 import { motion } from 'framer-motion';
@@ -5,6 +6,8 @@ import Link from 'next/link';
 
 export default function DocsPage() {
   return (
+<>
+  <LandingNav />
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-6 py-20">
 
