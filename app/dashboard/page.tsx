@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getSupabase } from '@/lib/supabase-browser';
+import { getSupabase } from '@/lib/supabase-browser';import LandingNav from '@/app/landing/LandingNav';
 
 interface UserData {
   id?: string;
@@ -213,6 +213,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
+<LandingNav />
       <div className="fixed inset-0 z-0 pointer-events-none">
         <motion.div
           className="absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/10 blur-3xl rounded-full"
