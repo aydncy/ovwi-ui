@@ -25,18 +25,14 @@ export default function Footer() {
           </Link>
 
           {user ? (
-            <Link
-              href="/dashboard"
-              className    ) : (
+            /dashboard
+              Dashboard
+            </Link>
+          ) : (
             <>
-              "
-                className="transition hover:text-white"
-              >
-                Login
-              </Link>
-
-              <auth/signup
-                Sign up
+              <Link
+                href="/auth/login"
+                className="transition hover                Sign up
               </Link>
             </>
           )}
@@ -45,11 +41,6 @@ export default function Footer() {
         <div className="text-sm text-slate-500">
           © 2026 OVWI · Open Verifiable Workflow Infrastructure
         </div>
-      </div>
-    </footer>
-  );
-}
-     </div>
       </div>
     </footer>
   );
