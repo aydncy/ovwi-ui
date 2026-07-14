@@ -9,7 +9,6 @@ export default function Footer() {
   return (
     <footer className="mt-24 border-t border-white/10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-8">
-
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 text-xs font-black text-white">
             O
@@ -21,28 +20,36 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-6 text-sm text-slate-400">
-          <Link
-            href="/docs"
-                     {user ? (
+          /docs
+            Docs
+          </Link>
+
+          {user ? (
             <Link
               href="/dashboard"
-           Link>
-          ) : (
+              className    ) : (
             <>
-              <Link
-                href="/auth/login"
-           nk>
+              "
+                className="transition hover:text-white"
+              >
+                Login
+              </Link>
 
-              <Link
-                href="/auth/signup"
-                className="  </>
+              <auth/signup
+                Sign up
+              </Link>
+            </>
           )}
         </div>
 
         <div className="text-sm text-slate-500">
           © 2026 OVWI · Open Verifiable Workflow Infrastructure
         </div>
-
+      </div>
+    </footer>
+  );
+}
+     </div>
       </div>
     </footer>
   );
