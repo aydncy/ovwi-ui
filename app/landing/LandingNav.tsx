@@ -44,7 +44,6 @@ export default function LandingNav() {
 
         <div className="hidden items-center gap-1 md:flex">
           <NavLink href="/docs">Docs</NavLink>
-          <NavLink href="/dashboard">Dashboard</NavLink>
         </div>
 
         <div className="flex items-center gap-2">
