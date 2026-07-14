@@ -17,34 +17,33 @@ export default function Callback() {
       }
 
       try {
-        const url = new URL(window.location.href);
+        const existing = await supabase.auth.getSession();
 
+        if (existing.data.session) {
+          router.push('/dashboard');
+          return;
+        }
+
+        const url = new URL(window.location.href);
         const code = url.searchParams.get('code');
 
         if (code) {
-          const { error } =
-            await supabase.auth.exchangeCodeForSession(code);
-
-          if (error) {
-            console.error(error);
-            router.push('/auth/login?error=exchange_failed');
-            return;
-          }
+          await supabase.auth.exchangeCodeForSession(code);
         }
 
         const {
           data: { session },
         } = await supabase.auth.getSession();
 
-        if (!session) {
-          router.push('/auth/login?error=no_session');
+        if (session) {
+          router.push('/dashboard');
           return;
         }
 
-        router.push('/dashboard');
-      } catch (e) {
-        console.error(e);
-        router.push('/auth/login?error=callback_error');
+        router.push('/auth/login');
+      } catch (err) {
+        console.error(err);
+        router.push('/auth/login');
       }
     };
 
