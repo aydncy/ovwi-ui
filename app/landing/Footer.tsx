@@ -17,14 +17,22 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-6 text-sm text-slate-400">
-          /docsDocs</Link>
+          /docs
+            Docs
+          </Link>
 
           {user ? (
-            /dashboardDashboard</Link>
+            /dashboard
+              Dashboard
+            </Link>
           ) : (
             <>
-              /auth/loginLogin</Link>
-              /auth/signupSign up</Link>
+              <Link href="/auth           Login
+              </Link>
+
+              /signup" className="transition hover:text-white">
+                Sign up
+              </Link>
             </>
           )}
         </div>
