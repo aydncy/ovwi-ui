@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getSupabase } from '@/lib/supabase-browser';import LandingNav from '@/app/landing/LandingNav';
+import { getSupabase } from '@/lib/supabase-browser';
+import LandingNav from '@/app/landing/LandingNav';
 
 interface UserData {
   id?: string;
