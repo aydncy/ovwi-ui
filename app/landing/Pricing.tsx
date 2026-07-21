@@ -64,6 +64,25 @@ const plans: Plan[] = [
     external: true,
     highlighted: false,
   },
+  
+{
+    name: 'Enterprise',
+    price: 'Custom',
+    period: '',
+    tagline: 'For organizations requiring dedicated scale and compliance.',
+    executions: 'Unlimited workflow executions',
+    features: [
+      'Dedicated 24/7 support',
+      'Custom cloud deployment',
+      'On-premises option',
+      'Custom SLA guarantees',
+      'Compliance assistance',
+    ],
+    cta: 'Book a Demo',
+    href: 'mailto:sales@ovwi.com',
+    external: true,
+    highlighted: false,
+  },
 ];
 
 export default function Pricing() {
@@ -81,7 +100,7 @@ export default function Pricing() {
         </p>
       </div>
 
-      <div className="mt-16 grid gap-6 lg:grid-cols-3">
+      <div className="mt-16 grid gap-6 lg:grid-cols-4">
         {plans.map((plan, i) => (
           <motion.div
             key={plan.name}
