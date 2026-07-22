@@ -16,16 +16,25 @@ interface UserData {
   api_key: string;
   user_id?: string;
 }
+interface ApiCall {
+  id: string;
+  endpoint: string;
+  status: number;
+  created_at: string;
+}
 
 export default function Dashboard() {
   const router = useRouter();
   const supabase = getSupabase();
+
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [apiCalls, setApiCalls] = useState<ApiCall[]>([]);
   const [copied, setCopied] = useState(false);
   const [userId, setUserId] = useState('');
   const [error, setError] = useState('');
+
 
   useEffect(() => {
     if (!supabase) {
@@ -98,6 +107,16 @@ export default function Dashboard() {
         } else {
           console.log('License data fetched:', licenseData);
           setUserData(licenseData);
+          const { data: callsData, error: callsError } = await supabase
+  .from("api_calls")
+  .select("id, endpoint, status, created_at")
+  .eq("user_id", authData.user.id)
+  .order("created_at", { ascending: false })
+  .limit(10);
+
+if (!callsError && callsData) {
+  setApiCalls(callsData);
+}
         }
       } catch (err) {
         console.error('Dashboard initialization error:', err);
@@ -154,6 +173,16 @@ export default function Dashboard() {
       if (callError) {
         console.error('Error inserting API call:', callError);
       }
+      const { data: refreshedCalls } = await supabase
+  .from("api_calls")
+  .select("id, endpoint, status, created_at")
+  .eq("user_id", userId)
+  .order("created_at", { ascending: false })
+  .limit(10);
+
+if (refreshedCalls) {
+  setApiCalls(refreshedCalls);
+}
     } catch (err) {
       console.error('Error simulating call:', err);
     }
@@ -198,13 +227,16 @@ export default function Dashboard() {
   const isLimitReached = userData ? userData.monthly_usage >= userData.monthly_limit : false;
 
   const getPlanUpgradeLink = () => {
-    if (userData?.plan === 'free') {
-      return 'https://aydncy.gumroad.com/l/ovwi_pro';
-    } else if (userData?.plan === 'pro') {
-      return 'https://aydncy.gumroad.com/l/ovwi_scale';
-    }
-    return '#';
-  };
+  if (userData?.plan === 'free') {
+    return 'https://aydncy.gumroad.com/l/ovwi_pro';
+  }
+
+  if (userData?.plan === 'pro') {
+    return 'https://aydncy.gumroad.com/l/ovwi_scale';
+  }
+
+  return '#';
+};
 
   const getUpgradeText = () => {
     if (userData?.plan === 'free') return 'Upgrade to Pro';
@@ -392,6 +424,71 @@ export default function Dashboard() {
                 </Link>
               </motion.div>
             </motion.div>
+            <motion.div className="mt-6 rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/50 to-slate-950/50 p-8">
+
+  
+<h3 className="mb-4 text-xl font-bold">
+  Workflow History ({apiCalls.length})
+</h3>
+
+
+  {apiCalls.length === 0 ? (
+
+    <p className="text-slate-400">
+      No API calls yet.
+    </p>
+
+  ) : (
+
+    <div className="space-y-3">
+
+      {apiCalls.map((call) => {
+
+        const endpoint =
+          call.endpoint === "simulate"
+            ? "POST /api/ovwi"
+            : call.endpoint;
+
+        return (
+
+          <div
+            key={call.id}
+            className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3"
+          >
+
+            <div>
+
+              <p className="font-mono text-cyan-400">
+                {endpoint}
+              </p>
+
+              <p className="text-xs text-slate-500">
+                {new Date(call.created_at).toLocaleString()}
+              </p>
+
+            </div>
+
+            <span
+              className={
+                call.status === 200
+                  ? "font-bold text-emerald-400"
+                  : "font-bold text-red-400"
+              }
+            >
+              {call.status}
+            </span>
+
+          </div>
+
+        );
+
+      })}
+
+    </div>
+
+  )}
+
+</motion.div>
           </>
         )}
       </div>
