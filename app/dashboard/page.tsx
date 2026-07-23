@@ -41,6 +41,7 @@ export default function Dashboard() {
 );
 const [playgroundResult, setPlaygroundResult] = useState('');
 const [playgroundLoading, setPlaygroundLoading] = useState(false);
+const [failedCalls, setFailedCalls] = useState(0);
 
 
   useEffect(() => {
@@ -129,6 +130,12 @@ if (!callsError && callsData) {
   const successfulCalls = callsData.filter(
     (call) => call.status === 200
   ).length;
+  
+  const failed = callsData.filter(
+  (call) => call.status !== 200
+).length;
+
+setFailedCalls(failed);
 
   setSuccessRate(
     callsData.length > 0
@@ -202,6 +209,26 @@ if (!callsError && callsData) {
 
 if (refreshedCalls) {
   setApiCalls(refreshedCalls);
+
+  setTotalCalls(refreshedCalls.length);
+
+  const successfulCalls = refreshedCalls.filter(
+    (call) => call.status === 200
+  ).length;
+
+  const failed = refreshedCalls.filter(
+    (call) => call.status !== 200
+  ).length;
+
+  setFailedCalls(failed);
+
+  setSuccessRate(
+    refreshedCalls.length > 0
+      ? Math.round(
+          (successfulCalls / refreshedCalls.length) * 100
+        )
+      : 0
+  );
 }
     } catch (err) {
       console.error('Error simulating call:', err);
@@ -348,7 +375,7 @@ if (refreshedCalls) {
         ) : (
           <>
             <motion.div
-  className="grid md:grid-cols-5 gap-6 mb-12"
+  className="grid md:grid-cols-6 gap-6 mb-12"
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ staggerChildren: 0.1 }}
@@ -456,6 +483,19 @@ if (refreshedCalls) {
       Based on recent executions
     </p>
   </motion.div>
+  <motion.div className="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/30 rounded-2xl p-8">
+  <p className="text-sm text-slate-400 uppercase tracking-wider">
+    Failed Calls
+  </p>
+
+  <div className="text-5xl font-bold mt-4 text-red-400">
+    {failedCalls}
+  </div>
+
+  <p className="text-xs text-slate-500 mt-6">
+    Non 200 responses
+  </p>
+</motion.div>
 </motion.div>
 
 
