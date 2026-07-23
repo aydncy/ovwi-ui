@@ -6,6 +6,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getSupabase } from '@/lib/supabase-browser';
 import LandingNav from '@/app/landing/LandingNav';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts';
 
 interface UserData {
   id?: string;
@@ -330,6 +338,20 @@ if (refreshedCalls) {
   }
 
   const percent = userData ? Math.min((userData.monthly_usage / userData.monthly_limit) * 100, 100) : 0;
+  const usageChartData = apiCalls
+  .slice()
+  .reverse()
+  .map((call, index) => ({
+    name: new Date(call.created_at).toLocaleDateString(
+      'tr-TR',
+      {
+        day: '2-digit',
+        month: '2-digit',
+      }
+    ),
+    calls: index + 1,
+    status: call.status,
+  }));
   const isLimitReached = userData ? userData.monthly_usage >= userData.monthly_limit : false;
 
   const getPlanUpgradeLink = () => {
@@ -395,7 +417,7 @@ if (refreshedCalls) {
       API Requests
     </p>
 
-    <div className="text-5xl font-bold mt-4 text-cyan-400">
+    <div className="text-4xl font-bold mt-4 text-cyan-400">
       {userData.monthly_usage}
       <span className="text-2xl text-slate-500">
         /{userData.monthly_limit}
@@ -433,7 +455,7 @@ if (refreshedCalls) {
     </div>
   </motion.div>
 
-  <motion.div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-2xl p-8">
+  <motion.div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-2xl p-6">
     <p className="text-sm text-slate-400 uppercase tracking-wider">
       Total Revenue
     </p>
@@ -635,6 +657,36 @@ if (refreshedCalls) {
     <pre className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950 p-4 text-sm text-emerald-400">
       {playgroundResult || 'No response yet'}
     </pre>
+  </div>
+</motion.div>
+            <motion.div className="mt-6 rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/50 to-slate-950/50 p-8">
+  <h3 className="text-xl font-bold mb-6">
+    Usage Trend
+  </h3>
+
+  <div className="h-72">
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={usageChartData}>
+        <XAxis
+          dataKey="name"
+          stroke="#94a3b8"
+        />
+
+        <YAxis
+          stroke="#94a3b8"
+        />
+
+        <Tooltip />
+
+        <Line
+          type="monotone"
+          dataKey="calls"
+          stroke="#22d3ee"
+          strokeWidth={3}
+          dot={{ r: 4 }}
+        />
+      </LineChart>
+    </ResponsiveContainer>
   </div>
 </motion.div>
             <motion.div className="mt-6 rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/50 to-slate-950/50 p-8">
