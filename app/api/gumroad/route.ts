@@ -31,13 +31,20 @@ export async function POST(req: NextRequest) {
     }
 
     // ✅ USER UPDATE
-    const { error } = await sb
-      .from("users_licenses")
-      .update({
-        plan,
-        monthly_limit: limit,
-      })
-      .eq("user_email", email);
+    const result = await sb
+  .from("users_licenses")
+  .update({
+    plan,
+    monthly_limit: limit,
+  })
+  .eq("user_email", email)
+  .select();
+
+console.log("EMAIL:", email);
+console.log("PLAN:", plan);
+console.log("UPDATE RESULT:", result);
+
+const { error } = result;
 
     if (error) {
       console.error("❌ Supabase error:", error);
