@@ -202,7 +202,25 @@ if (refreshedCalls) {
       console.error('Error simulating call:', err);
     }
   };
+   const regenerateApiKey = async () => {
+  if (!supabase || !userId) return;
 
+  const newKey =
+    `sk_live_${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`;
+
+  const { data, error } = await supabase
+    .from('users_licenses')
+    .update({
+      api_key: newKey,
+    })
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (!error && data) {
+    setUserData(data);
+  }
+};
   const copyApiKey = () => {
     if (userData?.api_key) {
       navigator.clipboard.writeText(userData.api_key);
@@ -361,12 +379,20 @@ if (refreshedCalls) {
                   <p className="text-slate-400 text-sm mt-1">Use this to authenticate your API requests</p>
                 </div>
                 <motion.button
-                  onClick={copyApiKey}
-                  whileHover={{ scale: 1.05 }}
-                  className="px-6 py-2 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/50 text-cyan-400 font-semibold text-sm transition-all"
-                >
-                  {copied ? 'Copied!' : 'Copy'}
-                </motion.button>
+  onClick={copyApiKey}
+  whileHover={{ scale: 1.05 }}
+  className="px-6 py-2 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/50 text-cyan-400 font-semibold text-sm transition-all"
+>
+  {copied ? 'Copied!' : 'Copy'}
+</motion.button>
+
+<motion.button
+  onClick={regenerateApiKey}
+  whileHover={{ scale: 1.05 }}
+  className="ml-3 px-6 py-2 rounded-lg bg-red-600/20 hover:bg-red-600/30 border border-red-500/50 text-red-400 font-semibold text-sm transition-all"
+>
+  Regenerate
+</motion.button>
               </div>
 
               <div className="bg-slate-950 border border-white/10 rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto break-all">
