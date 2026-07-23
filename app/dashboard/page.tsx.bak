@@ -32,8 +32,6 @@ export default function Dashboard() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [apiCalls, setApiCalls] = useState<ApiCall[]>([]);
   const [copied, setCopied] = useState(false);
-  const [totalCalls, setTotalCalls] = useState(0);
-  const [successRate, setSuccessRate] = useState(0);
   const [userId, setUserId] = useState('');
   const [error, setError] = useState('');
 
@@ -118,19 +116,6 @@ export default function Dashboard() {
 
 if (!callsError && callsData) {
   setApiCalls(callsData);
-
-  setTotalCalls(callsData.length);
-
-  const successfulCalls = callsData.filter(
-    (call) => call.status === 200
-  ).length;
-
-  setSuccessRate(
-    callsData.length > 0
-      ? Math.round((successfulCalls / callsData.length) * 100)
-      : 0
-  );
-
 }
         }
       } catch (err) {
@@ -294,7 +279,7 @@ if (refreshedCalls) {
         ) : (
           <>
             <motion.div
-              className="grid md:grid-cols-5 gap-6 mb-12"
+              className="grid md:grid-cols-3 gap-6 mb-12"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ staggerChildren: 0.1 }}
