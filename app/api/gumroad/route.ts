@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sb } from "@/lib/supabase";
+import { admin } from "@/lib/supabase-admin";
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,8 +31,10 @@ export async function POST(req: NextRequest) {
     }
 
     // ✅ USER UPDATE
-    const result = await sb
+    const result = 
+await admin
   .from("users_licenses")
+
   .update({
     plan,
     monthly_limit: limit,
