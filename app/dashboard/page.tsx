@@ -36,6 +36,11 @@ export default function Dashboard() {
   const [successRate, setSuccessRate] = useState(0);
   const [userId, setUserId] = useState('');
   const [error, setError] = useState('');
+  const [playgroundInput, setPlaygroundInput] = useState(
+  '{\n  "message": "hello world"\n}'
+);
+const [playgroundResult, setPlaygroundResult] = useState('');
+const [playgroundLoading, setPlaygroundLoading] = useState(false);
 
 
   useEffect(() => {
@@ -219,6 +224,37 @@ if (refreshedCalls) {
 
   if (!error && data) {
     setUserData(data);
+  }
+};
+  const runPlayground = async () => {
+  try {
+    setPlaygroundLoading(true);
+
+    const response = await fetch('/api/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: playgroundInput,
+    });
+
+    const data = await response.json();
+
+    setPlaygroundResult(
+      JSON.stringify(data, null, 2)
+    );
+  } catch {
+    setPlaygroundResult(
+      JSON.stringify(
+        {
+          error: 'playground_error',
+        },
+        null,
+        2
+      )
+    );
+  } finally {
+    setPlaygroundLoading(false);
   }
 };
   const copyApiKey = () => {
@@ -521,6 +557,36 @@ if (refreshedCalls) {
                 </Link>
               </motion.div>
             </motion.div>
+            <motion.div className="mt-6 rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/50 to-slate-950/50 p-8">
+  <h3 className="text-xl font-bold mb-4">
+    API Playground
+  </h3>
+
+  <p className="text-slate-400 text-sm mb-4">
+    Test OVWI endpoints directly from your dashboard.
+  </p>
+
+  <textarea
+    value={playgroundInput}
+    onChange={(e) => setPlaygroundInput(e.target.value)}
+    className="w-full h-40 rounded-xl border border-white/10 bg-slate-950 p-4 font-mono text-sm text-cyan-400"
+  />
+
+  <motion.button
+    onClick={runPlayground}
+    whileHover={{ scale: 1.02 }}
+    disabled={playgroundLoading}
+    className="mt-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-3 font-bold text-white"
+  >
+    {playgroundLoading ? 'Running...' : 'Run Verification'}
+  </motion.button>
+
+  <div className="mt-6">
+    <pre className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950 p-4 text-sm text-emerald-400">
+      {playgroundResult || 'No response yet'}
+    </pre>
+  </div>
+</motion.div>
             <motion.div className="mt-6 rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/50 to-slate-950/50 p-8">
 
   
