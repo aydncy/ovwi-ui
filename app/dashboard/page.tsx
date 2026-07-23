@@ -36,12 +36,10 @@ export default function Dashboard() {
   const [successRate, setSuccessRate] = useState(0);
   const [userId, setUserId] = useState('');
   const [error, setError] = useState('');
-  const [playgroundInput, setPlaygroundInput] = useState(
-  '{\n  "message": "hello world"\n}'
-);
-const [playgroundResult, setPlaygroundResult] = useState('');
-const [playgroundLoading, setPlaygroundLoading] = useState(false);
-const [failedCalls, setFailedCalls] = useState(0);
+  const [playgroundInput, setPlaygroundInput] = useState('');
+  const [playgroundResult, setPlaygroundResult] = useState('');
+  const [playgroundLoading, setPlaygroundLoading] = useState(false);
+  const [failedCalls, setFailedCalls] = useState(0);
 
 
   useEffect(() => {
@@ -70,7 +68,19 @@ const [failedCalls, setFailedCalls] = useState(0);
         }
 
         console.log('User authenticated:', authData.user.id, authData.user.email);
-        setEmail(authData.user.email || '');
+        const userEmail = authData.user.email || '';
+
+setEmail(userEmail);
+
+setPlaygroundInput(
+  JSON.stringify(
+    {
+      email: userEmail,
+    },
+    null,
+    2
+  )
+);
         setUserId(authData.user.id);
 
         console.log('Fetching user license data...');
