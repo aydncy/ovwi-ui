@@ -312,60 +312,116 @@ if (refreshedCalls) {
         ) : (
           <>
             <motion.div
-              className="grid md:grid-cols-5 gap-6 mb-12"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ staggerChildren: 0.1 }}
-            >
-              <motion.div className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 border border-cyan-500/30 rounded-2xl p-8">
-                <p className="text-sm text-slate-400 uppercase tracking-wider">API Requests</p>
-                <div className="text-5xl font-bold mt-4 text-cyan-400">
-                  {userData.monthly_usage}
-                  <span className="text-2xl text-slate-500">/{userData.monthly_limit}</span>
-                </div>
+  className="grid md:grid-cols-5 gap-6 mb-12"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ staggerChildren: 0.1 }}
+>
+  <motion.div className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 border border-cyan-500/30 rounded-2xl p-8">
+    <p className="text-sm text-slate-400 uppercase tracking-wider">
+      API Requests
+    </p>
 
-                <div className="mt-6">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-xs text-slate-400">Usage Progress</span>
-                    <span className={`font-bold ${isLimitReached ? 'text-red-400' : 'text-cyan-400'}`}>
-                      {percent.toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="w-full h-3 bg-slate-900/50 rounded-full overflow-hidden border border-white/10">
-                    <motion.div
-                      className={`h-full rounded-full ${isLimitReached ? 'bg-red-500' : 'bg-gradient-to-r from-cyan-500 to-blue-600'}`}
-                      animate={{ width: `${percent}%` }}
-                      transition={{ duration: 0.5 }}
-                      style={{
-                        boxShadow: isLimitReached
-                          ? '0 0 20px rgba(239, 68, 68, 0.5)'
-                          : '0 0 20px rgba(34, 211, 238, 0.5)',
-                      }}
-                    />
-                  </div>
-                </div>
-              </motion.div>
+    <div className="text-5xl font-bold mt-4 text-cyan-400">
+      {userData.monthly_usage}
+      <span className="text-2xl text-slate-500">
+        /{userData.monthly_limit}
+      </span>
+    </div>
 
-              <motion.div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-2xl p-8">
-                <p className="text-sm text-slate-400 uppercase tracking-wider">Total Revenue</p>
-                <div className="text-5xl font-bold mt-4 text-emerald-400">
-                  €{userData.total_revenue.toFixed(2)}
-                </div>
-                <p className="text-xs text-slate-500 mt-6">This month</p>
-              </motion.div>
+    <div className="mt-6">
+      <div className="flex justify-between mb-2">
+        <span className="text-xs text-slate-400">
+          Usage Progress
+        </span>
 
-              <motion.div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30 rounded-2xl p-8">
-                <p className="text-sm text-slate-400 uppercase tracking-wider">Your Plan</p>
-                <div className="text-3xl font-bold mt-4 text-blue-400 uppercase">
-                  {userData.plan}
-                </div>
-                <p className="text-xs text-slate-500 mt-6">
-                  {userData.plan === 'free' && '50 requests/month'}
-                  {userData.plan === 'pro' && '2,000 requests/month'}
-                  {userData.plan === 'scale' && '10,000 requests/month'}
-                </p>
-              </motion.div>
-            </motion.div>
+        <span
+          className={`font-bold ${
+            isLimitReached
+              ? 'text-red-400'
+              : 'text-cyan-400'
+          }`}
+        >
+          {percent.toFixed(0)}%
+        </span>
+      </div>
+
+      <div className="w-full h-3 bg-slate-900/50 rounded-full overflow-hidden border border-white/10">
+        <motion.div
+          className={`h-full rounded-full ${
+            isLimitReached
+              ? 'bg-red-500'
+              : 'bg-gradient-to-r from-cyan-500 to-blue-600'
+          }`}
+          animate={{ width: `${percent}%` }}
+          transition={{ duration: 0.5 }}
+        />
+      </div>
+    </div>
+  </motion.div>
+
+  <motion.div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 rounded-2xl p-8">
+    <p className="text-sm text-slate-400 uppercase tracking-wider">
+      Total Revenue
+    </p>
+
+    <div className="text-5xl font-bold mt-4 text-emerald-400">
+      €{userData.total_revenue.toFixed(2)}
+    </div>
+
+    <p className="text-xs text-slate-500 mt-6">
+      This month
+    </p>
+  </motion.div>
+
+  <motion.div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30 rounded-2xl p-8">
+    <p className="text-sm text-slate-400 uppercase tracking-wider">
+      Your Plan
+    </p>
+
+    <div className="text-3xl font-bold mt-4 text-blue-400 uppercase">
+      {userData.plan}
+    </div>
+
+    <p className="text-xs text-slate-500 mt-6">
+      {userData.plan === 'free' &&
+        '50 requests/month'}
+      {userData.plan === 'pro' &&
+        '2,000 requests/month'}
+      {userData.plan === 'scale' &&
+        '10,000 requests/month'}
+    </p>
+  </motion.div>
+
+  <motion.div className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30 rounded-2xl p-8">
+    <p className="text-sm text-slate-400 uppercase tracking-wider">
+      Total Calls
+    </p>
+
+    <div className="text-5xl font-bold mt-4 text-purple-400">
+      {totalCalls}
+    </div>
+
+    <p className="text-xs text-slate-500 mt-6">
+      Workflow executions
+    </p>
+  </motion.div>
+
+  <motion.div className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/30 rounded-2xl p-8">
+    <p className="text-sm text-slate-400 uppercase tracking-wider">
+      Success Rate
+    </p>
+
+    <div className="text-5xl font-bold mt-4 text-amber-400">
+      {successRate}%
+    </div>
+
+    <p className="text-xs text-slate-500 mt-6">
+      Based on recent executions
+    </p>
+  </motion.div>
+</motion.div>
+
 
             <motion.div
               className="bg-gradient-to-br from-slate-900/50 to-slate-950/50 border border-cyan-500/20 rounded-2xl p-8 mb-12"
