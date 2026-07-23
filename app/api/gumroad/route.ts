@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
 console.log("EMAIL:", email);
 console.log("PLAN:", plan);
-console.log("UPDATE RESULT:", result);
+console.log("UPDATE RESULT:", JSON.stringify(result, null, 2));
 
 const { error } = result;
 
