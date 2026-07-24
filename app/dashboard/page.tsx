@@ -406,6 +406,34 @@ if (refreshedCalls) {
           </div>
         ) : (
           <>
+          {userData?.plan === 'free' && (
+  <motion.div
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="mb-8 rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/10 to-blue-600/10 p-6"
+  >
+    <div className="flex items-center justify-between">
+      <div>
+        <h3 className="text-xl font-bold text-cyan-400">
+          Upgrade to Pro 🚀
+        </h3>
+
+        <p className="text-slate-400">
+          Unlock 2,000 requests/month and advanced workflow verification.
+        </p>
+      </div>
+
+      <Link
+  href="https://aydncy.gumroad.com/l/ovwi_pro"
+  target="_blank"
+>
+        <button className="rounded-xl bg-cyan-500 px-6 py-3 font-bold text-black">
+          Upgrade Now
+        </button>
+      </Link>
+    </div>
+  </motion.div>
+)}
             <motion.div
   className="grid md:grid-cols-6 gap-6 mb-12"
   initial={{ opacity: 0, y: 20 }}
@@ -460,7 +488,7 @@ if (refreshedCalls) {
       Total Revenue
     </p>
 
-    <div className="text-5xl font-bold mt-4 text-emerald-400">
+    <div className="text-4xl font-bold mt-4 text-emerald-400">
       €{userData.total_revenue.toFixed(2)}
     </div>
 
@@ -478,14 +506,19 @@ if (refreshedCalls) {
       {userData.plan}
     </div>
 
-    <p className="text-xs text-slate-500 mt-6">
-      {userData.plan === 'free' &&
-        '50 requests/month'}
-      {userData.plan === 'pro' &&
-        '2,000 requests/month'}
-      {userData.plan === 'scale' &&
-        '10,000 requests/month'}
+    <div className="mt-6">
+  <p className="text-xs text-slate-500">
+    {userData.plan === 'free' && '50 requests/month'}
+    {userData.plan === 'pro' && '2,000 requests/month'}
+    {userData.plan === 'scale' && '10,000 requests/month'}
+  </p>
+
+  {userData.plan === 'free' && (
+    <p className="mt-2 text-xs text-cyan-400">
+      Upgrade for 40x higher limits
     </p>
+  )}
+</div>
   </motion.div>
 
   <motion.div className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30 rounded-2xl p-8">
@@ -493,7 +526,7 @@ if (refreshedCalls) {
       Total Calls
     </p>
 
-    <div className="text-5xl font-bold mt-4 text-purple-400">
+    <div className="text-4xl font-bold mt-4 text-purple-400">
       {totalCalls}
     </div>
 
@@ -507,7 +540,7 @@ if (refreshedCalls) {
       Success Rate
     </p>
 
-    <div className="text-5xl font-bold mt-4 text-amber-400">
+    <div className="text-4xl font-bold mt-4 text-amber-400">
       {successRate}%
     </div>
 
@@ -520,7 +553,7 @@ if (refreshedCalls) {
     Failed Calls
   </p>
 
-  <div className="text-5xl font-bold mt-4 text-red-400">
+  <div className="text-4xl font-bold mt-4 text-red-400">
     {failedCalls}
   </div>
 
@@ -635,7 +668,7 @@ if (refreshedCalls) {
   </h3>
 
   <p className="text-slate-400 text-sm mb-4">
-    Test OVWI endpoints directly from your dashboard.
+    Test live verification requests directly from your dashboard.
   </p>
 
   <textarea
